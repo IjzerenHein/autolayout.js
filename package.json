@@ -1,0 +1,66 @@
+{
+  "name": "autolayout",
+  "version": "0.0.1",
+  "homepage": "https://github.com/IjzerenHein/autolayout.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IjzerenHein/autolayout.js.git"
+  },
+  "main": "dist/autolayout.js",
+  "author": {
+    "name": "Hein Rutjes <hrutjes@gmail.com>"
+  },
+  "description": "Apple's Auto Layout for javascript (using cassowary constraints)",
+  "keywords": [
+    "autolayout",
+    "autolayoutjs",
+    "autolayout.js",
+    "auto-layout",
+    "cassowary",
+    "cassowaryjs",
+    "cassowary.js"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/IjzerenHein/autolayout.js/blob/master/LICENSE"
+    }
+  ],
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/IjzerenHein/autolayout.js/issues"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "files": [
+    "src",
+    "dist",
+    "LICENSE"
+  ],
+  "devDependencies": {
+    "babelify": "^6.1.2",
+    "browserify": "^10.2.3",
+    "browserify-shim": "^3.8.7",
+    "cassowary": "0.0.2",
+    "grunt": "^0.4.5",
+    "grunt-banner": "^0.3.1",
+    "grunt-browserify": "^3.8.0",
+    "grunt-contrib-uglify": "^0.9.1",
+    "grunt-eslint": "^14.0.0",
+    "grunt-exec": "^0.4.6",
+    "grunt-jscs": "^1.8.0",
+    "grunt-jsdoc-to-markdown": "^1.1.1",
+    "grunt-peg": "^1.5.0",
+    "mocha-traceur": "^2.1.0"
+  },
+  "browserify": {
+    "transform": [
+      "babelify",
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "cassowary/bin/c": "global:C"
+  }
+}
