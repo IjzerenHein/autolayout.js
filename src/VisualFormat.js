@@ -4,7 +4,7 @@ import Attribute from './Attribute';
 /**
  * VisualFormat
  *
- * @class VisualFormat
+ * @namespace VisualFormat
  */
 class VisualFormat {
 

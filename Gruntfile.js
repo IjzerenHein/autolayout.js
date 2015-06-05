@@ -27,8 +27,8 @@ module.exports = function(grunt) {
           index: true
         },
         files: [
-            //{ src: 'src/Test.js', dest: 'docs/Test.md' }
             { src: 'src/AutoLayout.js', dest: 'docs/AutoLayout.md' },
+            { src: 'src/View.js', dest: 'docs/View.md' },
             { src: 'src/VisualFormat.js', dest: 'docs/VisualFormat.md' },
             { src: 'src/Attribute.js', dest: 'docs/Attribute.md' },
             { src: 'src/Relation.js', dest: 'docs/Relation.md' }
@@ -99,5 +99,5 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['exec:test']);
   grunt.registerTask('dist', ['parser', 'browserify', 'uglify', 'usebanner']);
   //grunt.registerTask('develop', ['watch:source']); // Develop: Watches source files. Trigger lint & build upon change.
-  grunt.registerTask('default', ['parser', 'lint', 'test', 'dist']);
+  grunt.registerTask('default', ['parser', 'lint', 'dist', 'test']);
 };

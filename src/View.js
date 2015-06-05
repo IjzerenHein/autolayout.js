@@ -94,22 +94,55 @@ function _addConstraint(constraint) {
     this.solver.addConstraint(relation);
 }
 
-/**
- * AutoLayout View.
- *
- * @class View
- */
 class View {
+
+    /**
+     * @class View
+     * @param {Object} [options] Configuration options.
+     * @param {Number} [options.width] Initial width of the view.
+     * @param {Number} [options.height] Initial height of the view.
+     * @param {Object|Array} [options.constraints] One or more constraint definitions.
+     * @param {String|Array} [options.visualFormat] Visual format string or array of vfl strings.
+     */
     constructor(options) {
         this.solver = new c.SimplexSolver();
         this.views = {};
         this.constraints = [];
-        if (options && options.constraints) {
-            this.addConstraints(options.constraints);
+        if (options) {
+            if ((options.width !== undefined) || (options.height !== undefined)) {
+                this.setSize(options.width, options.height);
+            }
+            if (options.constraints) {
+                this.addConstraints(options.constraints);
+            }
+            if (options.visualFormat) {
+                this.addVisualFormat(options.visualFormat);
+            }
         }
-        if (options && options.visualFormat) {
-            this.addVisualFormat(options.visualFormat);
+    }
+
+    /**
+     * Sets the width and height of the view.
+     *
+     * @param {Number} width Width of the view.
+     * @param {Number} height Height of the view.
+     * @return {AutoLayout} this
+     */
+    setSize(width, height /*, depth*/) {
+        if ((this._width === width) &&
+            (this._height === height)) {
+            return undefined;
         }
+        if ((width !== undefined) && (this._width !== width)) {
+            this._width = width;
+            this.solver.suggestValue(_getAttr.call(this, undefined, Attribute.WIDTH), this._width);
+        }
+        if ((height !== undefined) && (this._height !== height)) {
+            this._height = height;
+            this.solver.suggestValue(_getAttr.call(this, undefined, Attribute.HEIGHT), this._height);
+        }
+        this.solver.resolve();
+        return this;
     }
 
     /**
@@ -131,14 +164,14 @@ class View {
      * @param {Object|Array} constraints One or more constraint definitions.
      * @return {AutoLayout} this
      */
-    addConstraints(constraints) {
-        if (Array.isArray(constraints)) {
-            for (var i = 0; i < constraints.length; i++) {
-                _addConstraint.call(this, constraints[i]);
+    addConstraint(constraint) {
+        if (Array.isArray(constraint)) {
+            for (var i = 0; i < constraint.length; i++) {
+                _addConstraint.call(this, constraint[i]);
             }
         }
         else {
-            _addConstraint.call(this, constraints);
+            _addConstraint.call(this, constraint);
         }
         return this;
     }
@@ -152,6 +185,22 @@ class View {
      */
     addVisualFormat(visualFormat) {
         return this.addConstraint(VisualFormat.parse(visualFormat));
+    }
+
+    /**
+     * Gets a calculated attribute value.
+     *
+     * @param {String} subView Child view name (when undefined returns attributes for this value itself such as width and height).
+     * @param {Attribute|String} attr Attribute to get the value for.
+     * @return {Number} value or undefined
+     */
+    get(subView, attr) {
+        subView = subView || '__parentview';
+        if (!this.views[subView]) {
+            return undefined;
+        }
+        _getAttr.call(this, subView, attr);
+        return this.views[subView].attr[attr] ? this.views[subView].attr[attr].value : undefined;
     }
 }
 
