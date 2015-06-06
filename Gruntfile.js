@@ -28,10 +28,11 @@ module.exports = function(grunt) {
         },
         files: [
             { src: 'src/AutoLayout.js', dest: 'docs/AutoLayout.md' },
-            { src: 'src/View.js', dest: 'docs/View.md' },
-            { src: 'src/VisualFormat.js', dest: 'docs/VisualFormat.md' },
             { src: 'src/Attribute.js', dest: 'docs/Attribute.md' },
-            { src: 'src/Relation.js', dest: 'docs/Relation.md' }
+            { src: 'src/Relation.js', dest: 'docs/Relation.md' },
+            { src: 'src/VisualFormat.js', dest: 'docs/VisualFormat.md' },
+            { src: 'src/View.js', dest: 'docs/View.md' },
+            { src: 'src/SubView.js', dest: 'docs/SubView.md' }
         ]
       }
     },
