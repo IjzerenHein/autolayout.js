@@ -6,7 +6,8 @@
   "ecmaFeatures": {
     "classes": true,
     "modules": true,
-    "blockBindings": true
+    "blockBindings": true,
+    "arrowFunctions": true
   },
   "rules": {
     "quotes": [2, "single"],

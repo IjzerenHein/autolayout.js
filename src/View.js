@@ -4,8 +4,6 @@ import Attribute from './Attribute';
 import Relation from './Relation';
 import SubView from './SubView';
 
-
-
 function _getConst(name, value) {
     const vr = new c.Variable({value: value});
     this._solver.addConstraint(new c.StayConstraint(vr, c.Strength.required, 0));
@@ -25,24 +23,67 @@ function _getSubView(viewName) {
     }
 }
 
+function _getSpacing(constraint) {
+    let index = 4;
+    if (!constraint.view1 && (constraint.attr1 === 'left')) {
+        index = 3;
+    }
+    else if (!constraint.view1 && (constraint.attr1 === 'top')) {
+        index = 0;
+    }
+    else if (!constraint.view2 && (constraint.attr2 === 'right')) {
+        index = 1;
+    }
+    else if (!constraint.view2 && (constraint.attr2 === 'bottom')) {
+        index = 2;
+    }
+    else {
+        switch (constraint.attr1) {
+            case 'left':
+            case 'right':
+            case 'centerX':
+            case 'leading':
+            case 'trailing':
+                index = 4;
+                break;
+            default:
+                index = 5;
+        }
+    }
+    this._spacingVars = this._spacingVars || new Array(6);
+    if (!this._spacingVars[index]) {
+        this._spacingVars[index] = new c.Variable({
+            value: this._spacing[index],
+            name: 'spacing[' + index + ']'
+        });
+        this._solver.addEditVar(this._spacingVars[index]);
+    }
+    return this._spacingVars[index];
+}
+
 function _addConstraint(constraint) {
     //this.constraints.push(constraint);
+    let relation;
+    const multiplier = (constraint.multiplier !== undefined) ? constraint.multiplier : 1;
+    let constant = (constraint.constant !== undefined) ? constraint.constant : 0;
+    if (constant === 'default') {
+        constant = _getSpacing.call(this, constraint);
+    }
     const attr1 = _getSubView.call(this, constraint.view1)._getAttr(constraint.attr1);
     const attr2 = (constraint.attr2 === Attribute.CONST) ? _getConst.call(this, undefined, constraint.constant) : _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
-    let relation;
     switch (constraint.relation) {
         case Relation.LEQ:
             //relation = new c.Inequality(attr1, c.LEQ, c.plus(attr2, )
             break;
         case Relation.EQU:
-            if (((constraint.multiplier === 1) && !constraint.constant) || (constraint.attr2 === Attribute.CONST)) {
+            if (((multiplier === 1) && !constant) || (constraint.attr2 === Attribute.CONST)) {
                 relation = new c.Equation(attr1, attr2);
             }
-            else if ((constraint.multiplier !== 1) && constraint.constant) {
+            else if ((multiplier !== 1) && constant) {
                 throw 'todo';
             }
-            else if (constraint.constant) {
-                relation = new c.Equation(attr2, c.plus(attr1, constraint.constant));
+            else if (constant) {
+                relation = new c.Equation(attr2, c.plus(attr1, constant));
             }
             else {
                 throw 'todo';
@@ -63,15 +104,18 @@ class View {
      * @param {Object} [options] Configuration options.
      * @param {Number} [options.width] Initial width of the view.
      * @param {Number} [options.height] Initial height of the view.
+     * @param {Number|Object} [options.spacing] Spacing for the view (default: 8), see `setSpacing`.
      * @param {Object|Array} [options.constraints] One or more constraint definitions.
      * @param {String|Array} [options.visualFormat] Visual format string or array of vfl strings.
      */
     constructor(options) {
         this._solver = new c.SimplexSolver();
         this._subViews = {};
+        this._spacing = {};
         this._parentSubView = new SubView({
             solver: this._solver
         });
+        this.setSpacing((options && (options.spacing !== undefined)) ? options.spacing : 8);
         //this.constraints = [];
         if (options) {
             if ((options.width !== undefined) || (options.height !== undefined)) {
@@ -127,6 +171,39 @@ class View {
     }
 
     /**
+     * Sets the spacing for the view.
+     *
+     * Examples:
+     * ```javascript
+     * view.setSpacing(10); // all spacings 10
+     * view.setSpacing([10, 15]); // horizontal spacing 10, and vertical spacing 15
+     * view.setSpacing([10, 20, 10, 20, 5, 5]); // top, right, bottom, left, horizontal, vertical
+     * ```
+     *
+     * @param {Number|Array} spacing.
+     */
+    setSpacing(spacing) {
+        // convert spacing into array: [top, right, bottom, left, horz, vert]
+        switch (Array.isArray(spacing) ? spacing.length : -1) {
+            case -1: spacing = [spacing, spacing, spacing, spacing, spacing, spacing]; break;
+            case 1: spacing = [spacing[0], spacing[0], spacing[0], spacing[0], spacing[0], spacing[0]]; break;
+            case 2: spacing = [spacing[1], spacing[0], spacing[1], spacing[0], spacing[1], spacing[0]]; break;
+            case 6: break;
+            default: throw 'Invalid spacing syntax';
+        }
+        this._spacing = spacing;
+        // update spacing variables
+        if (this._spacingVars) {
+            for (var i = 0; i < this._spacingVars.length; i++) {
+                if (this._spacingVars[i]) {
+                    this._solver.suggestValue(this._spacingVars[i], this._spacing[i]); break;
+                }
+            }
+            this._solver.resolve();
+        }
+    }
+
+    /**
      * Adds one or more constraint definitions.
      *
      * A constraint definition has the following format:
@@ -142,7 +219,7 @@ class View {
      *   constant: {Number}
      * }
      * ```
-     * @param {Object|Array} constraints One or more constraint definitions.
+     * @param {Object|Array} constraint One or more constraint definitions.
      * @return {AutoLayout} this
      */
     addConstraint(constraint) {

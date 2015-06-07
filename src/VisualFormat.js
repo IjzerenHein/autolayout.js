@@ -12,14 +12,18 @@ class VisualFormat {
      * Parses a single line of vfl into an array of constraint definitions.
      *
      * @param {String} visualFormat Visual format string (cannot contain line-endings!).
+     * @param {Object} [options] Configuration options.
      * @return {Array} Array of constraint definitions.
      */
-    static parseLine(visualFormat) {
+    static parseLine(visualFormat, options) {
         if (visualFormat.length === 0) {
             return [];
         }
         const constraints = [];
         const res = parser.parse(visualFormat);
+        if (options && options.outFormat === 'raw') {
+            return [res];
+        }
         const horizontal = (res.orientation === 'horizontal');
         let view1;
         let view2;
@@ -56,12 +60,14 @@ class VisualFormat {
                 // process view size constraints
                 if (item.constraints) {
                     for (var n = 0; n < item.constraints.length; n++) {
+                        attr1 = horizontal ? Attribute.WIDTH : Attribute.HEIGHT;
+                        attr2 = item.constraints[n].view ? attr1 : Attribute.CONST;
                         constraints.push({
                             view1: item.view,
-                            attr1: horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
+                            attr1: attr1,
                             relation: item.constraints[n].relation,
-                            view2: undefined,
-                            attr2: Attribute.CONST,
+                            view2: item.constraints[n].view,
+                            attr2: attr2,
                             multiplier: 1,
                             constant: item.constraints[n].constant
                         });
@@ -75,18 +81,18 @@ class VisualFormat {
         return constraints;
     }
 
-
     /**
      * Parses one or more visual format strings into an array of constraint definitions.
      *
      * @param {String|Array} visualFormat One or more visual format strings.
-     * @param {String} [lineSeperator] String that defines the end of a line (default `\n`)
+     * @param {String} [lineSeperator] String that defines the end of a line (default `\n`).
+     * @param {Object} [options] Configuration options.
      * @return {Array} Array of constraint definitions.
      */
-    static parse(visualFormat, lineSeperator) {
+    static parse(visualFormat, lineSeperator, options) {
         lineSeperator = lineSeperator || '\n';
         if (!Array.isArray(visualFormat) && (visualFormat.indexOf(lineSeperator) < 0)) {
-            return this.parseLine(visualFormat);
+            return this.parseLine(visualFormat, options);
         }
 
         // Decompose visual-format into an array of strings, and within those strings
@@ -97,7 +103,7 @@ class VisualFormat {
         for (var i = 0; i < visualFormat.length; i++) {
             lines = visualFormat[i].split(lineSeperator);
             for (var j = 0; j < lines.length; j++) {
-                constraints = constraints.concat(this.parseLine(lines[j]));
+                constraints = constraints.concat(this.parseLine(lines[j], options));
             }
         }
         return constraints;

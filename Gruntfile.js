@@ -10,13 +10,13 @@ module.exports = function(grunt) {
       }
     },
     eslint: {
-      target: ['src/*.js'],
+      target: ['src/*.js', 'test/*.js'],
       options: {
         config: '.eslintrc'
       }
     },
     jscs: {
-        src: ['src/*.js'],
+        src: ['src/*.js', 'test/*.js'],
         options: {
             config: '.jscsrc'
         }
