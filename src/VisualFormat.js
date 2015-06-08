@@ -53,7 +53,7 @@ class VisualFormat {
                         relation: relation.relation,
                         view2: view2,
                         attr2: attr2,
-                        multiplier: 1,
+                        multiplier: relation.multiplier,
                         constant: relation.constant
                     });
                 }

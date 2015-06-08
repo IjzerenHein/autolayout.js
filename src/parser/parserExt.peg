@@ -45,6 +45,7 @@ predicateList
   / predicateListWithParens
 
 simplePredicate
+/*  = n:number '%' { return [{ relation: 'equ', multiplier: n / 100, view: null, $parserOffset: offset() }] } */
   = n:number { return [{ relation: 'equ', constant: n, $parserOffset: offset() }] }
 
 predicateListWithParens

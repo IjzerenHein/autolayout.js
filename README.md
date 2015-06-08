@@ -22,14 +22,14 @@ Features:
 - [X] Namespace & classes (AutoLayout, VisualFormat, View, Relation, Attribute)
 - [ ] Visual format 
   - [X] Vfl Parser (thanks to the awesome angular-autolayout team!)
-  - [ ] Size constraints
-  - [ ] Greater than, less than relationships.
+  - [X] Size constraints
+  - [X] Greater than, less than relationships.
   - [ ] Variables
-  - [ ] Percentage support (e.g. |-(5%)-[child]-(5%)-])
-- [ ] Equality relationships
+  - [X] Percentage support (e.g. |-[child(50%)]-[child2]-])
+- [X] Equality relationships
   - [X] Base functionality
-  - [ ] Multiplier support
-- [ ] In-equality relationships
+  - [X] Multiplier support
+- [X] In-equality relationships
 - [ ] Priorities & weights.
 - [X] Spacing.
 - [ ] Variables support (.e.g. |-(leftMargin)-[child]]).

@@ -70,26 +70,31 @@ function _addConstraint(constraint) {
         constant = _getSpacing.call(this, constraint);
     }
     const attr1 = _getSubView.call(this, constraint.view1)._getAttr(constraint.attr1);
-    const attr2 = (constraint.attr2 === Attribute.CONST) ? _getConst.call(this, undefined, constraint.constant) : _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
+    let attr2;
+    if (constraint.attr2 === Attribute.CONST) {
+        attr2 = _getConst.call(this, undefined, constraint.constant);
+    }
+    else {
+        attr2 = _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
+        if ((multiplier !== 1) && constant) {
+            attr2 = c.times(c.minus(attr2, constant), multiplier);
+        }
+        else if (constant) {
+            attr2 = c.minus(attr2, constant);
+        }
+        else if (multiplier !== 1) {
+            attr2 = c.times(attr2, multiplier);
+        }
+    }
     switch (constraint.relation) {
-        case Relation.LEQ:
-            //relation = new c.Inequality(attr1, c.LEQ, c.plus(attr2, )
-            break;
         case Relation.EQU:
-            if (((multiplier === 1) && !constant) || (constraint.attr2 === Attribute.CONST)) {
-                relation = new c.Equation(attr1, attr2);
-            }
-            else if ((multiplier !== 1) && constant) {
-                throw 'todo';
-            }
-            else if (constant) {
-                relation = new c.Equation(attr2, c.plus(attr1, constant));
-            }
-            else {
-                relation = new c.Equation(attr1, c.times(attr2, multiplier));
-            }
+            relation = new c.Equation(attr1, attr2);
             break;
         case Relation.GEQ:
+            relation = new c.Inequality(attr1, c.GEQ, attr2);
+            break;
+        case Relation.LEQ:
+            relation = new c.Inequality(attr1, c.LEQ, attr2);
             break;
         default:
             throw 'Invalid relation specified: ' + constraint.relation;
