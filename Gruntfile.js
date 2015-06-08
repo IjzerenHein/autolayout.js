@@ -7,6 +7,10 @@ module.exports = function(grunt) {
       parser: {
         src: 'src/parser/parser.peg',
         dest: 'src/parser/parser.js'
+      },
+      parserExt: {
+        src: 'src/parser/parserExt.peg',
+        dest: 'src/parser/parserExt.js'
       }
     },
     eslint: {

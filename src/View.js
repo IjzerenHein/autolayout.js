@@ -86,7 +86,7 @@ function _addConstraint(constraint) {
                 relation = new c.Equation(attr2, c.plus(attr1, constant));
             }
             else {
-                throw 'todo';
+                relation = new c.Equation(attr1, c.times(attr2, multiplier));
             }
             break;
         case Relation.GEQ:

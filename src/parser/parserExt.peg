@@ -1,0 +1,88 @@
+{
+  function extend(dst) {
+    for (var i = 1; i < arguments.length; i++) {
+      for (var k in arguments[i]) {
+        dst[k] = arguments[i][k];
+      }
+    }
+    return dst;
+  }
+}
+
+visualFormatString
+  = o:(orientation ":")?
+    superto:(superview connection)?
+    view:view
+    views:(connection view)*
+    tosuper:(connection superview)?
+  { return {
+      orientation: o ? o[0] : 'horizontal',
+      cascade: (superto || []).concat(
+        [view],
+        [].concat.apply([], views),
+        (tosuper || [])
+      )
+    }
+  }
+
+orientation
+  = orient:("H" / "V") { return orient == 'H' ? 'horizontal' : 'vertical' }
+
+superview
+  = "|" { return { view: null } }
+
+view
+  = "[" view:viewName predicates:predicateListWithParens? "]"
+  { return extend(view, predicates ? { constraints: predicates } : {}) }
+
+connection
+  = "-" predicateList:predicateList "-" { return predicateList }
+  / "-" { return [{ relation: 'equ', constant: 'default', $parserOffset: offset() }] }
+  / "" { return [{ relation: 'equ', constant: 0, $parserOffset: offset() }] }
+
+predicateList
+  = simplePredicate
+  / predicateListWithParens
+
+simplePredicate
+  = n:number { return [{ relation: 'equ', constant: n, $parserOffset: offset() }] }
+
+predicateListWithParens
+  = "(" p:predicate ps:("," predicate)* ")"
+  { return [p].concat(ps.map(function(p){ return p[1] })) }
+
+predicate
+  = r:relation? o:objectOfPredicate p:("@" priority)?
+  { return extend({ relation: 'equ' }, (r || {}), o, (p ? p[1]: {})) }
+
+relation
+  = "==" { return { relation: 'equ', $parserOffset: offset() } }
+  / "<=" { return { relation: 'leq', $parserOffset: offset() } }
+  / ">=" { return { relation: 'geq', $parserOffset: offset() } }
+
+objectOfPredicate
+  = percentage
+  / constant
+  / viewPredicate
+
+priority
+  = n:number { return { priority: n } }
+
+constant
+  = n:number { return { constant: n } }
+
+percentage
+  = n:number '%' { return { view: null, multiplier: n / 100 } }
+
+viewPredicate
+  = vn:viewName m:multiplier? { return { view: vn.view, multiplier: m ? m : 1 } }
+
+multiplier
+  = "/" n:number { return 1 / n; }
+  / "*" n:number { return n; }
+
+viewName
+  = v:$[a-zA-Z0-9\-_]+ { return { view: v } }
+
+number
+  = digits:[0-9]+ { return parseInt(digits.join(""), 10); }

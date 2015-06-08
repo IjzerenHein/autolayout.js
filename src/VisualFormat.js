@@ -1,4 +1,5 @@
 import parser from './parser/parser';
+import parserExt from './parser/parserExt';
 import Attribute from './Attribute';
 
 /**
@@ -13,6 +14,7 @@ class VisualFormat {
      *
      * @param {String} visualFormat Visual format string (cannot contain line-endings!).
      * @param {Object} [options] Configuration options.
+     * @param {Boolean} [options.extended] When set to true uses the extended syntax (default: false).
      * @return {Array} Array of constraint definitions.
      */
     static parseLine(visualFormat, options) {
@@ -20,7 +22,7 @@ class VisualFormat {
             return [];
         }
         const constraints = [];
-        const res = parser.parse(visualFormat);
+        const res = (options && options.extended) ? parserExt.parse(visualFormat) : parser.parse(visualFormat);
         if (options && options.outFormat === 'raw') {
             return [res];
         }
@@ -61,14 +63,14 @@ class VisualFormat {
                 if (item.constraints) {
                     for (var n = 0; n < item.constraints.length; n++) {
                         attr1 = horizontal ? Attribute.WIDTH : Attribute.HEIGHT;
-                        attr2 = item.constraints[n].view ? attr1 : Attribute.CONST;
+                        attr2 = (item.constraints[n].view || item.constraints[n].multiplier) ? attr1 : Attribute.CONST;
                         constraints.push({
                             view1: item.view,
                             attr1: attr1,
                             relation: item.constraints[n].relation,
                             view2: item.constraints[n].view,
                             attr2: attr2,
-                            multiplier: 1,
+                            multiplier: item.constraints[n].multiplier,
                             constant: item.constraints[n].constant
                         });
                     }
@@ -86,6 +88,7 @@ class VisualFormat {
      *
      * @param {String|Array} visualFormat One or more visual format strings.
      * @param {Object} [options] Configuration options.
+     * @param {Boolean} [options.extended] When set to true uses the extended syntax (default: false).
      * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
      * @param {String} [options.outFormat] Output format ('constraints' or 'raw') (default: 'constraints').
      * @return {Array} Array of constraint definitions.
