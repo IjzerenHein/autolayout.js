@@ -5,6 +5,9 @@
 Apple's Auto Layout and Visual Format Language for javascript (using cassowary constraints).
 
 
+## [Visual format Editor](https://rawgit.com/IjzerenHein/visualformat-editor/master/dist/index.html)
+
+
 ### Work in progress, come back later..
 
 # TODO
