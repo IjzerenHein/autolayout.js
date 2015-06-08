@@ -20,13 +20,15 @@ Features:
 - [ ] Visual format 
   - [X] Vfl Parser (thanks to the awesome angular-autolayout team!)
   - [ ] Size constraints
+  - [ ] Greater than, less than relationships.
   - [ ] Variables
+  - [ ] Percentage support (e.g. |-(5%)-[child]-(5%)-])
 - [ ] Equality relationships
   - [X] Base functionality
   - [ ] Multiplier support
 - [ ] In-equality relationships
 - [ ] Priorities & weights.
-- [ ] Gap-sizes.
+- [X] Spacing.
 - [ ] Variables support (.e.g. |-(leftMargin)-[child]]).
 - [ ] Checking for ambigous layout.
 - [ ] Fitting size?
@@ -38,4 +40,4 @@ Features:
 - [ ] Get constraint definitions from `View`
 - [ ] LTR (left to right reading) (Attribute.LEADING & Attribute.TRAILING)
 - [ ] Baseline support?
-- [ ] Margins? (View & Attribtes)
+- [ ] Margins? (View & Attributes)

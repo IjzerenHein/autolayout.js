@@ -196,7 +196,7 @@ class View {
         if (this._spacingVars) {
             for (var i = 0; i < this._spacingVars.length; i++) {
                 if (this._spacingVars[i]) {
-                    this._solver.suggestValue(this._spacingVars[i], this._spacing[i]); break;
+                    this._solver.suggestValue(this._spacingVars[i], this._spacing[i]);
                 }
             }
             this._solver.resolve();

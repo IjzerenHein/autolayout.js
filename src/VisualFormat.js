@@ -85,14 +85,21 @@ class VisualFormat {
      * Parses one or more visual format strings into an array of constraint definitions.
      *
      * @param {String|Array} visualFormat One or more visual format strings.
-     * @param {String} [lineSeperator] String that defines the end of a line (default `\n`).
      * @param {Object} [options] Configuration options.
+     * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
+     * @param {String} [options.outFormat] Output format ('constraints' or 'raw') (default: 'constraints').
      * @return {Array} Array of constraint definitions.
      */
-    static parse(visualFormat, lineSeperator, options) {
-        lineSeperator = lineSeperator || '\n';
+    static parse(visualFormat, options) {
+        const lineSeperator = (options && options.lineSeperator) ? options.lineSeperator : '\n';
         if (!Array.isArray(visualFormat) && (visualFormat.indexOf(lineSeperator) < 0)) {
-            return this.parseLine(visualFormat, options);
+            try {
+                return this.parseLine(visualFormat, options);
+            }
+            catch (err) {
+                err.source = visualFormat;
+                throw err;
+            }
         }
 
         // Decompose visual-format into an array of strings, and within those strings
@@ -100,11 +107,21 @@ class VisualFormat {
         visualFormat = Array.isArray(visualFormat) ? visualFormat : [visualFormat];
         let lines;
         let constraints = [];
-        for (var i = 0; i < visualFormat.length; i++) {
-            lines = visualFormat[i].split(lineSeperator);
-            for (var j = 0; j < lines.length; j++) {
-                constraints = constraints.concat(this.parseLine(lines[j], options));
+        let lineIndex = 0;
+        let line;
+        try {
+            for (var i = 0; i < visualFormat.length; i++) {
+                lines = visualFormat[i].split(lineSeperator);
+                for (var j = 0; j < lines.length; j++) {
+                    line = lines[j];
+                    lineIndex++;
+                    constraints = constraints.concat(this.parseLine(line, options));
+                }
             }
+        } catch (err) {
+            err.source = line;
+            err.line = lineIndex;
+            throw err;
         }
         return constraints;
     }
