@@ -101,6 +101,11 @@ function _addConstraint(constraint) {
     this._solver.addConstraint(relation);
 }
 
+/**
+ *  AutoLayoutJS API reference.
+ *
+ * @module AutoLayout
+ */
 class View {
 
     /**
@@ -136,7 +141,7 @@ class View {
      *
      * @param {Number} width Width of the view.
      * @param {Number} height Height of the view.
-     * @return {AutoLayout} this
+     * @return {View} this
      */
     setSize(width, height /*, depth*/) {
         if ((this._width === width) &&
@@ -181,7 +186,8 @@ class View {
      * view.setSpacing([10, 20, 10, 20, 5, 5]); // top, right, bottom, left, horizontal, vertical
      * ```
      *
-     * @param {Number|Array} spacing.
+     * @param {Number|Array} spacing
+     * @return {View} this
      */
     setSpacing(spacing) {
         // convert spacing into array: [top, right, bottom, left, horz, vert]
@@ -202,6 +208,7 @@ class View {
             }
             this._solver.resolve();
         }
+        return this;
     }
 
     /**
@@ -221,7 +228,7 @@ class View {
      * }
      * ```
      * @param {Object} constraint Constraint definition.
-     * @return {AutoLayout} this
+     * @return {View} this
      */
     addConstraint(constraint) {
         _addConstraint.call(this, constraint);
@@ -245,7 +252,7 @@ class View {
      * }
      * ```
      * @param {Array} constraints One or more constraint definitions.
-     * @return {AutoLayout} this
+     * @return {View} this
      */
     addConstraints(constraints) {
         for (var i = 0; i < constraints.length; i++) {

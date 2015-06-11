@@ -12,9 +12,13 @@ class VisualFormat {
     /**
      * Parses a single line of vfl into an array of constraint definitions.
      *
+     * When the visual-format could not be succesfully parsed an exception is thrown containing
+     * additional info about the parse error and column position.
+     *
      * @param {String} visualFormat Visual format string (cannot contain line-endings!).
      * @param {Object} [options] Configuration options.
      * @param {Boolean} [options.extended] When set to true uses the extended syntax (default: false).
+     * @param {String} [options.outFormat] Output format (`constraints` or `raw`) (default: `constraints`).
      * @return {Array} Array of constraint definitions.
      */
     static parseLine(visualFormat, options) {
@@ -88,11 +92,14 @@ class VisualFormat {
     /**
      * Parses one or more visual format strings into an array of constraint definitions.
      *
+     * When the visual-format could not be succesfully parsed an exception is thrown containing
+     * additional info about the parse error and column position.
+     *
      * @param {String|Array} visualFormat One or more visual format strings.
      * @param {Object} [options] Configuration options.
      * @param {Boolean} [options.extended] When set to true uses the extended syntax (default: false).
      * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
-     * @param {String} [options.outFormat] Output format ('constraints' or 'raw') (default: 'constraints').
+     * @param {String} [options.outFormat] Output format (`constraints` or `raw`) (default: `constraints`).
      * @return {Array} Array of constraint definitions.
      */
     static parse(visualFormat, options) {

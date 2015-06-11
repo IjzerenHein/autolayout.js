@@ -25,19 +25,20 @@ module.exports = function(grunt) {
             config: '.jscsrc'
         }
     },
+    concat: {
+      jsdoc2md: {
+        src: ['src/View.es6', 'src/SubView.es6', 'src/VisualFormat.es6', 'src/Attribute.es6', 'src/Relation.es6'],
+        dest: 'tmp/concat.js'
+      }
+    },
     jsdoc2md: {
-      separateOutputFilePerInput: {
+      output: {
         options: {
-          index: true
+          'global-index-format': 'none',
+          'module-index-format': 'none'
         },
-        files: [
-            { src: 'src/AutoLayout.es6', dest: 'docs/AutoLayout.md' },
-            { src: 'src/Attribute.es6', dest: 'docs/Attribute.md' },
-            { src: 'src/Relation.es6', dest: 'docs/Relation.md' },
-            { src: 'src/VisualFormat.es6', dest: 'docs/VisualFormat.md' },
-            { src: 'src/View.es6', dest: 'docs/View.md' },
-            { src: 'src/SubView.es6', dest: 'docs/SubView.md' }
-        ]
+        src: 'tmp/concat.js',
+        dest: 'docs/AutoLayout.md'
       }
     },
     exec: {
@@ -96,10 +97,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   // Tasks
   grunt.registerTask('lint', ['eslint', 'jscs']);
-  grunt.registerTask('doc', ['jsdoc2md']);
+  grunt.registerTask('doc', ['concat', 'jsdoc2md']);
   grunt.registerTask('parser', ['peg']);
   grunt.registerTask('test', ['exec:test']);
   grunt.registerTask('dist', ['parser', 'browserify', 'uglify', 'usebanner']);

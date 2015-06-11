@@ -4,7 +4,7 @@ import Attribute from './Attribute.es6';
 /**
  * A SubView is automatically generated when constraints are added to a View.
  *
- * @class SubView
+ * @namespace SubView
  */
 class SubView {
     constructor(options) {
