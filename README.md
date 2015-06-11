@@ -5,7 +5,7 @@
 AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/Introduction/Introduction.html) and [Visual Format Language](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html) in Javascript. Auto layout is a system which lets you perform lay out using mathematical relationships (constraints). It uses the awesome [Cassowary.js](https://github.com/slightlyoff/cassowary.js) library to do the actual constraint resolving and implements Apple's constraint system and Visual Format Language (vfl) on top of that.
 
 [![Example - click me](example.png)](https://rawgit.com/IjzerenHein/visualformat-editor/master/dist/index.html?vfl=example)
-*Visual Format Language Example **(click image to edit)***
+*Visual Format Language Example (click image to edit)*
 
 
 ## Index
@@ -14,13 +14,13 @@ AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/libra
   - [Using the API](#using-the-api)
   - [API Documentation](#api-documentation)  
 - [Extended Visual Format Language (EVFL)](#extended-visual-format-language-evfl)
-- [Additional resources](#resources)
+- [Additional resources](#additional-resources)
 - [ToDo list](#todo-list)
 
 ## Getting started
 
 AutoLayout.js is an abstract library for integrating Auto Layout and VFL into other javascript technologies. It does not contain
-DOM layouting or anything like that. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. An example of this is the The [Visual Format Editor](https://rawgit.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled output files.
+DOM layouting or anything like that. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. An example of this is the The [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled output files.
 
 ### Installation
 
@@ -39,10 +39,10 @@ AutoLayout.js has a dependency on [Cassowary.js](https://github.com/slightlyoff/
 var AutoLayout = window.AutoLayout;
 ```
 
-Or when using a bundler like webpack or browserify, use:
+When using a bundler like webpack or browserify, use (do make sure plugins are installed for transpiling .es6 files!) :
 
 ```javascript
-var AutoLayout = require('autolayout.js'); // make sure an ES6 transpiler is installed for .es6 files
+var AutoLayout = require('autolayout.js');
 ```
 
 ### Using the API
@@ -66,6 +66,7 @@ A View is the main entity onto which constraints are added. It uses the cassowar
 relations and variables. You can set the size of the view and other properties such as spacing. When constraints are added it automatically creates so called "sub-views" for every unique name that is encountered in the constraints. The evaluated size and position of these sub-views can be accessed through the `.subViews` property.
 
 ```javascript
+// Create a view with a set of constraints
 var view = new AutoLayout.View({
     constraints: constraints, // initial constraints (optional)
     width: 100,               // initial width (optional)
@@ -98,7 +99,7 @@ for (var key in view.subViews) {
 ```
 
 Instead of using VFL, you can also add constraints directly.
-The properties are similar to those of [NSLayoutConstraint](https://developer.apple.com/library/ios/documentation/AppKit/Reference/NSLayoutConstraint_Class).
+The properties are identical to those of [NSLayoutConstraint](https://developer.apple.com/library/ios/documentation/AppKit/Reference/NSLayoutConstraint_Class).
 
 ```
 view.addConstraint({
@@ -128,7 +129,7 @@ var evfl = '|-[view1(==50%)]';
 var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 ```
 
-## Proportional widths & heights
+### Proportional widths & heights
 
 To make the width or height proportional to the size of the **parent**, you can use the following % syntax:
 
@@ -146,8 +147,8 @@ And to make the width or height proportional to **another view**, use:
 - [Visual Format Language](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html)
 - [Cassowary.js](https://github.com/slightlyoff/cassowary.js)
 - [Overconstrained](http://overconstrained.io)
-- [Visual Format Editor](https://rawgit.com/IjzerenHein/visualformat-editor)
-- [famous-flex](https://rawgit.com/IjzerenHein/famous-flex)
+- [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor)
+- [famous-flex](https://github.com/IjzerenHein/famous-flex)
 
 
 ## ToDo list
@@ -157,9 +158,9 @@ and replaced by a roadmap.
 
 Overal:
 - [X] Toolchain (ES6, external cassowary.js, distributable output, testing, doc generation, travis CI)
-- [ ] Instructions
-- [ ] Documentation
-- [ ] Examples
+- [X] Instructions
+- [X] Documentation
+- [ ] More examples
 
 Features:
 - [X] Namespace & classes (AutoLayout, VisualFormat, View, Relation, Attribute)
