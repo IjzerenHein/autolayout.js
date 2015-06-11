@@ -47,6 +47,7 @@ predicateList
 simplePredicate
 /*  = n:number '%' { return [{ relation: 'equ', multiplier: n / 100, view: null, $parserOffset: offset() }] } */
   = n:number { return [{ relation: 'equ', constant: n, $parserOffset: offset() }] }
+  /*/ v:variable { return [{ relation: 'equ', variable: v.variable, $parserOffset: offset() }] }*/
 
 predicateListWithParens
   = "(" p:predicate ps:("," predicate)* ")"
@@ -65,6 +66,7 @@ objectOfPredicate
   = percentage
   / constant
   / viewPredicate
+  /*/ variable*/
 
 priority
   = n:number { return { priority: n } }
@@ -84,6 +86,10 @@ multiplier
 
 viewName
   = v:$[a-zA-Z0-9\-_]+ { return { view: v } }
+
+/*variable
+  = "{" v:$[a-zA-Z0-9\-_]+ "}" { return { variable: v } }
+*/
 
 number
   = digits:[0-9]+ { return parseInt(digits.join(""), 10); }

@@ -5,6 +5,7 @@
 var Attribute = {
     CONST: 'const',
     NOTANATTRIBUTE: 'const',
+    VARIABLE: 'var',
     /** left aligned */
     LEFT: 'left',
     /** right aligned */

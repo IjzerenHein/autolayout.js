@@ -33,6 +33,7 @@ class VisualFormat {
         let attr1;
         let attr2;
         let item;
+        let constraint;
         for (var i = 0; i < res.cascade.length; i++) {
             item = res.cascade[i];
             if (!Array.isArray(item) && item.hasOwnProperty('view')) {
@@ -55,6 +56,7 @@ class VisualFormat {
                         attr2: attr2,
                         multiplier: relation.multiplier,
                         constant: relation.constant
+                        //,variable: relation.variable
                     });
                 }
                 relation = undefined;
@@ -63,7 +65,7 @@ class VisualFormat {
                 if (item.constraints) {
                     for (var n = 0; n < item.constraints.length; n++) {
                         attr1 = horizontal ? Attribute.WIDTH : Attribute.HEIGHT;
-                        attr2 = (item.constraints[n].view || item.constraints[n].multiplier) ? attr1 : Attribute.CONST;
+                        attr2 = (item.constraints[n].view || item.constraints[n].multiplier) ? attr1 : (item.constraints[n].variable ? Attribute.VARIABLE : Attribute.CONST);
                         constraints.push({
                             view1: item.view,
                             attr1: attr1,
@@ -72,6 +74,7 @@ class VisualFormat {
                             attr2: attr2,
                             multiplier: item.constraints[n].multiplier,
                             constant: item.constraints[n].constant
+                            //,variable: item.constraints[n].variable
                         });
                     }
                 }

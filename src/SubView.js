@@ -5,7 +5,6 @@ import Attribute from './Attribute';
  * A SubView is automatically generated when constraints are added to a View.
  *
  * @class SubView
- * @param {Object} name Name of the sub-view.
  */
 class SubView {
     constructor(options) {
@@ -23,9 +22,22 @@ class SubView {
             this._solver.addEditVar(this._attr[Attribute.HEIGHT]);
         }
     }
+    toJSON() {
+        return {
+            name: this.name,
+            left: this.left,
+            top: this.top,
+            width: this.width,
+            height: this.height
+        }
+    }
+    toString() {
+        JSON.stringify(this.toJSON(), undefined, 2);
+    }
 
     /**
      * Name of the sub-view.
+     * @readonly
      * @type {String}
      */
     get name() {
@@ -34,6 +46,7 @@ class SubView {
 
     /**
      * Left value (`Attribute.LEFT`).
+     * @readonly
      * @type {Number}
      */
     get left() {
@@ -42,6 +55,7 @@ class SubView {
 
     /**
      * Right value (`Attribute.RIGHT`).
+     * @readonly
      * @type {Number}
      */
     get right() {
@@ -50,6 +64,7 @@ class SubView {
 
     /**
      * Width value (`Attribute.WIDTH`).
+     * @readonly
      * @type {Number}
      */
     get width() {
@@ -58,6 +73,7 @@ class SubView {
 
     /**
      * Height value (`Attribute.HEIGHT`).
+     * @readonly
      * @type {Number}
      */
     get height() {
@@ -66,6 +82,7 @@ class SubView {
 
     /**
      * Top value (`Attribute.TOP`).
+     * @readonly
      * @type {Number}
      */
     get top() {
@@ -74,6 +91,7 @@ class SubView {
 
     /**
      * Bottom value (`Attribute.BOTTOM`).
+     * @readonly
      * @type {Number}
      */
     get bottom() {
@@ -82,6 +100,7 @@ class SubView {
 
     /**
      * Horizontal center (`Attribute.CENTERX`).
+     * @readonly
      * @type {Number}
      */
     get centerX() {
@@ -90,6 +109,7 @@ class SubView {
 
     /**
      * Vertical center (`Attribute.CENTERY`).
+     * @readonly
      * @type {Number}
      */
     get centerY() {

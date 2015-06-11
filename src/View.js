@@ -1,5 +1,4 @@
 import c from 'cassowary/bin/c';
-import VisualFormat from './VisualFormat';
 import Attribute from './Attribute';
 import Relation from './Relation';
 import SubView from './SubView';
@@ -111,11 +110,11 @@ class View {
      * @param {Number} [options.height] Initial height of the view.
      * @param {Number|Object} [options.spacing] Spacing for the view (default: 8), see `setSpacing`.
      * @param {Object|Array} [options.constraints] One or more constraint definitions.
-     * @param {String|Array} [options.visualFormat] Visual format string or array of vfl strings.
      */
     constructor(options) {
         this._solver = new c.SimplexSolver();
         this._subViews = {};
+        //this._variables = {};
         this._spacing = {};
         this._parentSubView = new SubView({
             solver: this._solver
@@ -128,9 +127,6 @@ class View {
             }
             if (options.constraints) {
                 this.addConstraints(options.constraints);
-            }
-            if (options.visualFormat) {
-                this.addVisualFormat(options.visualFormat);
             }
         }
     }
@@ -192,7 +188,7 @@ class View {
         switch (Array.isArray(spacing) ? spacing.length : -1) {
             case -1: spacing = [spacing, spacing, spacing, spacing, spacing, spacing]; break;
             case 1: spacing = [spacing[0], spacing[0], spacing[0], spacing[0], spacing[0], spacing[0]]; break;
-            case 2: spacing = [spacing[1], spacing[0], spacing[1], spacing[0], spacing[1], spacing[0]]; break;
+            case 2: spacing = [spacing[1], spacing[0], spacing[1], spacing[0], spacing[0], spacing[1]]; break;
             case 6: break;
             default: throw 'Invalid spacing syntax';
         }
@@ -206,6 +202,30 @@ class View {
             }
             this._solver.resolve();
         }
+    }
+
+    /**
+     * Adds a constraint definition.
+     *
+     * A constraint definition has the following format:
+     *
+     * ```javascript
+     * constraint: {
+     *   view1: {String},
+     *   attr1: {AutoLayout.Attribute},
+     *   relation: {AutoLayout.Relation},
+     *   view2: {String},
+     *   attr2: {AutoLayout.Attribute},
+     *   multiplier: {Number},
+     *   constant: {Number}
+     * }
+     * ```
+     * @param {Object} constraint Constraint definition.
+     * @return {AutoLayout} this
+     */
+    addConstraint(constraint) {
+        _addConstraint.call(this, constraint);
+        return this;
     }
 
     /**
@@ -224,30 +244,14 @@ class View {
      *   constant: {Number}
      * }
      * ```
-     * @param {Object|Array} constraint One or more constraint definitions.
+     * @param {Array} constraints One or more constraint definitions.
      * @return {AutoLayout} this
      */
-    addConstraint(constraint) {
-        if (Array.isArray(constraint)) {
-            for (var i = 0; i < constraint.length; i++) {
-                _addConstraint.call(this, constraint[i]);
-            }
-        }
-        else {
-            _addConstraint.call(this, constraint);
+    addConstraints(constraints) {
+        for (var i = 0; i < constraints.length; i++) {
+            _addConstraint.call(this, constraints[i]);
         }
         return this;
-    }
-
-    /**
-     * Adds one or more constraints from a visual-format definition.
-     * See `VisualFormat.parse`.
-     *
-     * @param {String|Array} visualFormat Visual format string or array of vfl strings.
-     * @return {AutoLayout} this
-     */
-    addVisualFormat(visualFormat) {
-        return this.addConstraint(VisualFormat.parse(visualFormat));
     }
 
     /**
@@ -257,6 +261,15 @@ class View {
     get subViews() {
         return this._subViews;
     }
+
+    /**
+     * Dictionary of `Variable` objects that have been created when adding constraints.
+     * @type {Object.SubView}
+     */
+    /*
+    get variables() {
+        return this._variables;
+    }*/
 }
 
 export {View as default};

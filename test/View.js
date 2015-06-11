@@ -31,40 +31,80 @@ describe('View', function() {
         });
     });
 
+    describe('toJSON', function() {
+        var view = new AutoLayout.View({
+            constraints: AutoLayout.VisualFormat.parse([
+                '|-[child(==child2)]-[child2]-|',
+                'V:|[child(==child2)]|'
+            ]),
+            width: 200,
+            height: 100
+        });
+        it('subViews', function() {
+            assert.equal(JSON.stringify(view.subViews), JSON.stringify({
+                child: {
+                    name: 'child',
+                    left: 8,
+                    top: 0,
+                    width: 88,
+                    height: 100
+                },
+                child2: {
+                    name: 'child2',
+                    left: 104,
+                    top: 0,
+                    width: 88,
+                    height: 100
+                }
+            }));
+        });
+        it('subViews.child', function() {
+            assert.equal(JSON.stringify(view.subViews.child), JSON.stringify({
+                name: 'child',
+                left: 8,
+                top: 0,
+                width: 88,
+                height: 100
+            }));
+        });
+    });
+
     describe('attributes', function() {
-        var width = 200;
-        var height = 100;
-        var view = new AutoLayout.View();
-        view.setSize(width, height);
-        view.addVisualFormat('|[child]|');
-        view.addVisualFormat('V:|[child]|');
+        var view = new AutoLayout.View({
+            constraints: AutoLayout.VisualFormat.parse([
+                '|[child]|',
+                'V:|[child]|'
+            ]),
+            width: 200,
+            height: 100
+        });
         var child = view.subViews.child;
         it('left', function() {
             assert.equal(0, child.left);
         });
         it('width', function() {
-            assert.equal(width, child.width);
+            assert.equal(view.width, child.width);
         });
         it('right', function() {
             assert.equal(child.left + child.right, child.right);
         });
         it('centerX', function() {
             assert.equal(child.left + (child.width / 2), child.centerX);
-            assert.equal(width / 2, child.centerX);
+            assert.equal(view.width / 2, child.centerX);
         });
         it('top', function() {
             assert.equal(0, child.top);
         });
         it('height', function() {
-            assert.equal(height, child.height);
+            assert.equal(view.height, child.height);
         });
         it('bottom', function() {
             assert.equal(child.top + child.height, child.bottom);
-            assert.equal(height, child.bottom);
+            assert.equal(view.height, child.bottom);
         });
         it('centerY', function() {
             assert.equal(child.top + (child.height / 2), child.centerY);
-            assert.equal(height / 2, child.centerY);
+            assert.equal(view.height / 2, child.centerY);
         });
     });
 
