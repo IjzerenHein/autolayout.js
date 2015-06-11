@@ -1,8 +1,8 @@
-import Attribute from './Attribute';
-import Relation from './Relation';
-import VisualFormat from './VisualFormat';
-import View from './View';
-import SubView from './SubView';
+import Attribute from './Attribute.es6';
+import Relation from './Relation.es6';
+import VisualFormat from './VisualFormat.es6';
+import View from './View.es6';
+import SubView from './SubView.es6';
 
 /**
  * AutoLayout.

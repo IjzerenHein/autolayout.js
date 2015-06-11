@@ -1,7 +1,7 @@
 import c from 'cassowary/bin/c';
-import Attribute from './Attribute';
-import Relation from './Relation';
-import SubView from './SubView';
+import Attribute from './Attribute.es6';
+import Relation from './Relation.es6';
+import SubView from './SubView.es6';
 
 function _getConst(name, value) {
     const vr = new c.Variable({value: value});

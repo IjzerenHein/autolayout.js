@@ -1,6 +1,6 @@
 /*global describe, it*/
 var assert = (typeof window === 'undefined') ? require('assert') : window.chai.assert;
-var AutoLayout = (typeof window === 'undefined') ? require('../src/AutoLayout').default : window.AutoLayout;
+var AutoLayout = (typeof window === 'undefined') ? require('../src/AutoLayout.es6').default : window.AutoLayout;
 //var Attribute = AutoLayout.Attribute;
 
 describe('VisualFormat', function() {

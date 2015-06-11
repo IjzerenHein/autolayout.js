@@ -14,13 +14,13 @@ module.exports = function(grunt) {
       }
     },
     eslint: {
-      target: ['src/*.js', 'test/*.js'],
+      target: ['src/*.es6', 'test/*.js'],
       options: {
         config: '.eslintrc'
       }
     },
     jscs: {
-        src: ['src/*.js', 'test/*.js'],
+        src: ['src/*.es6', 'test/*.js'],
         options: {
             config: '.jscsrc'
         }
@@ -31,12 +31,12 @@ module.exports = function(grunt) {
           index: true
         },
         files: [
-            { src: 'src/AutoLayout.js', dest: 'docs/AutoLayout.md' },
-            { src: 'src/Attribute.js', dest: 'docs/Attribute.md' },
-            { src: 'src/Relation.js', dest: 'docs/Relation.md' },
-            { src: 'src/VisualFormat.js', dest: 'docs/VisualFormat.md' },
-            { src: 'src/View.js', dest: 'docs/View.md' },
-            { src: 'src/SubView.js', dest: 'docs/SubView.md' }
+            { src: 'src/AutoLayout.es6', dest: 'docs/AutoLayout.md' },
+            { src: 'src/Attribute.es6', dest: 'docs/Attribute.md' },
+            { src: 'src/Relation.es6', dest: 'docs/Relation.md' },
+            { src: 'src/VisualFormat.es6', dest: 'docs/VisualFormat.md' },
+            { src: 'src/View.es6', dest: 'docs/View.md' },
+            { src: 'src/SubView.es6', dest: 'docs/SubView.md' }
         ]
       }
     },
@@ -51,7 +51,7 @@ module.exports = function(grunt) {
           }
         },
         files: {
-          './dist/autolayout.js': ['./src/AutoLayout.js']
+          './dist/autolayout.js': ['./src/AutoLayout.es6']
         }
       }
     },

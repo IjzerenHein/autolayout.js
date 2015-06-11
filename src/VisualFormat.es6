@@ -1,6 +1,6 @@
 import parser from './parser/parser';
 import parserExt from './parser/parserExt';
-import Attribute from './Attribute';
+import Attribute from './Attribute.es6';
 
 /**
  * VisualFormat
@@ -33,7 +33,6 @@ class VisualFormat {
         let attr1;
         let attr2;
         let item;
-        let constraint;
         for (var i = 0; i < res.cascade.length; i++) {
             item = res.cascade[i];
             if (!Array.isArray(item) && item.hasOwnProperty('view')) {

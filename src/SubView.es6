@@ -1,5 +1,5 @@
 import c from 'cassowary/bin/c';
-import Attribute from './Attribute';
+import Attribute from './Attribute.es6';
 
 /**
  * A SubView is automatically generated when constraints are added to a View.
@@ -29,7 +29,7 @@ class SubView {
             top: this.top,
             width: this.width,
             height: this.height
-        }
+        };
     }
     toString() {
         JSON.stringify(this.toJSON(), undefined, 2);

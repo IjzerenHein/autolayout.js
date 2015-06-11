@@ -6,7 +6,7 @@
     "type": "git",
     "url": "git://github.com/IjzerenHein/autolayout.js.git"
   },
-  "main": "dist/autolayout.js",
+  "main": "src/AutoLayout.es6",
   "author": {
     "name": "Hein Rutjes <hrutjes@gmail.com>"
   },
