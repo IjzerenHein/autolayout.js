@@ -16,6 +16,7 @@ AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/libra
 - [Extended Visual Format Language (EVFL)](#extended-visual-format-language-evfl)
 - [Additional resources](#additional-resources)
 - [ToDo list](#todo-list)
+- [Contribute](#contribute)
 
 ## Getting started
 
@@ -120,9 +121,7 @@ view.addConstraint({
 
 ## Extended Visual Format Language (EVFL)
 
-Apple's Visual Format Language prefers good notation over completeness of expressibility. Because of this some useful constraints cannot be expressed by "Standard" VFL. AutoLayout.js defines an extended syntax which you can optionally use.
-
-To enable the extended syntax, set option `extended` to `true` when parsing the visual format:
+Apple's Visual Format Language prefers good notation over completeness of expressibility. Because of this some useful constraints cannot be expressed by "Standard" VFL. AutoLayout.js defines an extended syntax which you can optionally use. To enable the extended syntax, set option `extended` to `true` when parsing the visual format:
 
 ```javascript
 var evfl = '|-[view1(==50%)]';
