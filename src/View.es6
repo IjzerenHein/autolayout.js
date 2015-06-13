@@ -102,7 +102,20 @@ function _addConstraint(constraint) {
 }
 
 /**
- *  AutoLayoutJS API reference.
+ * AutoLayoutJS API reference.
+ *
+ * ### Index
+ *
+ * |Entity|Type|Description|
+ * |---|---|---|
+ * |[AutoLayout](#autolayout)|`namespace`|Top level AutoLayout object.|
+ * |[VisualFormat](#autolayout-visualformat)|`namespace`|Parses VFL into constraints.|
+ * |[View](#autolayout-view)|`class`|Main entity for adding & evaluating constraints.|
+ * |[SubView](#autolayout-subview)|`class`|SubView's are automatically created when constraints are added to views. They give access to the evaluated results.|
+ * |[Attribute](#autolayout-attribute)|`enum`|Attribute types that are supported when adding constraints.|
+ * |[Relation](#autolayout-relation)|`enum`|Relationship types that are supported when adding constraints.|
+ *
+ * ### AutoLayout
  *
  * @module AutoLayout
  */
@@ -114,7 +127,7 @@ class View {
      * @param {Number} [options.width] Initial width of the view.
      * @param {Number} [options.height] Initial height of the view.
      * @param {Number|Object} [options.spacing] Spacing for the view (default: 8), see `setSpacing`.
-     * @param {Object|Array} [options.constraints] One or more constraint definitions.
+     * @param {Array} [options.constraints] One or more constraint definitions.
      */
     constructor(options) {
         this._solver = new c.SimplexSolver();
@@ -178,6 +191,20 @@ class View {
 
     /**
      * Sets the spacing for the view.
+     *
+     * The spacing can be set for 6 different variables:
+     * `top`, `right`, `bottom`, `left`, `width` and `height`. The `left`-spacing is
+     * used when a spacer is used between the parent-view and a sub-view (e.g. `|-[subView]`).
+     * The same is true for the `right`, `top` and `bottom` spacers. The `width` and `height` are
+     * used for spacers in between sub-views (e.g. `[view1]-[view2]`).
+     *
+     * Instead of using the full spacing syntax, it is also possible to use shorthand notations:
+     *
+     * |Syntax|Description|
+     * |---|---|
+     * |`[top, right, bottom, left, width, height]`|Full syntax **(clockwise order)**.|
+     * |`[horizontal, vertical]`|Horizontal = left, right, width, vertical = top, bottom, height.|
+     * |`spacing`|All spacing variables are the same.|
      *
      * Examples:
      * ```javascript

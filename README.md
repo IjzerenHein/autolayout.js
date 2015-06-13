@@ -22,7 +22,7 @@ AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/libra
 ## Getting started
 
 AutoLayout.js is an abstract library for integrating Auto Layout and VFL into other javascript technologies. It does not contain
-DOM layouting or anything like that. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. An example of this is the The [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled output files.
+DOM layouting or anything like that. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. An example of this is the The [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled distribution files.
 
 ### Installation
 
@@ -41,7 +41,7 @@ AutoLayout.js has a dependency on [Cassowary.js](https://github.com/slightlyoff/
 var AutoLayout = window.AutoLayout;
 ```
 
-When using a bundler like webpack or browserify, use (do make sure plugins are installed for transpiling .es6 files!) :
+When using a bundler like webpack or browserify, use: *(make sure plugins for transpiling .es6 files are installed!)*
 
 ```javascript
 var AutoLayout = require('autolayout.js');
