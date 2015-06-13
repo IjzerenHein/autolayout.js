@@ -7,11 +7,11 @@ AutoLayoutJS API reference.
 |Entity|Type|Description|
 |---|---|---|
 |[AutoLayout](#autolayout)|`namespace`|Top level AutoLayout object.|
-|[VisualFormat](#autolayout-visualformat)|`namespace`|Parses VFL into constraints.|
-|[View](#autolayout-view)|`class`|Main entity for adding & evaluating constraints.|
-|[SubView](#autolayout-subview)|`class`|SubView's are automatically created when constraints are added to views. They give access to the evaluated results.|
-|[Attribute](#autolayout-attribute)|`enum`|Attribute types that are supported when adding constraints.|
-|[Relation](#autolayout-relation)|`enum`|Relationship types that are supported when adding constraints.|
+|[VisualFormat](#autolayoutvisualformat)|`namespace`|Parses VFL into constraints.|
+|[View](#autolayoutview)|`class`|Main entity for adding & evaluating constraints.|
+|[SubView](#autolayoutsubview)|`class`|SubView's are automatically created when constraints are added to views. They give access to the evaluated results.|
+|[Attribute](#autolayoutattribute)|`enum`|Attribute types that are supported when adding constraints.|
+|[Relation](#autolayoutrelation)|`enum`|Relationship types that are supported when adding constraints.|
 
 ### AutoLayout
 
