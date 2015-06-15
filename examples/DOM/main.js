@@ -24,11 +24,11 @@ function setAbsoluteSizeAndPosition(elm, left, top, width, height) {
 }
 
 /**
- * Lays out the child elements of a parent elements absolutely
+ * Lays out the child elements of a parent element absolutely
  * using the visual format language.
  *
- * When the parent element is resized, the AutoLayout view is re-evaluated
- * and the childs elements are resized and repositioned.
+ * When the window is resized, the AutoLayout view is re-evaluated
+ * and the child elements are resized and repositioned.
  *
  * @param {Element} parentElm Parent DOM element
  * @param {String|Array} visualFormat One or more visual format strings
