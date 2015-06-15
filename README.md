@@ -22,7 +22,7 @@ AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/libra
 
 ## Getting started
 
-AutoLayout.js is an abstract library for integrating Auto Layout and VFL into other javascript technologies. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. A simple example of this is, is using `position: absolute;` to [lay out DOM elements](examples/DOM/index.html). A more elobarate example of is the [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled distribution files.
+AutoLayout.js is an abstract library for integrating Auto Layout and VFL into other javascript technologies. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. A simple example of this is, is using `position: absolute;` to [lay out DOM elements](https://rawgit.com/IjzerenHein/autolayout.js/master/examples/DOM/index.html). A more elobarate example of is the [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled distribution files.
 
 ### Installation
 
@@ -123,7 +123,7 @@ view.addConstraint({
 
 ### Examples
 
-- [DOM Example](examples/DOM/index.html)
+- [DOM Example](https://rawgit.com/IjzerenHein/autolayout.js/master/examples/DOM/index.html) [(source)](examples/DOM)
 - [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor)
 
 
