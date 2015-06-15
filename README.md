@@ -141,7 +141,7 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 To make the width or height proportional to the size of the **parent**, you can use the following % syntax:
 
     |-[view1(==50%)]    // view1 is 50% the width of the parent (regardless of any spacing)
-    [view1(>=50%)]      // view1 should never be more than 50% the width of the parent
+    [view1(>=50%)]      // view1 should always be more than 50% the width of the parent
 
 And to make the width or height proportional to **another view**, use:
 
