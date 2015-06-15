@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>AutoLayout demo</title>
+        <title>DOM AutoLayout example</title>
         <meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -10,9 +10,19 @@
         <script type="text/javascript" src="../../node_modules/cassowary/bin/c.js"></script>
         <script type="text/javascript" src="../../dist/autolayout.js"></script>
         <script type="text/javascript" src="../../node_modules/chai/chai.js"></script>
-        <script type="text/javascript" src="./main.js"></script>
     </head>
     <body>
-       Demo
+        <div id="left">
+            <div id="text">AutoLayout.js DOM Example:</div>
+            <pre id="vfl"></pre>
+        </div>
+        <div id="right">
+            <div id="child1"><div>child1</div></div>
+            <div id="child2"><div>child2</div></div>
+            <div id="child3"><div>child3</div></div>
+            <div id="child4"><div>child4</div></div>
+            <div id="child5"><div>child5</div></div>
+        </div>
+        <script type="text/javascript" src="./main.js"></script>
     </body>
 </html>

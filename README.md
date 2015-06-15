@@ -13,7 +13,8 @@ AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/libra
 - [Getting started](#getting-started)
   - [Installation](#installation)
   - [Using the API](#using-the-api)
-  - [API Documentation](#api-documentation)  
+  - [API Documentation](#api-documentation)
+  - [Examples](#examples)
 - [Extended Visual Format Language (EVFL)](#extended-visual-format-language-evfl)
 - [Additional resources](#additional-resources)
 - [ToDo list](#todo-list)
@@ -21,8 +22,7 @@ AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/libra
 
 ## Getting started
 
-AutoLayout.js is an abstract library for integrating Auto Layout and VFL into other javascript technologies. It does not contain
-DOM layouting or anything like that. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. An example of this is the The [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled distribution files.
+AutoLayout.js is an abstract library for integrating Auto Layout and VFL into other javascript technologies. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. A simple example of this is, is using `position: absolute;` to [lay out DOM elements](examples/DOM/index.html). A more elobarate example of is the [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled distribution files.
 
 ### Installation
 
@@ -41,11 +41,12 @@ AutoLayout.js has a dependency on [Cassowary.js](https://github.com/slightlyoff/
 var AutoLayout = window.AutoLayout;
 ```
 
-When using a bundler like webpack or browserify, use: *(make sure plugins for transpiling .es6 files are installed!)*
+When using a bundler like webpack or browserify, use:
 
 ```javascript
 var AutoLayout = require('autolayout.js');
 ```
+*(do make sure plugins for transpiling .es6 files are installed!)*
 
 ### Using the API
 
@@ -120,6 +121,12 @@ view.addConstraint({
 [The API reference documentation can be found here.](docs/AutoLayout.md)
 
 
+### Examples
+
+- [DOM Example](examples/DOM/index.html)
+- [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor)
+
+
 ## Extended Visual Format Language (EVFL)
 
 Apple's Visual Format Language prefers good notation over completeness of expressibility. Because of this some useful constraints cannot be expressed by "Standard" VFL. AutoLayout.js defines an extended syntax which you can optionally use. To enable the extended syntax, set option `extended` to `true` when parsing the visual format:
@@ -160,7 +167,7 @@ Overal:
 - [X] Toolchain (ES6, external cassowary.js, distributable output, testing, doc generation, travis CI)
 - [X] Instructions
 - [X] Documentation
-- [ ] More examples
+- [X] Some examples
 
 Features:
 - [X] Namespace & classes (AutoLayout, VisualFormat, View, Relation, Attribute)
