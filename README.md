@@ -163,19 +163,18 @@ And to make the width or height proportional to **another view**, use:
 AutoLayout.js is currently a work in progress. Once feature complete, this todo list will be removed
 and replaced by a roadmap.
 
-Overal:
+**Overal:**
 - [X] Toolchain (ES6, external cassowary.js, distributable output, testing, doc generation, travis CI)
 - [X] Instructions
 - [X] Documentation
 - [X] Some examples
 
-Features:
+**Features:**
 - [X] Namespace & classes (AutoLayout, VisualFormat, View, Relation, Attribute)
 - [X] Visual format
   - [X] Vfl Parser (thanks to the awesome angular-autolayout team!)
   - [X] Size constraints
   - [X] Greater than, less than relationships.
-  - [X] Percentage support (e.g. |-[child(50%)]-[child2]-])
 - [X] Equality relationships
   - [X] Base functionality
   - [X] Multiplier support
@@ -194,8 +193,16 @@ Features:
 - [ ] Baseline support?
 - [ ] Margins? (View & Attributes)
 
-- Parked Features:
-  - [ ] Variables support (.e.g. |-(leftMargin)-[child]]).
+**Extended format features:**
+- [X] Percentage support (e.g. |-[child(50%)]-[child2]-])
+- [X] Multiplier/divider support (e.g. [child(child2/2)])
+- [ ] Addition/substraction support (e.g. [child(child2-100)])
+- [ ] Comments (/* bla */ // bla)
+- [ ] Z-indexing (depth)
+- [ ] sub-properties access (e.g. |-)
+
+**Parked Features:**
+- [ ] Variables support (e.g. |-(leftMargin)-[child]]).
 
 
 ## Contribute
