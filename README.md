@@ -168,6 +168,7 @@ and replaced by a roadmap.
 - [X] Instructions
 - [X] Documentation
 - [X] Some examples
+- [ ] DOM layouting primitives
 
 **Features:**
 - [X] Namespace & classes (AutoLayout, VisualFormat, View, Relation, Attribute)
@@ -199,7 +200,7 @@ and replaced by a roadmap.
 - [ ] Addition/substraction support (e.g. [child(child2-100)])
 - [ ] Comments (/* bla */ // bla)
 - [ ] Z-indexing (depth)
-- [ ] sub-properties access (e.g. |-)
+- [ ] Sub-properties access (e.g. [child(==child.height)])
 
 **Parked Features:**
 - [ ] Variables support (e.g. |-(leftMargin)-[child]]).
