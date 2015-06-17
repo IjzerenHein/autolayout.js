@@ -58,7 +58,8 @@ class VisualFormat {
                         view2: view2,
                         attr2: attr2,
                         multiplier: relation.multiplier,
-                        constant: relation.constant
+                        constant: relation.constant,
+                        priority: relation.priority
                         //,variable: relation.variable
                     });
                 }
@@ -76,7 +77,8 @@ class VisualFormat {
                             view2: item.constraints[n].view,
                             attr2: attr2,
                             multiplier: item.constraints[n].multiplier,
-                            constant: item.constraints[n].constant
+                            constant: item.constraints[n].constant,
+                            priority: item.constraints[n].priority
                             //,variable: item.constraints[n].variable
                         });
                     }

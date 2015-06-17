@@ -12,14 +12,14 @@ class SubView {
         this._solver = options.solver;
         this._attr = {};
         if (!options.name) {
-            this._attr[Attribute.LEFT] = new c.Variable({value: 0});
-            this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.LEFT], c.Strength.required, 0));
-            this._attr[Attribute.TOP] = new c.Variable({value: 0});
-            this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.TOP], c.Strength.required, 0));
-            this._attr[Attribute.WIDTH] = new c.Variable({value: 0});
-            this._solver.addEditVar(this._attr[Attribute.WIDTH]);
-            this._attr[Attribute.HEIGHT] = new c.Variable({value: 0});
-            this._solver.addEditVar(this._attr[Attribute.HEIGHT]);
+            this._attr[Attribute.LEFT] = new c.Variable({value: 0, name: '|.left'});
+            this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.LEFT], c.Strength.required));
+            this._attr[Attribute.TOP] = new c.Variable({value: 0, name: '|.top'});
+            this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.TOP], c.Strength.required));
+            this._attr[Attribute.WIDTH] = new c.Variable({value: 0, name: '|.width'});
+            this._solver.addEditVar(this._attr[Attribute.WIDTH], new c.Strength('required', 999, 1000, 1000));
+            this._attr[Attribute.HEIGHT] = new c.Variable({value: 0, name: '|.height'});
+            this._solver.addEditVar(this._attr[Attribute.HEIGHT], new c.Strength('required', 999, 1000, 1000));
         }
     }
     toJSON() {
@@ -138,30 +138,30 @@ class SubView {
             case Attribute.TOP:
             case Attribute.WIDTH:
             case Attribute.HEIGHT:
-                this._attr[attr] = new c.Variable({value: 0});
+                this._attr[attr] = new c.Variable({value: 0, name: (this._name || '|') + '.' + attr});
                 break;
             case Attribute.RIGHT:
                 this._getAttr(Attribute.LEFT);
                 this._getAttr(Attribute.WIDTH);
-                this._attr[Attribute.RIGHT] = new c.Variable();
+                this._attr[Attribute.RIGHT] = new c.Variable({name: (this._name || '|') + '.' + attr});
                 this._solver.addConstraint(new c.Equation(this._attr[Attribute.RIGHT], c.plus(this._attr[Attribute.LEFT], this._attr[Attribute.WIDTH])));
                 break;
             case Attribute.BOTTOM:
                 this._getAttr(Attribute.TOP);
                 this._getAttr(Attribute.HEIGHT);
-                this._attr[Attribute.BOTTOM] = new c.Variable();
+                this._attr[Attribute.BOTTOM] = new c.Variable({name: (this._name || '|') + '.' + attr});
                 this._solver.addConstraint(new c.Equation(this._attr[Attribute.BOTTOM], c.plus(this._attr[Attribute.TOP], this._attr[Attribute.HEIGHT])));
                 break;
             case Attribute.CENTERX:
                 this._getAttr(Attribute.LEFT);
                 this._getAttr(Attribute.WIDTH);
-                this._attr[Attribute.CENTERX] = new c.Variable();
+                this._attr[Attribute.CENTERX] = new c.Variable({name: (this._name || '|') + '.' + attr});
                 this._solver.addConstraint(new c.Equation(this._attr[Attribute.CENTERX], c.plus(this._attr[Attribute.LEFT], c.divide(this._attr[Attribute.WIDTH], 2))));
                 break;
             case Attribute.CENTERY:
                 this._getAttr(Attribute.TOP);
                 this._getAttr(Attribute.HEIGHT);
-                this._attr[Attribute.CENTERY] = new c.Variable();
+                this._attr[Attribute.CENTERY] = new c.Variable({name: (this._name || '|') + '.' + attr});
                 this._solver.addConstraint(new c.Equation(this._attr[Attribute.CENTERY], c.plus(this._attr[Attribute.TOP], c.divide(this._attr[Attribute.HEIGHT], 2))));
                 break;
         }

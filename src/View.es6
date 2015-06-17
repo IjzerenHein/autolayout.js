@@ -3,6 +3,8 @@ import Attribute from './Attribute.es6';
 import Relation from './Relation.es6';
 import SubView from './SubView.es6';
 
+const defaultPriorityStrength = new c.Strength('defaultPriority', 0, 1000, 1000);
+
 function _getConst(name, value) {
     const vr = new c.Variable({value: value});
     this._solver.addConstraint(new c.StayConstraint(vr, c.Strength.required, 0));
@@ -85,15 +87,16 @@ function _addConstraint(constraint) {
             attr2 = c.times(attr2, multiplier);
         }
     }
+    const strength = ((constraint.priority !== undefined) && (constraint.priority < 1000)) ? new c.Strength('priority', 0, constraint.priority, 1000) : defaultPriorityStrength;
     switch (constraint.relation) {
         case Relation.EQU:
-            relation = new c.Equation(attr1, attr2);
+            relation = new c.Equation(attr1, attr2, strength);
             break;
         case Relation.GEQ:
-            relation = new c.Inequality(attr1, c.GEQ, attr2);
+            relation = new c.Inequality(attr1, c.GEQ, attr2, strength);
             break;
         case Relation.LEQ:
-            relation = new c.Inequality(attr1, c.LEQ, attr2);
+            relation = new c.Inequality(attr1, c.LEQ, attr2, strength);
             break;
         default:
             throw 'Invalid relation specified: ' + constraint.relation;
@@ -114,6 +117,7 @@ function _addConstraint(constraint) {
  * |[SubView](#autolayoutsubview--object)|`class`|SubView's are automatically created when constraints are added to views. They give access to the evaluated results.|
  * |[Attribute](#autolayoutattribute--enum)|`enum`|Attribute types that are supported when adding constraints.|
  * |[Relation](#autolayoutrelation--enum)|`enum`|Relationship types that are supported when adding constraints.|
+ * |[Priority](#autolayoutpriority--enum)|`enum`|Default priority types for when adding constraints.|
  *
  * ### AutoLayout
  *
@@ -126,8 +130,8 @@ class View {
      * @param {Object} [options] Configuration options.
      * @param {Number} [options.width] Initial width of the view.
      * @param {Number} [options.height] Initial height of the view.
-     * @param {Number|Object} [options.spacing] Spacing for the view (default: 8), see `setSpacing`.
-     * @param {Array} [options.constraints] One or more constraint definitions.
+     * @param {Number|Object} [options.spacing] Spacing for the view (default: 8) (see `setSpacing`).
+     * @param {Array} [options.constraints] One or more constraint definitions (see `setConstraints`).
      */
     constructor(options) {
         this._solver = new c.SimplexSolver();
@@ -170,6 +174,7 @@ class View {
             this._solver.suggestValue(this._parentSubView._getAttr(Attribute.HEIGHT), this._height);
         }
         this._solver.resolve();
+        //console.log('width: ' + this._parentSubView._getAttr(Attribute.WIDTH).value + ', height: ' + this._parentSubView._getAttr(Attribute.HEIGHT).value)
         return this;
     }
 
@@ -251,7 +256,8 @@ class View {
      *   view2: {String},
      *   attr2: {AutoLayout.Attribute},
      *   multiplier: {Number},
-     *   constant: {Number}
+     *   constant: {Number},
+     *   priority: {Number}(0..1000)
      * }
      * ```
      * @param {Object} constraint Constraint definition.
@@ -275,7 +281,8 @@ class View {
      *   view2: {String},
      *   attr2: {AutoLayout.Attribute},
      *   multiplier: {Number},
-     *   constant: {Number}
+     *   constant: {Number},
+     *   priority: {Number}(0..1000)
      * }
      * ```
      * @param {Array} constraints One or more constraint definitions.
