@@ -32,7 +32,7 @@ AutoLayout.js has a dependency on [Cassowary.js](https://github.com/slightlyoff/
 
 ```html
 <head>
-  <script type="text/javascript" src="node_modules/cassowary/bin/c.js"></script>
+  <script type="text/javascript" src="node_modules/autolayout/node_modules/cassowary/bin/c.js"></script>
   <script type="text/javascript" src="node_modules/autolayout/dist/autolayout.js"></script>
 </head>
 ```
@@ -181,7 +181,7 @@ and replaced by a roadmap.
   - [X] Multiplier support
 - [X] In-equality relationships
 - [X] Spacing.
-- [ ] Priorities & weights.
+- [ ] Priorities.
 - [ ] Checking for ambigous layout.
 - [ ] Fitting size?
 - [ ] Intrinsic content size?
