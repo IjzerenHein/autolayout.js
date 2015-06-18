@@ -22,7 +22,8 @@ class VisualFormat {
      * @return {Array} Array of constraint definitions.
      */
     static parseLine(visualFormat, options) {
-        if (visualFormat.length === 0) {
+        if ((visualFormat.length === 0) ||
+            (options && options.extended && (visualFormat.indexOf('//') === 0))) {
             return [];
         }
         const constraints = [];
@@ -69,7 +70,9 @@ class VisualFormat {
                 if (item.constraints) {
                     for (var n = 0; n < item.constraints.length; n++) {
                         attr1 = horizontal ? Attribute.WIDTH : Attribute.HEIGHT;
-                        attr2 = (item.constraints[n].view || item.constraints[n].multiplier) ? attr1 : (item.constraints[n].variable ? Attribute.VARIABLE : Attribute.CONST);
+                        attr2 = (item.constraints[n].view || item.constraints[n].multiplier) ?
+                                (item.constraints[n].attribute || attr1) :
+                                (item.constraints[n].variable ? Attribute.VARIABLE : Attribute.CONST);
                         constraints.push({
                             view1: item.view,
                             attr1: attr1,
@@ -132,7 +135,8 @@ class VisualFormat {
                     constraints = constraints.concat(this.parseLine(line, options));
                 }
             }
-        } catch (err) {
+        }
+        catch (err) {
             err.source = line;
             err.line = lineIndex;
             throw err;

@@ -131,7 +131,7 @@ class View {
      * @param {Number} [options.width] Initial width of the view.
      * @param {Number} [options.height] Initial height of the view.
      * @param {Number|Object} [options.spacing] Spacing for the view (default: 8) (see `setSpacing`).
-     * @param {Array} [options.constraints] One or more constraint definitions (see `setConstraints`).
+     * @param {Array} [options.constraints] One or more constraint definitions (see `addConstraints`).
      */
     constructor(options) {
         this._solver = new c.SimplexSolver();

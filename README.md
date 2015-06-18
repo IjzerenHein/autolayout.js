@@ -129,25 +129,65 @@ view.addConstraint({
 
 ## Extended Visual Format Language (EVFL)
 
-Apple's Visual Format Language prefers good notation over completeness of expressibility. Because of this some useful constraints cannot be expressed by "Standard" VFL. AutoLayout.js defines an extended syntax which you can optionally use. To enable the extended syntax, set option `extended` to `true` when parsing the visual format:
+Apple's Visual Format Language prefers good notation over completeness of expressibility. Because of this some useful constraints cannot be expressed by "Standard" VFL. AutoLayout.js defines an extended syntax (superset of VFL) which you opt-in to use. To enable the extended syntax, set option `extended` to `true` when parsing the visual format:
 
 ```javascript
 var evfl = '|-[view1(==50%)]';
 var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 ```
 
-### Proportional widths & heights
+### Language features
 
-To make the width or height proportional to the size of the **parent**, you can use the following % syntax:
+- [Proportional size](#proportional-size) (`|-[view1(==50%)]`)
+- [Operators](#operators) (`|-[view1(==view2/2)]-[view2]-|`)
+- [Attributes](#attributes) (`V:|[view2(view1.width)]`)
+- [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
+
+
+### Proportional size
+
+To make the size proportional to the **size of the parent**, you can use the following % syntax:
 
     |-[view1(==50%)]    // view1 is 50% the width of the parent (regardless of any spacing)
     [view1(>=50%)]      // view1 should always be more than 50% the width of the parent
 
-And to make the width or height proportional to **another view**, use:
+### Operators
+
+To make the width or height proportional to **another view**, use:
 
     |-[view1(==view2/2)]-[view2]-|  // view1 is half the width of view2
     |-[view1(==view2*4)]-[view2]-|  // view1 is four times the width of view2
 
+### Attributes
+
+In some cases it is useful to for instance make the **width equal to the height**. To do this you can
+use the `.{attribute}` syntax, like this:
+
+    |-[view1]-|
+    V:|-[view1(view1.width)]
+
+You can also combine with operators to for instance enforce a certain **aspect ratio**:
+
+    V:|-[view1(view1.width/3)]
+
+Supported attributes:
+
+    .width
+    .height
+    .left
+    .top
+    .right
+    .bottom
+    .centerX
+    .centerY
+
+### Comments
+
+Single line comments can be used to explain the VFL or to prevent its execution:
+
+    // Enfore aspect ratios
+    [view1(view1.height/3)] // enfore aspect ratio 1/3
+    // [view2(view2.height/3)] <-- uncomment to enable
 
 ## Additional resources
 - [Apple's Auto Layout](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/Introduction/Introduction.html)
@@ -181,7 +221,7 @@ and replaced by a roadmap.
   - [X] Multiplier support
 - [X] In-equality relationships
 - [X] Spacing.
-- [ ] Priorities.
+- [X] Priorities.
 - [ ] Checking for ambigous layout.
 - [ ] Fitting size?
 - [ ] Intrinsic content size?
@@ -197,10 +237,11 @@ and replaced by a roadmap.
 **Extended format features:**
 - [X] Percentage support (e.g. |-[child(50%)]-[child2]-])
 - [X] Multiplier/divider support (e.g. [child(child2/2)])
+- [X] Sub-properties access (e.g. [child(==child.height)])
 - [ ] Addition/substraction support (e.g. [child(child2-100)])
-- [ ] Comments (/* bla */ // bla)
+- [X] Single line comments (// bla)
+- [ ] Multi line comments (/* bla */)
 - [ ] Z-indexing (depth)
-- [ ] Sub-properties access (e.g. [child(==child.height)])
 
 **Parked Features:**
 - [ ] Variables support (e.g. |-(leftMargin)-[child]]).

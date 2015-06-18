@@ -6,9 +6,7 @@ var Attribute = {
     CONST: 'const',
     NOTANATTRIBUTE: 'const',
     VARIABLE: 'var',
-    /** left aligned */
     LEFT: 'left',
-    /** right aligned */
     RIGHT: 'right',
     TOP: 'top',
     BOTTOM: 'bottom',
@@ -18,5 +16,7 @@ var Attribute = {
     CENTERY: 'centerY'
     /*LEADING: 'leading',
     TRAILING: 'trailing'*/
+    // Extended format attributes
+    //ZINDEX: 'zIndex'
 };
 export {Attribute as default};
