@@ -71,7 +71,7 @@ constant
   = n:number { return { constant: n } }
 
 viewName
-  = v:$[a-zA-Z0-9\-_]+ { return { view: v } }
+  = f:$[a-zA-Z_]+ v:$[a-zA-Z0-9_]* { return { view: f + v } }
 
 number
   = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
