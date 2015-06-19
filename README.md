@@ -139,7 +139,7 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 ### Language features
 
 - [Proportional size](#proportional-size) (`|-[view1(==50%)]`)
-- [Operators](#operators) (`|-[view1(==view2/2)]-[view2]-|`)
+- [Operators](#operators) (`|-[view1(==view2/2-10)]-[view2]-|`)
 - [Attributes](#attributes) (`V:|[view2(view1.width)]`)
 - [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
 
@@ -153,10 +153,17 @@ To make the size proportional to the **size of the parent**, you can use the fol
 
 ### Operators
 
-To make the width or height proportional to **another view**, use:
+Operators can be used to create linear equations of the form:
+`view1.attr1 <relation> view2.attr2 * multiplier + constant`.
+
+Syntax:
+
+    (view[.{attribute}]['*'|'/'{value}]['+'|'-'{value}])
+
+To for instance, make the width or height proportional to **another view**, use:
 
     |-[view1(==view2/2)]-[view2]-|  // view1 is half the width of view2
-    |-[view1(==view2*4)]-[view2]-|  // view1 is four times the width of view2
+    |-[view1(==view2*4-100)]-[view2]-|  // view1 is four times the width minus 100 of view2
 
 ### Attributes
 
@@ -238,7 +245,7 @@ and replaced by a roadmap.
 - [X] Percentage support (e.g. |-[child(50%)]-[child2]-])
 - [X] Multiplier/divider support (e.g. [child(child2/2)])
 - [X] Sub-properties access (e.g. [child(==child.height)])
-- [ ] Addition/substraction support (e.g. [child(child2-100)])
+- [X] Addition/substraction support (e.g. [child(child2-100)])
 - [X] Single line comments (// bla)
 - [ ] Multi line comments (/* bla */)
 - [ ] Z-indexing (depth)
