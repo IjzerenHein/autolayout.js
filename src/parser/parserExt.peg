@@ -28,6 +28,7 @@ visualFormatString
 
 orientation
   = orient:("H" / "V") { return orient == 'H' ? 'horizontal' : 'vertical' }
+  /*= orient:("H" / "V" / "Z") { return (orient == 'H') ? 'horizontal' : ((orient == 'V') ? 'vertical' : 'z-axis') }*/
 
 comments
   = " "* "//" .*
@@ -82,7 +83,7 @@ percentage
   = n:number '%' { return { view: null, multiplier: n / 100 } }
 
 viewPredicate
-  = vn:viewName a:attribute? m:multiplier? { return { view: vn.view, attribute: a ? a : undefined, multiplier: m ? m : 1 } }
+  = vn:viewName a:attribute? m:multiplier? c:constantExpr? { return { view: vn.view, attribute: a ? a : undefined, multiplier: m ? m : 1, constant: c ? c : undefined } }
 
 attribute
   = '.left' { return 'left'}
@@ -98,8 +99,12 @@ multiplier
   = "/" n:number { return 1 / n; }
   / "*" n:number { return n; }
 
+constantExpr
+  = "-" n:number { return -n; }
+  / "+" n:number { return n; }
+
 viewName
-  = v:$[a-zA-Z0-9\-_]+ { return { view: v } }
+  = f:$[a-zA-Z_]+ v:$[a-zA-Z0-9_]* { return { view: f + v } }
 
 /*variable
   = "{" v:$[a-zA-Z0-9\-_]+ "}" { return { variable: v } }

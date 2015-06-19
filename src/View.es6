@@ -52,14 +52,16 @@ function _getSpacing(constraint) {
         }
     }
     this._spacingVars = this._spacingVars || new Array(6);
+    this._spacingExpr = this._spacingExpr || new Array(6);
     if (!this._spacingVars[index]) {
         this._spacingVars[index] = new c.Variable({
             value: this._spacing[index],
             name: 'spacing[' + index + ']'
         });
         this._solver.addEditVar(this._spacingVars[index]);
+        this._spacingExpr[index] = c.minus(0, this._spacingVars[index]);
     }
-    return this._spacingVars[index];
+    return this._spacingExpr[index];
 }
 
 function _addConstraint(constraint) {
@@ -78,10 +80,10 @@ function _addConstraint(constraint) {
     else {
         attr2 = _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
         if ((multiplier !== 1) && constant) {
-            attr2 = c.times(c.minus(attr2, constant), multiplier);
+            attr2 = c.plus(c.times(attr2, multiplier), constant);
         }
         else if (constant) {
-            attr2 = c.minus(attr2, constant);
+            attr2 = c.plus(attr2, constant);
         }
         else if (multiplier !== 1) {
             attr2 = c.times(attr2, multiplier);

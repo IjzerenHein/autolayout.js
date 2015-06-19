@@ -59,7 +59,7 @@ class VisualFormat {
                         view2: view2,
                         attr2: attr2,
                         multiplier: relation.multiplier,
-                        constant: relation.constant,
+                        constant: ((relation.constant === 'default') || !relation.constant) ? relation.constant : -relation.constant,
                         priority: relation.priority
                         //,variable: relation.variable
                     });
