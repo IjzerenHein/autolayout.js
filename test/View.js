@@ -29,6 +29,29 @@ describe('View', function() {
                 assert.equal(100, view.height);
             });
         });
+        describe('through constructor', function() {
+            var view = new AutoLayout.View({
+                width: 200,
+                height: 100
+            });
+            it('width should be equal', function() {
+                assert.equal(200, view.width);
+            });
+            it('height should be equal', function() {
+                assert.equal(100, view.height);
+            });
+        });
+        describe('ambiguous inner size |[child(50)]|', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse([
+                    '|[child(50)]|'
+                ]),
+                width: 200
+            });
+            it('width should be equal 200', function() {
+                assert.equal(200, view.width);
+            });
+        });
     });
 
     describe('toJSON', function() {
@@ -108,25 +131,15 @@ describe('View', function() {
         });
     });
 
-    /*describe('visualFormats', function() {
-        describe('|[child]|', function() {
-            var width = 100;
-            var view = new AutoLayout.View();
-            view.setSize(width);
-            view.addVisualFormat('|[child]|');
-            it('left should be 0', function() {
-                assert.equal(0, view.getChild('child', Attribute.LEFT));
+    describe('intrinsic & fitting size', function() {
+        it('|-[view1]-[view2]-| => fittingWidth', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('|-[view1]-[view2]-|'),
+                spacing: 20
             });
-            it('width should be ' + width, function() {
-                assert.equal(width, view.getChild('child', Attribute.WIDTH));
-            });
-            it('width should be ' + width, function() {
-                assert.equal(width, view.getChild('child', Attribute.WIDTH));
-            });
-                assert.equal(0, view.get('child', Attribute.TOP));
-                assert.equal(100, view.get('child', Attribute.WIDTH));
-                assert.equal(100, view.get('child', Attribute.HEIGHT));
-            });
+            view.subViews.view1.intrinsicWidth = 100;
+            view.subViews.view2.intrinsicWidth = 100;
+            assert.equal(view.fittingWidth, 260);
         });
-    });*/
+    });
 });
