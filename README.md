@@ -229,9 +229,9 @@ and replaced by a roadmap.
 - [X] In-equality relationships
 - [X] Spacing.
 - [X] Priorities.
+- [X] Fitting size.
+- [X] Intrinsic content size.
 - [ ] Checking for ambigous layout.
-- [ ] Fitting size?
-- [ ] Intrinsic content size?
 - [ ] Content hugging?
 - [ ] Compression resistance?
 - [ ] Remove constraints?
