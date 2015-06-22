@@ -27,7 +27,7 @@ module.exports = function(grunt) {
     },
     concat: {
       jsdoc2md: {
-        src: ['src/View.es6', 'src/SubView.es6', 'src/VisualFormat.es6', 'src/Attribute.es6', 'src/Relation.es6'],
+        src: ['src/View.es6', 'src/SubView.es6', 'src/VisualFormat.es6', 'src/Attribute.es6', 'src/Relation.es6', 'src/Priority.es6'],
         dest: 'tmp/concat.js'
       }
     },
