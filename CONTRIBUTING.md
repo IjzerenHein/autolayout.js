@@ -1,5 +1,9 @@
 # Contributing to AutoLayout.js
 
+## Branch
+
+Any pull requests should be made on the 'develop' branch.
+
 ## Documentation
 
 Please note that documentation (i.e. everything in the `docs` directory) is
