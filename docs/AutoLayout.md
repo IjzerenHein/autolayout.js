@@ -12,7 +12,7 @@ AutoLayoutJS API reference.
 |[SubView](#autolayoutsubview--object)|`class`|SubView's are automatically created when constraints are added to views. They give access to the evaluated results.|
 |[Attribute](#autolayoutattribute--enum)|`enum`|Attribute types that are supported when adding constraints.|
 |[Relation](#autolayoutrelation--enum)|`enum`|Relationship types that are supported when adding constraints.|
-|[Priority](#autolayoutpriority--enum)|`enum`|Default priority types for when adding constraints.|
+|[Priority](#autolayoutpriority--enum)|`enum`|Default priority values for when adding constraints.|
 
 ### AutoLayout
 
@@ -44,6 +44,7 @@ AutoLayoutJS API reference.
     * [.bottom](#module_AutoLayout..SubView+bottom) : <code>Number</code>
     * [.centerX](#module_AutoLayout..SubView+centerX) : <code>Number</code>
     * [.centerY](#module_AutoLayout..SubView+centerY) : <code>Number</code>
+    * [.zIndex](#module_AutoLayout..SubView+zIndex) : <code>Number</code>
     * [.getValue(attr)](#module_AutoLayout..SubView+getValue) ⇒ <code>Number</code>
   * [~VisualFormat](#module_AutoLayout..VisualFormat) : <code>object</code>
     * [.parseLine(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseLine) ⇒ <code>Array</code>
@@ -139,25 +140,28 @@ Sets the width and height of the view.
 #### view.setSpacing(spacing) ⇒ <code>View</code>
 Sets the spacing for the view.
 
-The spacing can be set for 6 different variables:
-`top`, `right`, `bottom`, `left`, `width` and `height`. The `left`-spacing is
+The spacing can be set for 7 different variables:
+`top`, `right`, `bottom`, `left`, `width`, `height` and `zIndex`. The `left`-spacing is
 used when a spacer is used between the parent-view and a sub-view (e.g. `|-[subView]`).
 The same is true for the `right`, `top` and `bottom` spacers. The `width` and `height` are
 used for spacers in between sub-views (e.g. `[view1]-[view2]`).
 
 Instead of using the full spacing syntax, it is also possible to use shorthand notations:
 
-|Syntax|Description|
-|---|---|
-|`[top, right, bottom, left, width, height]`|Full syntax **(clockwise order)**.|
-|`[horizontal, vertical]`|Horizontal = left, right, width, vertical = top, bottom, height.|
-|`spacing`|All spacing variables are the same.|
+|Syntax|Type|Description|
+|---|---|---|
+|`[top, right, bottom, left, width, height, zIndex]`|Array(7)|Full syntax including z-index **(clockwise order)**.|
+|`[top, right, bottom, left, width, height]`|Array(6)|Full horizontal & vertical spacing syntax (no z-index) **(clockwise order)**.|
+|`[horizontal, vertical, zIndex]`|Array(3)|Horizontal = left, right, width, vertical = top, bottom, height.|
+|`[horizontal, vertical]`|Array(2)|Horizontal = left, right, width, vertical = top, bottom, height, z-index = 1.|
+|`spacing`|Number|Horizontal & vertical spacing are all the same, z-index = 1.|
 
 Examples:
 ```javascript
-view.setSpacing(10); // all spacings 10
-view.setSpacing([10, 15]); // horizontal spacing 10, and vertical spacing 15
+view.setSpacing(10); // horizontal & vertical spacing 10
+view.setSpacing([10, 15, 2]); // horizontal spacing 10, vertical spacing 15, z-axis spacing 2
 view.setSpacing([10, 20, 10, 20, 5, 5]); // top, right, bottom, left, horizontal, vertical
+view.setSpacing([10, 20, 10, 20, 5, 5, 1]); // top, right, bottom, left, horizontal, vertical, z
 ```
 
 **Kind**: instance method of <code>[View](#module_AutoLayout..View)</code>  
@@ -239,6 +243,7 @@ Layout attributes.
 | HEIGHT | <code>String</code> | <code>height</code> | 
 | CENTERX | <code>String</code> | <code>centerX</code> | 
 | CENTERY | <code>String</code> | <code>centerY</code> | 
+| ZINDEX | <code>String</code> | <code>zIndex</code> | 
 
 <a name="module_AutoLayout..Relation"></a>
 ### AutoLayout~Relation : <code>enum</code>
@@ -284,6 +289,7 @@ A SubView is automatically generated when constraints are added to a View.
   * [.bottom](#module_AutoLayout..SubView+bottom) : <code>Number</code>
   * [.centerX](#module_AutoLayout..SubView+centerX) : <code>Number</code>
   * [.centerY](#module_AutoLayout..SubView+centerY) : <code>Number</code>
+  * [.zIndex](#module_AutoLayout..SubView+zIndex) : <code>Number</code>
   * [.getValue(attr)](#module_AutoLayout..SubView+getValue) ⇒ <code>Number</code>
 
 <a name="module_AutoLayout..SubView+name"></a>
@@ -350,6 +356,12 @@ Horizontal center (`Attribute.CENTERX`).
 <a name="module_AutoLayout..SubView+centerY"></a>
 #### subView.centerY : <code>Number</code>
 Vertical center (`Attribute.CENTERY`).
+
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
+**Read only**: true  
+<a name="module_AutoLayout..SubView+zIndex"></a>
+#### subView.zIndex : <code>Number</code>
+Z-index (`Attribute.ZINDEX`).
 
 **Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  

@@ -13,10 +13,10 @@ var Attribute = {
     WIDTH: 'width',
     HEIGHT: 'height',
     CENTERX: 'centerX',
-    CENTERY: 'centerY'
+    CENTERY: 'centerY',
     /*LEADING: 'leading',
     TRAILING: 'trailing'*/
     // Extended format attributes
-    //ZINDEX: 'zIndex'
+    ZINDEX: 'zIndex'
 };
 export {Attribute as default};

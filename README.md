@@ -141,8 +141,8 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 - [Proportional size](#proportional-size) (`|-[view1(==50%)]`)
 - [Operators](#operators) (`|-[view1(==view2/2-10)]-[view2]-|`)
 - [Attributes](#attributes) (`V:|[view2(view1.width)]`)
+- [Z-ordering](#z-ordering) (`Z:|-[view1][view2]`)
 - [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
-
 
 ### Proportional size
 
@@ -187,6 +187,19 @@ Supported attributes:
     .bottom
     .centerX
     .centerY
+
+### Z-Ordering
+
+When sub-views overlap it can be useful to specify the z-ordering for the sub-views:
+
+    Z:|[child1][child2]  // child2 is placed in front of child1
+
+By default, all sub-views have a z-index of `0`. When placed in front of each other, the z-index
+will be `1` higher than the sub-view it was placed in front of. The z-index of the sub-view can
+be accessed through the `zIndex` property:
+
+    console.log('zIndex: ' + view.subViews.child2.zIndex);
+
 
 ### Comments
 
@@ -247,8 +260,8 @@ and replaced by a roadmap.
 - [X] Sub-properties access (e.g. [child(==child.height)])
 - [X] Addition/substraction support (e.g. [child(child2-100)])
 - [X] Single line comments (// bla)
+- [X] Z-ordering (z-index)
 - [ ] Multi line comments (/* bla */)
-- [ ] Z-indexing (depth)
 
 **Parked Features:**
 - [ ] Variables support (e.g. |-(leftMargin)-[child]]).

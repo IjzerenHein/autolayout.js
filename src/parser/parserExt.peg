@@ -27,8 +27,7 @@ visualFormatString
   }
 
 orientation
-  = orient:("H" / "V") { return orient == 'H' ? 'horizontal' : 'vertical' }
-  /*= orient:("H" / "V" / "Z") { return (orient == 'H') ? 'horizontal' : ((orient == 'V') ? 'vertical' : 'z-axis') }*/
+  = orient:("H" / "V" / "Z") { return (orient == 'H') ? 'horizontal' : ((orient == 'V') ? 'vertical' : 'zIndex') }
 
 comments
   = " "* "//" .*

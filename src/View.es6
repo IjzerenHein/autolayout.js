@@ -47,12 +47,15 @@ function _getSpacing(constraint) {
             case 'trailing':
                 index = 4;
                 break;
+            case 'zIndex':
+                index = 6;
+                break;
             default:
                 index = 5;
         }
     }
-    this._spacingVars = this._spacingVars || new Array(6);
-    this._spacingExpr = this._spacingExpr || new Array(6);
+    this._spacingVars = this._spacingVars || new Array(7);
+    this._spacingExpr = this._spacingExpr || new Array(7);
     if (!this._spacingVars[index]) {
         this._spacingVars[index] = new c.Variable({
             value: this._spacing[index],
@@ -119,7 +122,7 @@ function _addConstraint(constraint) {
  * |[SubView](#autolayoutsubview--object)|`class`|SubView's are automatically created when constraints are added to views. They give access to the evaluated results.|
  * |[Attribute](#autolayoutattribute--enum)|`enum`|Attribute types that are supported when adding constraints.|
  * |[Relation](#autolayoutrelation--enum)|`enum`|Relationship types that are supported when adding constraints.|
- * |[Priority](#autolayoutpriority--enum)|`enum`|Default priority types for when adding constraints.|
+ * |[Priority](#autolayoutpriority--enum)|`enum`|Default priority values for when adding constraints.|
  *
  * ### AutoLayout
  *
@@ -226,37 +229,42 @@ class View {
     /**
      * Sets the spacing for the view.
      *
-     * The spacing can be set for 6 different variables:
-     * `top`, `right`, `bottom`, `left`, `width` and `height`. The `left`-spacing is
+     * The spacing can be set for 7 different variables:
+     * `top`, `right`, `bottom`, `left`, `width`, `height` and `zIndex`. The `left`-spacing is
      * used when a spacer is used between the parent-view and a sub-view (e.g. `|-[subView]`).
      * The same is true for the `right`, `top` and `bottom` spacers. The `width` and `height` are
      * used for spacers in between sub-views (e.g. `[view1]-[view2]`).
      *
      * Instead of using the full spacing syntax, it is also possible to use shorthand notations:
      *
-     * |Syntax|Description|
-     * |---|---|
-     * |`[top, right, bottom, left, width, height]`|Full syntax **(clockwise order)**.|
-     * |`[horizontal, vertical]`|Horizontal = left, right, width, vertical = top, bottom, height.|
-     * |`spacing`|All spacing variables are the same.|
+     * |Syntax|Type|Description|
+     * |---|---|---|
+     * |`[top, right, bottom, left, width, height, zIndex]`|Array(7)|Full syntax including z-index **(clockwise order)**.|
+     * |`[top, right, bottom, left, width, height]`|Array(6)|Full horizontal & vertical spacing syntax (no z-index) **(clockwise order)**.|
+     * |`[horizontal, vertical, zIndex]`|Array(3)|Horizontal = left, right, width, vertical = top, bottom, height.|
+     * |`[horizontal, vertical]`|Array(2)|Horizontal = left, right, width, vertical = top, bottom, height, z-index = 1.|
+     * |`spacing`|Number|Horizontal & vertical spacing are all the same, z-index = 1.|
      *
      * Examples:
      * ```javascript
-     * view.setSpacing(10); // all spacings 10
-     * view.setSpacing([10, 15]); // horizontal spacing 10, and vertical spacing 15
+     * view.setSpacing(10); // horizontal & vertical spacing 10
+     * view.setSpacing([10, 15, 2]); // horizontal spacing 10, vertical spacing 15, z-axis spacing 2
      * view.setSpacing([10, 20, 10, 20, 5, 5]); // top, right, bottom, left, horizontal, vertical
+     * view.setSpacing([10, 20, 10, 20, 5, 5, 1]); // top, right, bottom, left, horizontal, vertical, z
      * ```
      *
      * @param {Number|Array} spacing
      * @return {View} this
      */
     setSpacing(spacing) {
-        // convert spacing into array: [top, right, bottom, left, horz, vert]
+        // convert spacing into array: [top, right, bottom, left, horz, vert, z-index]
         switch (Array.isArray(spacing) ? spacing.length : -1) {
-            case -1: spacing = [spacing, spacing, spacing, spacing, spacing, spacing]; break;
-            case 1: spacing = [spacing[0], spacing[0], spacing[0], spacing[0], spacing[0], spacing[0]]; break;
-            case 2: spacing = [spacing[1], spacing[0], spacing[1], spacing[0], spacing[0], spacing[1]]; break;
-            case 6: break;
+            case -1: spacing = [spacing, spacing, spacing, spacing, spacing, spacing, 1]; break;
+            case 1: spacing = [spacing[0], spacing[0], spacing[0], spacing[0], spacing[0], spacing[0], 1]; break;
+            case 2: spacing = [spacing[1], spacing[0], spacing[1], spacing[0], spacing[0], spacing[1], 1]; break;
+            case 3: spacing = [spacing[1], spacing[0], spacing[1], spacing[0], spacing[0], spacing[1], spacing[2]]; break;
+            case 6: spacing = [spacing[0], spacing[1], spacing[2], spacing[3], spacing[4], spacing[5], 1]; break;
+            case 7: break;
             default: throw 'Invalid spacing syntax';
         }
         this._spacing = spacing;

@@ -44,13 +44,20 @@ class VisualFormat {
                 view1 = view2;
                 view2 = item.view;
                 if ((view1 !== undefined) && (view2 !== undefined) && relation) {
-                    attr1 = horizontal ? Attribute.RIGHT : Attribute.BOTTOM;
-                    attr2 = horizontal ? Attribute.LEFT : Attribute.TOP;
-                    if (!view1) {
-                        attr1 = horizontal ? Attribute.LEFT : Attribute.TOP;
-                    }
-                    if (!view2) {
-                        attr2 = horizontal ? Attribute.RIGHT : Attribute.BOTTOM;
+                    switch (res.orientation) {
+                        case 'horizontal':
+                            attr1 = view1 ? Attribute.RIGHT : Attribute.LEFT;
+                            attr2 = view2 ? Attribute.LEFT : Attribute.RIGHT;
+                            break;
+                        case 'vertical':
+                            attr1 = view1 ? Attribute.BOTTOM : Attribute.TOP;
+                            attr2 = view2 ? Attribute.TOP : Attribute.BOTTOM;
+                            break;
+                        case 'zIndex':
+                            attr1 = Attribute.ZINDEX;
+                            attr2 = Attribute.ZINDEX;
+                            relation.constant = view1 ? 'default' : 0;
+                            break;
                     }
                     constraints.push({
                         view1: view1,

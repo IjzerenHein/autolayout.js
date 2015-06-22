@@ -16,6 +16,8 @@ class SubView {
             this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.LEFT], c.Strength.required));
             this._attr[Attribute.TOP] = new c.Variable({value: 0, name: '|.top'});
             this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.TOP], c.Strength.required));
+            this._attr[Attribute.ZINDEX] = new c.Variable({value: 0, name: '|.zIndex'});
+            this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.ZINDEX], c.Strength.required));
         }
     }
     toJSON() {
@@ -156,6 +158,15 @@ class SubView {
     }
 
     /**
+     * Z-index (`Attribute.ZINDEX`).
+     * @readonly
+     * @type {Number}
+     */
+    get zIndex() {
+        return this._getAttr(Attribute.ZINDEX).value;
+    }
+
+    /**
      * Gets the value of one of the attributes.
      *
      * @param {String|Attribute} attr Attribute name (e.g. 'right', 'centerY', Attribute.TOP).
@@ -177,6 +188,7 @@ class SubView {
             case Attribute.TOP:
             case Attribute.WIDTH:
             case Attribute.HEIGHT:
+            case Attribute.ZINDEX:
                 this._attr[attr] = new c.Variable({value: 0, name: (this._name || '|') + '.' + attr});
                 break;
             case Attribute.RIGHT:
