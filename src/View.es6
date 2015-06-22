@@ -163,37 +163,64 @@ class View {
      * @return {View} this
      */
     setSize(width, height /*, depth*/) {
-        if ((this._width === width) &&
-            (this._height === height)) {
-            return undefined;
-        }
-        if ((width !== undefined) && (this._width !== width)) {
-            this._width = width;
-            this._solver.suggestValue(this._parentSubView._getAttr(Attribute.WIDTH), this._width);
-        }
-        if ((height !== undefined) && (this._height !== height)) {
-            this._height = height;
-            this._solver.suggestValue(this._parentSubView._getAttr(Attribute.HEIGHT), this._height);
-        }
-        this._solver.resolve();
-        //console.log('width: ' + this._parentSubView._getAttr(Attribute.WIDTH).value + ', height: ' + this._parentSubView._getAttr(Attribute.HEIGHT).value)
+        this._parentSubView.intrinsicWidth = width;
+        this._parentSubView.intrinsicHeight = height;
         return this;
     }
 
     /**
      * Width that was set using `setSize`.
+     * @readonly
      * @type {Number}
      */
     get width() {
-        return this._width;
+        return this._parentSubView.intrinsicWidth;
     }
 
     /**
      * Height that was set using `setSize`.
+     * @readonly
      * @type {Number}
      */
     get height() {
-        return this._height;
+        return this._parentSubView.intrinsicHeight;
+    }
+
+    /**
+     * Width that is calculated from the constraints and the `.intrinsicWidth` of
+     * the sub-views.
+     *
+     * When the width has been explicitely set using `setSize`, the fittingWidth
+     * will **always** be the same as the explicitely set width. To calculate the size
+     * based on the content, use:
+     * ```javascript
+     * var view = new AutoLayout.View({
+     *   constraints: VisualFormat.parse('|-[view1]-[view2]-'),
+     *   spacing: 20
+     * });
+     * view.subViews.view1.intrinsicWidth = 100;
+     * view.subViews.view2.intrinsicWidth = 100;
+     * console.log('fittingWidth: ' + view.fittingWidth); // 260
+     * ```
+     *
+     * @readonly
+     * @type {Number}
+     */
+    get fittingWidth() {
+        return this._parentSubView.width;
+    }
+
+    /**
+     * Height that is calculated from the constraints and the `.intrinsicHeight` of
+     * the sub-views.
+     *
+     * See `.fittingWidth`.
+     *
+     * @readonly
+     * @type {Number}
+     */
+    get fittingHeight() {
+        return this._parentSubView.height;
     }
 
     /**
@@ -299,6 +326,7 @@ class View {
 
     /**
      * Dictionary of `SubView` objects that have been created when adding constraints.
+     * @readonly
      * @type {Object.SubView}
      */
     get subViews() {

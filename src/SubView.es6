@@ -16,10 +16,6 @@ class SubView {
             this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.LEFT], c.Strength.required));
             this._attr[Attribute.TOP] = new c.Variable({value: 0, name: '|.top'});
             this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.TOP], c.Strength.required));
-            this._attr[Attribute.WIDTH] = new c.Variable({value: 0, name: '|.width'});
-            this._solver.addEditVar(this._attr[Attribute.WIDTH], new c.Strength('required', 999, 1000, 1000));
-            this._attr[Attribute.HEIGHT] = new c.Variable({value: 0, name: '|.height'});
-            this._solver.addEditVar(this._attr[Attribute.HEIGHT], new c.Strength('required', 999, 1000, 1000));
         }
     }
     toJSON() {
@@ -64,7 +60,6 @@ class SubView {
 
     /**
      * Width value (`Attribute.WIDTH`).
-     * @readonly
      * @type {Number}
      */
     get width() {
@@ -78,6 +73,50 @@ class SubView {
      */
     get height() {
         return this._getAttr(Attribute.HEIGHT).value;
+    }
+
+    /**
+     * Intrinsic width of the sub-view.
+     *
+     * Use this property to explicitely set the width of the sub-view.
+     *
+     * @type {Number}
+     */
+    get intrinsicWidth() {
+        return this._intrinsicWidth;
+    }
+    set intrinsicWidth(value) {
+        if ((value !== undefined) && (value !== this._intrinsicWidth)) {
+            const attr = this._getAttr(Attribute.WIDTH);
+            if (this._intrinsicWidth === undefined) {
+                this._solver.addEditVar(attr, new c.Strength('required', this._name ? 998 : 999, 1000, 1000));
+            }
+            this._intrinsicWidth = value;
+            this._solver.suggestValue(attr, value);
+            this._solver.resolve();
+        }
+    }
+
+    /**
+     * Intrinsic height of the sub-view.
+     *
+     * Use this property to explicitely set the width of the sub-view.
+     *
+     * @type {Number}
+     */
+    get intrinsicHeight() {
+        return this._intrinsicHeight;
+    }
+    set intrinsicHeight(value) {
+        if ((value !== undefined) && (value !== this._intrinsicHeight)) {
+            const attr = this._getAttr(Attribute.HEIGHT);
+            if (this._intrinsicHeight === undefined) {
+                this._solver.addEditVar(attr, new c.Strength('required', this._name ? 998 : 999, 1000, 1000));
+            }
+            this._intrinsicHeight = value;
+            this._solver.suggestValue(attr, value);
+            this._solver.resolve();
+        }
     }
 
     /**
