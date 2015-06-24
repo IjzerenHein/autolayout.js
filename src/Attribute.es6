@@ -16,7 +16,7 @@ var Attribute = {
     CENTERY: 'centerY',
     /*LEADING: 'leading',
     TRAILING: 'trailing'*/
-    // Extended format attributes
+    /** Used by the extended VFL syntax. */
     ZINDEX: 'zIndex'
 };
 export {Attribute as default};

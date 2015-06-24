@@ -230,20 +230,20 @@ Layout attributes.
 **Kind**: inner enum property of <code>[AutoLayout](#module_AutoLayout)</code>  
 **Properties**
 
-| Name | Type | Default |
-| --- | --- | --- |
-| CONST | <code>String</code> | <code>const</code> | 
-| NOTANATTRIBUTE | <code>String</code> | <code>const</code> | 
-| VARIABLE | <code>String</code> | <code>var</code> | 
-| LEFT | <code>String</code> | <code>left</code> | 
-| RIGHT | <code>String</code> | <code>right</code> | 
-| TOP | <code>String</code> | <code>top</code> | 
-| BOTTOM | <code>String</code> | <code>bottom</code> | 
-| WIDTH | <code>String</code> | <code>width</code> | 
-| HEIGHT | <code>String</code> | <code>height</code> | 
-| CENTERX | <code>String</code> | <code>centerX</code> | 
-| CENTERY | <code>String</code> | <code>centerY</code> | 
-| ZINDEX | <code>String</code> | <code>zIndex</code> | 
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| CONST | <code>String</code> | <code>const</code> |  |
+| NOTANATTRIBUTE | <code>String</code> | <code>const</code> |  |
+| VARIABLE | <code>String</code> | <code>var</code> |  |
+| LEFT | <code>String</code> | <code>left</code> |  |
+| RIGHT | <code>String</code> | <code>right</code> |  |
+| TOP | <code>String</code> | <code>top</code> |  |
+| BOTTOM | <code>String</code> | <code>bottom</code> |  |
+| WIDTH | <code>String</code> | <code>width</code> |  |
+| HEIGHT | <code>String</code> | <code>height</code> |  |
+| CENTERX | <code>String</code> | <code>centerX</code> |  |
+| CENTERY | <code>String</code> | <code>centerY</code> |  |
+| ZINDEX | <code>String</code> | <code>zIndex</code> | Used by the extended VFL syntax. |
 
 <a name="module_AutoLayout..Relation"></a>
 ### AutoLayout~Relation : <code>enum</code>
@@ -325,14 +325,21 @@ Height value (`Attribute.HEIGHT`).
 #### subView.intrinsicWidth : <code>Number</code>
 Intrinsic width of the sub-view.
 
-Use this property to explicitely set the width of the sub-view.
+Use this property to explicitely set the width of the sub-view, e.g.:
+```javascript
+var view = new AutoLayout.View(AutoLayout.VisualFormat.parse('|[child1][child2]|'), {
+  width: 500
+});
+view.subViews.child1.intrinsicWidth = 100;
+console.log('child2 width: ' + view.subViews.child2.width); // 400
+```
 
 **Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 <a name="module_AutoLayout..SubView+intrinsicHeight"></a>
 #### subView.intrinsicHeight : <code>Number</code>
 Intrinsic height of the sub-view.
 
-Use this property to explicitely set the width of the sub-view.
+See `intrinsicWidth`.
 
 **Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 <a name="module_AutoLayout..SubView+top"></a>

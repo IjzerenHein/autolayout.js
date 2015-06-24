@@ -80,7 +80,14 @@ class SubView {
     /**
      * Intrinsic width of the sub-view.
      *
-     * Use this property to explicitely set the width of the sub-view.
+     * Use this property to explicitely set the width of the sub-view, e.g.:
+     * ```javascript
+     * var view = new AutoLayout.View(AutoLayout.VisualFormat.parse('|[child1][child2]|'), {
+     *   width: 500
+     * });
+     * view.subViews.child1.intrinsicWidth = 100;
+     * console.log('child2 width: ' + view.subViews.child2.width); // 400
+     * ```
      *
      * @type {Number}
      */
@@ -102,7 +109,7 @@ class SubView {
     /**
      * Intrinsic height of the sub-view.
      *
-     * Use this property to explicitely set the width of the sub-view.
+     * See `intrinsicWidth`.
      *
      * @type {Number}
      */
