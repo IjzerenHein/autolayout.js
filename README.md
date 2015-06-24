@@ -261,6 +261,7 @@ and replaced by a roadmap.
 - [X] Addition/substraction support (e.g. [child(child2-100)])
 - [X] Single line comments (// bla)
 - [X] Z-ordering (z-index)
+- [ ] View stacks (inspsired by UIStackView) (this make it a lot)
 - [ ] Multi line comments (/* bla */)
 
 **Parked Features:**
