@@ -1,6 +1,105 @@
 import parser from './parser/parser';
 import parserExt from './parser/parserExt';
 import Attribute from './Attribute.es6';
+import Relation from './Relation.es6';
+
+/**
+ * Recursive helper function that processes the cascaded data.
+ */
+function _processCascade(context, cascade, stackView) {
+    if (stackView) {
+        cascade.push({view: stackView});
+    }
+    for (var i = 0; i < cascade.length; i++) {
+        context.item = cascade[i];
+        if (!Array.isArray(context.item) && context.item.hasOwnProperty('view')) {
+            context.view1 = context.view2;
+            context.view2 = context.item.view;
+            if ((context.view1 !== undefined) && (context.view2 !== undefined) && context.relation) {
+                switch (context.orientation) {
+                    case 'horizontal':
+                        context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
+                        context.attr2 = (context.view2 !== stackView) ? Attribute.LEFT : Attribute.RIGHT;
+                        break;
+                    case 'vertical':
+                        context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
+                        context.attr2 = (context.view2 !== stackView) ? Attribute.TOP : Attribute.BOTTOM;
+                        break;
+                    case 'zIndex':
+                        context.attr1 = Attribute.ZINDEX;
+                        context.attr2 = Attribute.ZINDEX;
+                        context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
+                        break;
+                }
+                context.constraints.push({
+                    view1: context.view1,
+                    attr1: context.attr1,
+                    relation: context.relation.relation,
+                    view2: context.view2,
+                    attr2: context.attr2,
+                    multiplier: context.relation.multiplier,
+                    constant: ((context.relation.constant === 'default') || !context.relation.constant) ? context.relation.constant : -context.relation.constant,
+                    priority: context.relation.priority
+                    //,variable: context.relation.variable
+                });
+            }
+            context.relation = undefined;
+
+            // process view size constraints
+            if (context.item.constraints) {
+                for (var n = 0; n < context.item.constraints.length; n++) {
+                    context.attr1 = context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT;
+                    context.attr2 = (context.item.constraints[n].view || context.item.constraints[n].multiplier) ?
+                            (context.item.constraints[n].attribute || context.attr1) :
+                            (context.item.constraints[n].variable ? Attribute.VARIABLE : Attribute.CONST);
+                    context.constraints.push({
+                        view1: context.item.view,
+                        attr1: context.attr1,
+                        relation: context.item.constraints[n].relation,
+                        view2: context.item.constraints[n].view,
+                        attr2: context.attr2,
+                        multiplier: context.item.constraints[n].multiplier,
+                        constant: context.item.constraints[n].constant,
+                        priority: context.item.constraints[n].priority
+                        //,variable: context.item.constraints[n].variable
+                    });
+                }
+            }
+
+            // In case of a stack-view, set constraints for opposite orientation
+            if (stackView && (context.item.view !== stackView)) {
+                context.constraints.push({
+                    view1: {
+                        name: stackView,
+                        type: 'stack'
+                    },
+                    attr1: context.horizontal ? Attribute.HEIGHT : Attribute.WIDTH,
+                    relation: Relation.EQU,
+                    view2: context.item.view,
+                    attr2: context.horizontal ? Attribute.HEIGHT : Attribute.WIDTH
+                });
+                context.constraints.push({
+                    view1: {
+                        name: stackView,
+                        type: 'stack'
+                    },
+                    attr1: context.horizontal ? Attribute.TOP : Attribute.LEFT,
+                    relation: Relation.EQU,
+                    view2: context.item.view,
+                    attr2: context.horizontal ? Attribute.TOP : Attribute.LEFT
+                });
+            }
+
+            // Process cascaded data (child stack-views)
+            if (context.item.cascade) {
+                _processCascade(context, context.item.cascade, context.item.view);
+            }
+        }
+        else {
+            context.relation = context.item[0];
+        }
+    }
+}
 
 /**
  * VisualFormat
@@ -26,79 +125,17 @@ class VisualFormat {
             (options && options.extended && (visualFormat.indexOf('//') === 0))) {
             return [];
         }
-        const constraints = [];
         const res = (options && options.extended) ? parserExt.parse(visualFormat) : parser.parse(visualFormat);
         if (options && options.outFormat === 'raw') {
             return [res];
         }
-        const horizontal = (res.orientation === 'horizontal');
-        let view1;
-        let view2;
-        let relation;
-        let attr1;
-        let attr2;
-        let item;
-        for (var i = 0; i < res.cascade.length; i++) {
-            item = res.cascade[i];
-            if (!Array.isArray(item) && item.hasOwnProperty('view')) {
-                view1 = view2;
-                view2 = item.view;
-                if ((view1 !== undefined) && (view2 !== undefined) && relation) {
-                    switch (res.orientation) {
-                        case 'horizontal':
-                            attr1 = view1 ? Attribute.RIGHT : Attribute.LEFT;
-                            attr2 = view2 ? Attribute.LEFT : Attribute.RIGHT;
-                            break;
-                        case 'vertical':
-                            attr1 = view1 ? Attribute.BOTTOM : Attribute.TOP;
-                            attr2 = view2 ? Attribute.TOP : Attribute.BOTTOM;
-                            break;
-                        case 'zIndex':
-                            attr1 = Attribute.ZINDEX;
-                            attr2 = Attribute.ZINDEX;
-                            relation.constant = view1 ? 'default' : 0;
-                            break;
-                    }
-                    constraints.push({
-                        view1: view1,
-                        attr1: attr1,
-                        relation: relation.relation,
-                        view2: view2,
-                        attr2: attr2,
-                        multiplier: relation.multiplier,
-                        constant: ((relation.constant === 'default') || !relation.constant) ? relation.constant : -relation.constant,
-                        priority: relation.priority
-                        //,variable: relation.variable
-                    });
-                }
-                relation = undefined;
-
-                // process view size constraints
-                if (item.constraints) {
-                    for (var n = 0; n < item.constraints.length; n++) {
-                        attr1 = horizontal ? Attribute.WIDTH : Attribute.HEIGHT;
-                        attr2 = (item.constraints[n].view || item.constraints[n].multiplier) ?
-                                (item.constraints[n].attribute || attr1) :
-                                (item.constraints[n].variable ? Attribute.VARIABLE : Attribute.CONST);
-                        constraints.push({
-                            view1: item.view,
-                            attr1: attr1,
-                            relation: item.constraints[n].relation,
-                            view2: item.constraints[n].view,
-                            attr2: attr2,
-                            multiplier: item.constraints[n].multiplier,
-                            constant: item.constraints[n].constant,
-                            priority: item.constraints[n].priority
-                            //,variable: item.constraints[n].variable
-                        });
-                    }
-                }
-            }
-            else {
-                relation = item[0];
-            }
-        }
-        return constraints;
+        var context = {
+            orientation: res.orientation,
+            horizontal: (res.orientation === 'horizontal'),
+            constraints: []
+        };
+        _processCascade(context, res.cascade, null);
+        return context.constraints;
     }
 
     /**

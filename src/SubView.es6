@@ -9,6 +9,7 @@ import Attribute from './Attribute.es6';
 class SubView {
     constructor(options) {
         this._name = options.name;
+        this._type = options.type;
         this._solver = options.solver;
         this._attr = {};
         if (!options.name) {
@@ -171,6 +172,15 @@ class SubView {
      */
     get zIndex() {
         return this._getAttr(Attribute.ZINDEX).value;
+    }
+
+    /**
+     * Returns the type of the sub-view.
+     * @readonly
+     * @type {String}
+     */
+    get type() {
+        return this._type;
     }
 
     /**

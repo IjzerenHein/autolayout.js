@@ -15,6 +15,14 @@ function _getSubView(viewName) {
     if (!viewName) {
         return this._parentSubView;
     }
+    else if (viewName.name) {
+        this._subViews[viewName.name] = this._subViews[viewName.name] || new SubView({
+            name: viewName.name,
+            solver: this._solver
+        });
+        this._subViews[viewName.name]._type = this._subViews[viewName.name]._type || viewName.type;
+        return this._subViews[viewName.name];
+    }
     else {
         this._subViews[viewName] = this._subViews[viewName] || new SubView({
             name: viewName,

@@ -36,8 +36,13 @@ superview
   = "|" { return { view: null } }
 
 view
-  = "[" view:viewName predicates:predicateListWithParens? "]"
-  { return extend(view, predicates ? { constraints: predicates } : {}) }
+  = "[" view:viewName predicates:predicateListWithParens? cascadedViews:cascadedViews? "]"
+  { return extend(extend(view, predicates ? { constraints: predicates } : {}), cascadedViews ? {
+    cascade: cascadedViews
+  } : {}) }
+
+cascadedViews
+  = ":" views:(connection view)+ connection:connection { return [].concat([].concat.apply([], views),[connection]); }
 
 connection
   = "-" predicateList:predicateList "-" { return predicateList }
