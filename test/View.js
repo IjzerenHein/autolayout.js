@@ -132,6 +132,15 @@ describe('View', function() {
     });
 
     describe('intrinsic & fitting size', function() {
+        it('|-[view1]-[view2]-| subViews.view1.intrinsWidth = 100', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('|-[view1]-[view2]-|'),
+                spacing: 20,
+                width: 500
+            });
+            view.subViews.view1.intrinsicWidth = 100;
+            assert.equal(view.subViews.view2.width, 340);
+        });
         it('|-[view1]-[view2]-| => fittingWidth', function() {
             var view = new AutoLayout.View({
                 constraints: AutoLayout.VisualFormat.parse('|-[view1]-[view2]-|'),
