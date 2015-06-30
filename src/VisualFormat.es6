@@ -212,7 +212,7 @@ class VisualFormat {
             orientation: res.orientation,
             horizontal: (res.orientation === 'horizontal'),
             constraints: [],
-            lineIndex: options.lineIndex || 1
+            lineIndex: (options ? options.lineIndex : undefined) || 1
         };
         _processCascade(context, res.cascade, null);
         return context.constraints;
@@ -252,8 +252,8 @@ class VisualFormat {
         let line;
         const parseOptions = {
             lineIndex: lineIndex,
-            extended: options.extended,
-            outFormat: options.outFormat
+            extended: (options && options.extended),
+            outFormat: options ? options.outFormat : undefined
         };
         try {
             for (var i = 0; i < visualFormat.length; i++) {
