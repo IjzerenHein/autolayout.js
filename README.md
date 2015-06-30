@@ -142,6 +142,7 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 - [Operators](#operators) (`|-[view1(==view2/2-10)]-[view2]-|`)
 - [Attributes](#attributes) (`V:|[view2(view1.width)]`)
 - [Z-ordering](#z-ordering) (`Z:|-[view1][view2]`)
+- [Equal size spacers/centering](#equal-size-spacers-centering)(`|~[center(100)]~|`)
 - [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
 
 ### Proportional size
@@ -200,6 +201,17 @@ be accessed through the `zIndex` property:
 
     console.log('zIndex: ' + view.subViews.child2.zIndex);
 
+### Equal size spacers / centering
+
+Sometimes you just want to center a view. To do this use the `~` connector:
+
+    |~[view1(100)]~|        // view1 has width of 100 and is centered
+    V:|~(10%)~[view2]~|     // top & bottom spacers have height of 10%
+
+All `~` connectors inside a single line of EVFL are constrained to have the same size.
+You can also use more than 2 connectors to proportionally align views:
+
+    |~[child1(10)]~[child2(20)]~[child3(30)]~|
 
 ### Comments
 
@@ -261,7 +273,8 @@ and replaced by a roadmap.
 - [X] Addition/substraction support (e.g. [child(child2-100)])
 - [X] Single line comments (// bla)
 - [X] Z-ordering (z-index)
-- [ ] View stacks (inspsired by UIStackView) (this make it a lot)
+- [ ] View stacks (inspsired by UIStackView) (this make stuff a lot easier)
+- [X] Equal size spacers / centering (e.g. |~[centered(100)~])
 - [ ] Multi line comments (/* bla */)
 
 **Parked Features:**
