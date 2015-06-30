@@ -47,6 +47,8 @@ cascadedViews
 connection
   = "-" predicateList:predicateList "-" { return predicateList }
   / "-" { return [{ relation: 'equ', constant: 'default', $parserOffset: offset() }] }
+  / "~" predicateList:equalSpacingPredicateList "~" { return predicateList }
+  / "~" { return [{ relation: 'equ', equalSpacing: true, $parserOffset: offset() }] }
   / "" { return [{ relation: 'equ', constant: 0, $parserOffset: offset() }] }
 
 predicateList
@@ -54,9 +56,7 @@ predicateList
   / predicateListWithParens
 
 simplePredicate
-/*  = n:number '%' { return [{ relation: 'equ', multiplier: n / 100, view: null, $parserOffset: offset() }] } */
   = n:number { return [{ relation: 'equ', constant: n, $parserOffset: offset() }] }
-  /*/ v:variable { return [{ relation: 'equ', variable: v.variable, $parserOffset: offset() }] }*/
 
 predicateListWithParens
   = "(" p:predicate ps:("," predicate)* ")"
@@ -65,6 +65,13 @@ predicateListWithParens
 predicate
   = r:relation? o:objectOfPredicate p:("@" priority)?
   { return extend({ relation: 'equ' }, (r || {}), o, (p ? p[1]: {})) }
+
+equalSpacingPredicateList
+  = "(" p:equalSpacingPredicate ps:("," equalSpacingPredicate)* ")" { return [p].concat(ps.map(function(p){ return p[1] })) }
+
+equalSpacingPredicate
+  = r:relation? o:objectOfPredicate p:("@" priority)?
+  { return extend({ relation: 'equ', equalSpacing: true }, (r || {}), o, (p ? p[1]: {})) }
 
 relation
   = "==" { return { relation: 'equ', $parserOffset: offset() } }
