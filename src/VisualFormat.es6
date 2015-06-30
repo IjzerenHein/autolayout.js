@@ -2,7 +2,6 @@ import parser from './parser/parser';
 import parserExt from './parser/parserExt';
 import Attribute from './Attribute.es6';
 import Relation from './Relation.es6';
-import Operator from './Operator.es6';
 
 /**
  * Helper function that inserts equal spacers (~).
@@ -18,7 +17,7 @@ function _processEqualSpacer(context, stackView) {
         context.constraints.push({
             view1: '_~' + context.lineIndex + ':1~',
             attr1: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
-            relation: context.relation.relation || Operator.EQU,
+            relation: context.relation.relation || Relation.EQU,
             view2: name,
             attr2: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
             priority: context.relation.priority
@@ -31,7 +30,7 @@ function _processEqualSpacer(context, stackView) {
         context.constraints.push({
             view1: name,
             attr1: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
-            relation: context.relation.relation || Operator.EQU,
+            relation: context.relation.relation || Relation.EQU,
             view2: null,
             attr2: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
             priority: context.relation.priority,
