@@ -2,6 +2,7 @@ import parser from './parser/parser';
 import parserExt from './parser/parserExt';
 import Attribute from './Attribute.es6';
 import Relation from './Relation.es6';
+import Operator from './Operator.es6';
 
 /**
  * Helper function that inserts equal spacers (~).
