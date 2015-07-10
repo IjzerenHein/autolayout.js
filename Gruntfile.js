@@ -6,28 +6,38 @@ module.exports = function(grunt) {
     peg: {
       parser: {
         src: 'src/parser/parser.peg',
-        dest: 'src/parser/parser.js'
+        dest: 'src/parser/parser.js',
+        options: {
+          wrapper: function(src, parser) {
+            return 'export default ' + parser + ';';
+          }
+        }
       },
       parserExt: {
         src: 'src/parser/parserExt.peg',
-        dest: 'src/parser/parserExt.js'
+        dest: 'src/parser/parserExt.js',
+        options: {
+          wrapper: function(src, parser) {
+            return 'export default ' + parser + ';';
+          }
+        }
       }
     },
     eslint: {
-      target: ['src/*.es6', 'test/*.js'],
+      target: ['src/*.js', 'test/*.js'],
       options: {
         config: '.eslintrc'
       }
     },
     jscs: {
-        src: ['src/*.es6', 'test/*.js'],
+        src: ['src/*.js', 'test/*.js'],
         options: {
             config: '.jscsrc'
         }
     },
     concat: {
       jsdoc2md: {
-        src: ['src/View.es6', 'src/SubView.es6', 'src/VisualFormat.es6', 'src/Attribute.es6', 'src/Relation.es6', 'src/Priority.es6'],
+        src: ['src/View.js', 'src/SubView.js', 'src/VisualFormat.js', 'src/Attribute.js', 'src/Relation.js', 'src/Priority.js'],
         dest: 'tmp/concat.js'
       }
     },
@@ -42,30 +52,28 @@ module.exports = function(grunt) {
       }
     },
     exec: {
-      test: 'mocha --compilers js:mocha-traceur'
+      'bundle-es6': 'node ./bundle-es6',
+      test: 'mocha',
+      bench: 'node bench/main.js'
+    },
+    usebanner: {
+      dependencies: {
+        options: {
+          position: 'top',
+          banner: 'var kiwi = require(\'kiwi/ts/bin/kiwi\')\n'
+          //banner: 'var c = require(\'cassowary/bin/c\')\n'
+        },
+        files: {
+          src: ['dist/autolayout.js']
+        }
+      }
     },
     browserify: {
       dist: {
         options: {
           browserifyOptions: {
             standalone: 'AutoLayout'
-          }
-        },
-        files: {
-          './dist/autolayout.js': ['./src/AutoLayout.es6']
-        }
-      }
-    },
-    uglify: {
-      dist: {
-        src: './dist/autolayout.js',
-        dest: './dist/autolayout.min.js'
-      }
-    },
-    usebanner: {
-      dist: {
-        options: {
-          position: 'top',
+          },
           banner:
             '/**\n' +
             '* This Source Code is licensed under the MIT license. If a copy of the\n' +
@@ -82,10 +90,16 @@ module.exports = function(grunt) {
             '*/'
         },
         files: {
-          src: ['dist/*.js']
+          './dist/autolayout.js': ['./dist/autolayout.js']
         }
       }
-    }
+    },
+    uglify: {
+      dist: {
+        src: './dist/autolayout.js',
+        dest: './dist/autolayout.min.js'
+      }
+    },
   });
 
   // These plugins provide necessary tasks.
@@ -93,8 +107,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-jsdoc-to-markdown');
   grunt.loadNpmTasks('grunt-peg');
-  grunt.loadNpmTasks('grunt-banner');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-banner');
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -104,7 +118,7 @@ module.exports = function(grunt) {
   grunt.registerTask('doc', ['concat', 'jsdoc2md']);
   grunt.registerTask('parser', ['peg']);
   grunt.registerTask('test', ['exec:test']);
-  grunt.registerTask('dist', ['parser', 'browserify', 'uglify', 'usebanner']);
-  //grunt.registerTask('develop', ['watch:source']); // Develop: Watches source files. Trigger lint & build upon change.
-  grunt.registerTask('default', ['parser', 'lint', 'dist', 'test']);
+  grunt.registerTask('bench', ['exec:bench']);
+  grunt.registerTask('dist', ['parser', 'exec:bundle-es6', 'usebanner', 'browserify', 'uglify']);
+  grunt.registerTask('default', ['lint', 'dist', 'test']);
 };
