@@ -1,14 +1,23 @@
 import c from 'cassowary/bin/c';
-import Attribute from './Attribute.es6';
-import Relation from './Relation.es6';
-import SubView from './SubView.es6';
+import kiwi from 'kiwi/ts/bin/kiwi';
+import Attribute from './Attribute';
+import Relation from './Relation';
+import SubView from './SubView';
+const USE_CASSOWARYJS = false;
 
-const defaultPriorityStrength = new c.Strength('defaultPriority', 0, 1000, 1000);
+const defaultPriorityStrength = USE_CASSOWARYJS ? new c.Strength('defaultPriority', 0, 1000, 1000) : kiwi.Strength.create(0, 1000, 1000);
 
 function _getConst(name, value) {
-    const vr = new c.Variable({value: value});
-    this._solver.addConstraint(new c.StayConstraint(vr, c.Strength.required, 0));
-    return vr;
+    if (USE_CASSOWARYJS) {
+        const vr = new c.Variable({value: value});
+        this._solver.addConstraint(new c.StayConstraint(vr, c.Strength.required, 0));
+        return vr;
+    }
+    else {
+        const vr = new kiwi.Variable();
+        this._solver.addConstraint(new kiwi.Constraint(vr, kiwi.Operator.Eq, 0));
+        return vr;
+    }
 }
 
 function _getSubView(viewName) {
@@ -65,17 +74,22 @@ function _getSpacing(constraint) {
     this._spacingVars = this._spacingVars || new Array(7);
     this._spacingExpr = this._spacingExpr || new Array(7);
     if (!this._spacingVars[index]) {
-        this._spacingVars[index] = new c.Variable({
-            value: this._spacing[index],
-            name: 'spacing[' + index + ']'
-        });
-        this._solver.addEditVar(this._spacingVars[index]);
-        this._spacingExpr[index] = c.minus(0, this._spacingVars[index]);
+        if (USE_CASSOWARYJS) {
+            this._spacingVars[index] = new c.Variable();
+            this._solver.addEditVar(this._spacingVars[index]);
+            this._spacingExpr[index] = c.minus(0, this._spacingVars[index]);
+        }
+        else {
+            this._spacingVars[index] = new kiwi.Variable();
+            this._solver.addEditVariable(this._spacingVars[index], kiwi.Strength.create(999, 1000, 1000));
+            this._spacingExpr[index] = this._spacingVars[index].multiply(-1);
+        }
+        this._solver.suggestValue(this._spacingVars[index], this._spacing[index]);
     }
     return this._spacingExpr[index];
 }
 
-function _addConstraint(constraint) {
+function _addConstraintCassowary(constraint) {
     //this.constraints.push(constraint);
     let relation;
     const multiplier = (constraint.multiplier !== undefined) ? constraint.multiplier : 1;
@@ -117,6 +131,48 @@ function _addConstraint(constraint) {
     this._solver.addConstraint(relation);
 }
 
+function _addConstraintKiwi(constraint) {
+    //this.constraints.push(constraint);
+    let relation;
+    const multiplier = (constraint.multiplier !== undefined) ? constraint.multiplier : 1;
+    let constant = (constraint.constant !== undefined) ? constraint.constant : 0;
+    if (constant === 'default') {
+        constant = _getSpacing.call(this, constraint);
+    }
+    const attr1 = _getSubView.call(this, constraint.view1)._getAttr(constraint.attr1);
+    let attr2;
+    if (constraint.attr2 === Attribute.CONST) {
+        attr2 = _getConst.call(this, undefined, constraint.constant);
+    }
+    else {
+        attr2 = _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
+        if ((multiplier !== 1) && constant) {
+            attr2 = attr2.multiply(multiplier).plus(constant);
+        }
+        else if (constant) {
+            attr2 = attr2.plus(constant);
+        }
+        else if (multiplier !== 1) {
+            attr2 = attr2.multiply(multiplier);
+        }
+    }
+    const strength = ((constraint.priority !== undefined) && (constraint.priority < 1000)) ? kiwi.Strength.create(0, constraint.priority, 1000) : defaultPriorityStrength;
+    switch (constraint.relation) {
+        case Relation.EQU:
+            relation = new kiwi.Constraint(attr1, kiwi.Operator.Eq, attr2, strength);
+            break;
+        case Relation.GEQ:
+            relation = new kiwi.Constraint(attr1, kiwi.Operator.Ge, attr2, strength);
+            break;
+        case Relation.LEQ:
+            relation = new kiwi.Constraint(attr1, kiwi.Operator.Le, attr2, strength);
+            break;
+        default:
+            throw 'Invalid relation specified: ' + constraint.relation;
+    }
+    this._solver.addConstraint(relation);
+}
+
 /**
  * AutoLayoutJS API reference.
  *
@@ -147,7 +203,7 @@ class View {
      * @param {Array} [options.constraints] One or more constraint definitions (see `addConstraints`).
      */
     constructor(options) {
-        this._solver = new c.SimplexSolver();
+        this._solver = USE_CASSOWARYJS ? new c.SimplexSolver() : new kiwi.Solver();
         this._subViews = {};
         //this._variables = {};
         this._spacing = {};
@@ -283,7 +339,12 @@ class View {
                     this._solver.suggestValue(this._spacingVars[i], this._spacing[i]);
                 }
             }
-            this._solver.resolve();
+            if (USE_CASSOWARYJS) {
+                this._solver.resolve();
+            }
+            else {
+                this._solver.updateVariables();
+            }
         }
         return this;
     }
@@ -309,7 +370,13 @@ class View {
      * @return {View} this
      */
     addConstraint(constraint) {
-        _addConstraint.call(this, constraint);
+        if (USE_CASSOWARYJS) {
+            _addConstraintCassowary.call(this, constraint);
+        }
+        else {
+            _addConstraintKiwi.call(this, constraint);
+            this._solver.updateVariables();
+        }
         return this;
     }
 
@@ -334,8 +401,16 @@ class View {
      * @return {View} this
      */
     addConstraints(constraints) {
-        for (var i = 0; i < constraints.length; i++) {
-            _addConstraint.call(this, constraints[i]);
+        if (USE_CASSOWARYJS) {
+            for (var j = 0; j < constraints.length; j++) {
+                _addConstraintCassowary.call(this, constraints[j]);
+            }
+        }
+        else {
+            for (var i = 0; i < constraints.length; i++) {
+                _addConstraintKiwi.call(this, constraints[i]);
+            }
+            this._solver.updateVariables();
         }
         return this;
     }
@@ -359,4 +434,4 @@ class View {
     }*/
 }
 
-export {View as default};
+export default View;

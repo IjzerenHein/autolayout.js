@@ -1,7 +1,7 @@
 import parser from './parser/parser';
 import parserExt from './parser/parserExt';
-import Attribute from './Attribute.es6';
-import Relation from './Relation.es6';
+import Attribute from './Attribute';
+import Relation from './Relation';
 
 /**
  * Helper function that inserts equal spacers (~).
@@ -275,4 +275,4 @@ class VisualFormat {
     }
 }
 
-export {VisualFormat as default};
+export default VisualFormat;

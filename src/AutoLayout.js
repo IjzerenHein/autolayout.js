@@ -1,10 +1,10 @@
-import Attribute from './Attribute.es6';
-import Relation from './Relation.es6';
-import Priority from './Priority.es6';
-import VisualFormat from './VisualFormat.es6';
-import View from './View.es6';
-import SubView from './SubView.es6';
-//import DOM from './DOM.es6';
+import Attribute from './Attribute';
+import Relation from './Relation';
+import Priority from './Priority';
+import VisualFormat from './VisualFormat';
+import View from './View';
+import SubView from './SubView';
+//import DOM from './DOM';
 
 /**
  * AutoLayout.
@@ -27,4 +27,4 @@ var AutoLayout = {
     //DOM: DOM
 };
 
-export {AutoLayout as default};
+export default AutoLayout;

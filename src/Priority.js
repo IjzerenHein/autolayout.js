@@ -8,4 +8,4 @@ var Priority = {
     DEFAULTLOW: 250
     //FITTINGSIZELEVEL: 50,
 };
-export {Priority as default};
+export default Priority;

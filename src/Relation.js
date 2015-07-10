@@ -10,4 +10,4 @@ var Relation = {
     /** Greater than or equal */
     GEQ: 'geq'
 };
-export {Relation as default};
+export default Relation;

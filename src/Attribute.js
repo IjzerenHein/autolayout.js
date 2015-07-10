@@ -19,4 +19,4 @@ var Attribute = {
     /** Used by the extended VFL syntax. */
     ZINDEX: 'zIndex'
 };
-export {Attribute as default};
+export default Attribute;
