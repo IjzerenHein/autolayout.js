@@ -5,6 +5,7 @@ import Relation from './Relation';
 
 /**
  * Helper function that inserts equal spacers (~).
+ * @private
  */
 function _processEqualSpacer(context, stackView) {
 
@@ -80,6 +81,7 @@ function _processEqualSpacer(context, stackView) {
 
 /**
  * Recursive helper function that processes the cascaded data.
+ * @private
  */
 function _processCascade(context, cascade, stackView) {
     if (stackView) {

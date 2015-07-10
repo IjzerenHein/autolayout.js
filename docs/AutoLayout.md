@@ -45,6 +45,7 @@ AutoLayoutJS API reference.
     * [.centerX](#module_AutoLayout..SubView+centerX) : <code>Number</code>
     * [.centerY](#module_AutoLayout..SubView+centerY) : <code>Number</code>
     * [.zIndex](#module_AutoLayout..SubView+zIndex) : <code>Number</code>
+    * [.type](#module_AutoLayout..SubView+type) : <code>String</code>
     * [.getValue(attr)](#module_AutoLayout..SubView+getValue) ⇒ <code>Number</code>
   * [~VisualFormat](#module_AutoLayout..VisualFormat) : <code>object</code>
     * [.parseLine(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseLine) ⇒ <code>Array</code>
@@ -290,6 +291,7 @@ A SubView is automatically generated when constraints are added to a View.
   * [.centerX](#module_AutoLayout..SubView+centerX) : <code>Number</code>
   * [.centerY](#module_AutoLayout..SubView+centerY) : <code>Number</code>
   * [.zIndex](#module_AutoLayout..SubView+zIndex) : <code>Number</code>
+  * [.type](#module_AutoLayout..SubView+type) : <code>String</code>
   * [.getValue(attr)](#module_AutoLayout..SubView+getValue) ⇒ <code>Number</code>
 
 <a name="module_AutoLayout..SubView+name"></a>
@@ -372,6 +374,12 @@ Z-index (`Attribute.ZINDEX`).
 
 **Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
+<a name="module_AutoLayout..SubView+type"></a>
+#### subView.type : <code>String</code>
+Returns the type of the sub-view.
+
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
+**Read only**: true  
 <a name="module_AutoLayout..SubView+getValue"></a>
 #### subView.getValue(attr) ⇒ <code>Number</code>
 Gets the value of one of the attributes.
@@ -409,6 +417,7 @@ additional info about the parse error and column position.
 | [options] | <code>Object</code> | Configuration options. |
 | [options.extended] | <code>Boolean</code> | When set to true uses the extended syntax (default: false). |
 | [options.outFormat] | <code>String</code> | Output format (`constraints` or `raw`) (default: `constraints`). |
+| [options.lineIndex] | <code>Number</code> | Line-index used when auto generating equal-spacing constraints. |
 
 <a name="module_AutoLayout..VisualFormat.parse"></a>
 #### VisualFormat.parse(visualFormat, [options]) ⇒ <code>Array</code>

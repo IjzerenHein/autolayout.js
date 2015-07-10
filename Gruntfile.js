@@ -120,5 +120,5 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['exec:test']);
   grunt.registerTask('bench', ['exec:bench']);
   grunt.registerTask('dist', ['parser', 'exec:bundle-es6', 'usebanner', 'browserify', 'uglify']);
-  grunt.registerTask('default', ['lint', 'dist', 'test']);
+  grunt.registerTask('default', ['lint', 'doc', 'dist', 'test']);
 };
