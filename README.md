@@ -17,6 +17,8 @@ AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/libra
   - [Examples](#examples)
 - [Extended Visual Format Language (EVFL)](#extended-visual-format-language-evfl)
 - [Additional resources](#additional-resources)
+- [Benchmark](https://rawgit.com/IjzerenHein/autolayout.js/master/bench/index.html)
+- [Tests](https://rawgit.com/IjzerenHein/autolayout.js/master/test/index.html)
 - [ToDo list](#todo-list)
 - [Contribute](#contribute)
 
