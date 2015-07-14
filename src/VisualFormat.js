@@ -80,6 +80,52 @@ function _processEqualSpacer(context, stackView) {
 }
 
 /**
+ * Helper function that inserts proportional spacers (-12%-).
+ * @private
+ */
+function _processProportionalSpacer(context, stackView) {
+    context.proportionalSpacerIndex = context.proportionalSpacerIndex || 1;
+    const name = '_-' + context.lineIndex + ':' + context.proportionalSpacerIndex + '-';
+    context.proportionalSpacerIndex++;
+    context.constraints.push({
+        view1: name,
+        attr1: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
+        relation: context.relation.relation || Relation.EQU,
+        view2: null, // or relative to the stackView... food for thought
+        attr2: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
+        priority: context.relation.priority,
+        multiplier: context.relation.multiplier
+    });
+    context.relation.multiplier = undefined;
+
+    // Add constraint
+    switch (context.orientation) {
+        case 'horizontal':
+            context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
+            context.attr2 = Attribute.LEFT;
+            break;
+        case 'vertical':
+            context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
+            context.attr2 = Attribute.TOP;
+            break;
+        case 'zIndex':
+            context.attr1 = Attribute.ZINDEX;
+            context.attr2 = Attribute.ZINDEX;
+            context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
+            break;
+    }
+    context.constraints.push({
+        view1: context.view1,
+        attr1: context.attr1,
+        relation: context.relation.relation,
+        view2: name,
+        attr2: context.attr2,
+        priority: context.relation.priority
+    });
+    context.view1 = name;
+}
+
+/**
  * Recursive helper function that processes the cascaded data.
  * @private
  */
@@ -95,6 +141,9 @@ function _processCascade(context, cascade, stackView) {
             if ((context.view1 !== undefined) && (context.view2 !== undefined) && context.relation) {
                 if (context.relation.equalSpacing) {
                     _processEqualSpacer(context, stackView);
+                }
+                if (context.relation.multiplier) {
+                    _processProportionalSpacer(context, stackView);
                 }
                 switch (context.orientation) {
                     case 'horizontal':

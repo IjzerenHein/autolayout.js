@@ -56,7 +56,8 @@ predicateList
   / predicateListWithParens
 
 simplePredicate
-  = n:number { return [{ relation: 'equ', constant: n, $parserOffset: offset() }] }
+  = p:percentage { return [{ relation: 'equ', multiplier: p.multiplier, $parserOffset: offset() }] }
+  / n:number { return [{ relation: 'equ', constant: n, $parserOffset: offset() }] }
 
 predicateListWithParens
   = "(" p:predicate ps:("," predicate)* ")"
