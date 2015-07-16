@@ -278,6 +278,7 @@ class VisualFormat {
      * @param {String|Array} visualFormat One or more visual format strings.
      * @param {Object} [options] Configuration options.
      * @param {Boolean} [options.extended] When set to true uses the extended syntax (default: false).
+     * @param {Boolean} [options.strict] When set to false trims any leading/trailing spaces and ignores empty lines (default: true).
      * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
      * @param {String} [options.outFormat] Output format (`constraints` or `raw`) (default: `constraints`).
      * @return {Array} Array of constraint definitions.
@@ -304,6 +305,7 @@ class VisualFormat {
         const parseOptions = {
             lineIndex: lineIndex,
             extended: (options && options.extended),
+            strict: (options && (options.strict !== undefined)) ? options.strict : true,
             outFormat: options ? options.outFormat : undefined
         };
         try {
@@ -313,7 +315,12 @@ class VisualFormat {
                     line = lines[j];
                     lineIndex++;
                     parseOptions.lineIndex = lineIndex;
-                    constraints = constraints.concat(this.parseLine(line, parseOptions));
+                    if (!parseOptions.strict) {
+                        line = line.trim();
+                    }
+                    if (parseOptions.strict || line.length) {
+                        constraints = constraints.concat(this.parseLine(line, parseOptions));
+                    }
                 }
             }
         }
