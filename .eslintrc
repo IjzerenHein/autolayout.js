@@ -3,6 +3,9 @@
     "browser": true,
     "node": true
   },
+  "globals": {
+    "kiwi"
+  },
   "ecmaFeatures": {
     "classes": true,
     "modules": true,
