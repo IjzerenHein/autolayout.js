@@ -46,6 +46,7 @@
     "benchmark": "^1.0.0",
     "browserify": "^10.2.3",
     "chai": "^3.0.0",
+    "envify": "^3.4.0",
     "esperanto": "^0.7.3",
     "grunt": "^0.4.5",
     "grunt-banner": "^0.4.0",
@@ -66,12 +67,8 @@
   },
   "browserify": {
     "transform": [
-      [
-        "babelify",
-        {
-          "compact": false
-        }
-      ]
+      ["babelify", {"compact": false}],
+      ["envify", {"CASSOWARYJS": true}]
     ]
   },
   "scripts": {

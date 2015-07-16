@@ -1,7 +1,7 @@
 /*global module:false*/
 module.exports = function(grunt) {
-
   var path = require('path');
+  var cassowaryJS = true;
 
   var banner = '' +
     '/**\n' +
@@ -86,8 +86,7 @@ module.exports = function(grunt) {
       dependencies: {
         options: {
           position: 'top',
-          banner: 'var kiwi = require(\'kiwi/ts/bin/kiwi\')\n'
-          //banner: 'var c = require(\'cassowary/bin/c\')\n'
+          banner: cassowaryJS ? 'var c = require(\'cassowary/bin/c\')\n' : 'var kiwi = require(\'kiwi/ts/bin/kiwi\')\n'
         },
         files: {
           src: ['tmp/autolayout.es6']
@@ -100,7 +99,10 @@ module.exports = function(grunt) {
           browserifyOptions: {
             standalone: 'AutoLayout',
           },
-          banner: banner
+          banner: banner,
+          tranform: [
+            ['envify', {_: 'purge', 'CASSOWARYJS': cassowaryJS}]
+          ]
         },
         files: {
           './dist/autolayout.js': ['./tmp/autolayout.es6']
@@ -112,6 +114,9 @@ module.exports = function(grunt) {
             standalone: 'AutoLayout',
             debug: true
           },
+          tranform: [
+            ['envify', {_: 'purge', 'CASSOWARYJS': cassowaryJS}]
+          ],
           plugin: [
             ['minifyify', {
               map: 'autolayout.min.map',

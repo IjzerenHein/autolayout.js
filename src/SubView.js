@@ -1,7 +1,6 @@
 import c from 'cassowary/bin/c';
-import kiwi from 'kiwi/ts/bin/kiwi';
+//import kiwi from 'kiwi/ts/bin/kiwi';
 import Attribute from './Attribute';
-const USE_CASSOWARYJS = false;
 
 /**
  * A SubView is automatically generated when constraints are added to a View.
@@ -15,7 +14,7 @@ class SubView {
         this._solver = options.solver;
         this._attr = {};
         if (!options.name) {
-            if (USE_CASSOWARYJS) {
+            if (process.env.CASSOWARYJS) {
                 this._attr[Attribute.LEFT] = new c.Variable();
                 this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.LEFT], c.Strength.required));
                 this._attr[Attribute.TOP] = new c.Variable();
@@ -61,7 +60,7 @@ class SubView {
      * @type {Number}
      */
     get left() {
-        return this._getAttr(Attribute.LEFT).value();
+        return this._getAttr(Attribute.LEFT).value;
     }
 
     /**
@@ -70,7 +69,7 @@ class SubView {
      * @type {Number}
      */
     get right() {
-        return this._getAttr(Attribute.RIGHT).value();
+        return this._getAttr(Attribute.RIGHT).value;
     }
 
     /**
@@ -78,7 +77,7 @@ class SubView {
      * @type {Number}
      */
     get width() {
-        return this._getAttr(Attribute.WIDTH).value();
+        return this._getAttr(Attribute.WIDTH).value;
     }
 
     /**
@@ -87,7 +86,7 @@ class SubView {
      * @type {Number}
      */
     get height() {
-        return this._getAttr(Attribute.HEIGHT).value();
+        return this._getAttr(Attribute.HEIGHT).value;
     }
 
     /**
@@ -111,7 +110,7 @@ class SubView {
         if ((value !== undefined) && (value !== this._intrinsicWidth)) {
             const attr = this._getAttr(Attribute.WIDTH);
             if (this._intrinsicWidth === undefined) {
-                if (USE_CASSOWARYJS) {
+                if (process.env.CASSOWARYJS) {
                     this._solver.addEditVar(attr, new c.Strength('required', this._name ? 998 : 999, 1000, 1000));
                 }
                 else {
@@ -120,7 +119,7 @@ class SubView {
             }
             this._intrinsicWidth = value;
             this._solver.suggestValue(attr, value);
-            if (USE_CASSOWARYJS) {
+            if (process.env.CASSOWARYJS) {
                 this._solver.resolve();
             }
             else {
@@ -143,7 +142,7 @@ class SubView {
         if ((value !== undefined) && (value !== this._intrinsicHeight)) {
             const attr = this._getAttr(Attribute.HEIGHT);
             if (this._intrinsicHeight === undefined) {
-                if (USE_CASSOWARYJS) {
+                if (process.env.CASSOWARYJS) {
                     this._solver.addEditVar(attr, new c.Strength('required', this._name ? 998 : 999, 1000, 1000));
                 }
                 else {
@@ -152,7 +151,7 @@ class SubView {
             }
             this._intrinsicHeight = value;
             this._solver.suggestValue(attr, value);
-            if (USE_CASSOWARYJS) {
+            if (process.env.CASSOWARYJS) {
                 this._solver.resolve();
             }
             else {
@@ -167,7 +166,7 @@ class SubView {
      * @type {Number}
      */
     get top() {
-        return this._getAttr(Attribute.TOP).value();
+        return this._getAttr(Attribute.TOP).value;
     }
 
     /**
@@ -176,7 +175,7 @@ class SubView {
      * @type {Number}
      */
     get bottom() {
-        return this._getAttr(Attribute.BOTTOM).value();
+        return this._getAttr(Attribute.BOTTOM).value;
     }
 
     /**
@@ -185,7 +184,7 @@ class SubView {
      * @type {Number}
      */
     get centerX() {
-        return this._getAttr(Attribute.CENTERX).value();
+        return this._getAttr(Attribute.CENTERX).value;
     }
 
     /**
@@ -194,7 +193,7 @@ class SubView {
      * @type {Number}
      */
     get centerY() {
-        return this._getAttr(Attribute.CENTERY).value();
+        return this._getAttr(Attribute.CENTERY).value;
     }
 
     /**
@@ -203,7 +202,7 @@ class SubView {
      * @type {Number}
      */
     get zIndex() {
-        return this._getAttr(Attribute.ZINDEX).value();
+        return this._getAttr(Attribute.ZINDEX).value;
     }
 
     /**
@@ -222,7 +221,7 @@ class SubView {
      * @return {Number} value or `undefined`
      */
     getValue(attr) {
-        return this._attr[attr] ? this._attr[attr].value() : undefined;
+        return this._attr[attr] ? this._attr[attr].value : undefined;
     }
 
     /**
@@ -232,12 +231,12 @@ class SubView {
         if (this._attr[attr]) {
             return this._attr[attr];
         }
-        this._attr[attr] = USE_CASSOWARYJS ? new c.Variable() : new kiwi.Variable();
+        this._attr[attr] = process.env.CASSOWARYJS ? new c.Variable() : new kiwi.Variable();
         switch (attr) {
             case Attribute.RIGHT:
                 this._getAttr(Attribute.LEFT);
                 this._getAttr(Attribute.WIDTH);
-                if (USE_CASSOWARYJS) {
+                if (process.env.CASSOWARYJS) {
                     this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.LEFT], this._attr[Attribute.WIDTH])));
                 }
                 else {
@@ -247,7 +246,7 @@ class SubView {
             case Attribute.BOTTOM:
                 this._getAttr(Attribute.TOP);
                 this._getAttr(Attribute.HEIGHT);
-                if (USE_CASSOWARYJS) {
+                if (process.env.CASSOWARYJS) {
                     this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.TOP], this._attr[Attribute.HEIGHT])));
                 }
                 else {
@@ -257,7 +256,7 @@ class SubView {
             case Attribute.CENTERX:
                 this._getAttr(Attribute.LEFT);
                 this._getAttr(Attribute.WIDTH);
-                if (USE_CASSOWARYJS) {
+                if (process.env.CASSOWARYJS) {
                     this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.LEFT], c.divide(this._attr[Attribute.WIDTH], 2))));
                 }
                 else {
@@ -267,7 +266,7 @@ class SubView {
             case Attribute.CENTERY:
                 this._getAttr(Attribute.TOP);
                 this._getAttr(Attribute.HEIGHT);
-                if (USE_CASSOWARYJS) {
+                if (process.env.CASSOWARYJS) {
                     this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.TOP], c.divide(this._attr[Attribute.HEIGHT], 2))));
                 }
                 else {
@@ -275,7 +274,7 @@ class SubView {
                 }
                 break;
         }
-        if (!USE_CASSOWARYJS) {
+        if (!process.env.CASSOWARYJS) {
             this._solver.updateVariables();
         }
         return this._attr[attr];
