@@ -145,6 +145,8 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 - [Attributes](#attributes) (`V:|[view2(view1.width)]`)
 - [Z-ordering](#z-ordering) (`Z:|-[view1][view2]`)
 - [Equal size spacers/centering](#equal-size-spacers-centering)(`|~[center(100)]~|`)
+- [Disconnections](#disconnections) (`|[view1(200)]->[view2(100)]|`)
+- [View stacks](#view-stacks) (`TODO`)
 - [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
 
 ### Proportional size
@@ -215,6 +217,25 @@ You can also use more than 2 connectors to proportionally align views:
 
     |~[child1(10)]~[child2(20)]~[child3(30)]~|
 
+### Disconnections (right/bottom alignment)
+
+By default, views are interconnected when defined after each other (e.g. `[view1][view2][view3]`). In some cases
+it is useful to not interconnect the views, in order to align content to the right or bottom. The following
+example shows a disconnection causing the content after the disconnect to align to the right-edge:
+
+```
+ // left1..2 are left-aligned, right1..2 are right aligned
+      |[left1(100)][left2(300)]->[right1(100)][right2(100)]|
+      ^^                       ^^                         ^^
+   left1 is                 left2 and                  right2 is
+ connected to               right1 are                connected to
+  super-view               not connected               super-view
+```
+
+### View stacks
+
+TODO
+
 ### Comments
 
 Single line comments can be used to explain the VFL or to prevent its execution:
@@ -275,8 +296,9 @@ and replaced by a roadmap.
 - [X] Addition/substraction support (e.g. [child(child2-100)])
 - [X] Single line comments (// bla)
 - [X] Z-ordering (z-index)
-- [ ] View stacks (inspsired by UIStackView) (this make stuff a lot easier)
 - [X] Equal size spacers / centering (e.g. |~[centered(100)~])
+- [X] Disonnections
+- [ ] View stacks (inspsired by UIStackView) (this make stuff a lot easier)
 - [ ] Multi line comments (/* bla */)
 
 **Parked Features:**
@@ -294,6 +316,6 @@ Also have a look at [CONTRIBUTING](./CONTRIBUTING.md).
 
 ## Contact
 -   @IjzerenHein
--   hrutjes@gmail.com (for hire)
+-   hrutjes@gmail.com
 
 © 2015 Hein Rutjes

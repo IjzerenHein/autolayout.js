@@ -145,32 +145,34 @@ function _processCascade(context, cascade, stackView) {
                 if (context.relation.multiplier) {
                     _processProportionalSpacer(context, stackView);
                 }
-                switch (context.orientation) {
-                    case 'horizontal':
-                        context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
-                        context.attr2 = (context.view2 !== stackView) ? Attribute.LEFT : Attribute.RIGHT;
-                        break;
-                    case 'vertical':
-                        context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
-                        context.attr2 = (context.view2 !== stackView) ? Attribute.TOP : Attribute.BOTTOM;
-                        break;
-                    case 'zIndex':
-                        context.attr1 = Attribute.ZINDEX;
-                        context.attr2 = Attribute.ZINDEX;
-                        context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
-                        break;
+                if (context.relation.relation !== 'none') {
+                    switch (context.orientation) {
+                        case 'horizontal':
+                            context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
+                            context.attr2 = (context.view2 !== stackView) ? Attribute.LEFT : Attribute.RIGHT;
+                            break;
+                        case 'vertical':
+                            context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
+                            context.attr2 = (context.view2 !== stackView) ? Attribute.TOP : Attribute.BOTTOM;
+                            break;
+                        case 'zIndex':
+                            context.attr1 = Attribute.ZINDEX;
+                            context.attr2 = Attribute.ZINDEX;
+                            context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
+                            break;
+                    }
+                    context.constraints.push({
+                        view1: context.view1,
+                        attr1: context.attr1,
+                        relation: context.relation.relation,
+                        view2: context.view2,
+                        attr2: context.attr2,
+                        multiplier: context.relation.multiplier,
+                        constant: ((context.relation.constant === 'default') || !context.relation.constant) ? context.relation.constant : -context.relation.constant,
+                        priority: context.relation.priority
+                        //,variable: context.relation.variable
+                    });
                 }
-                context.constraints.push({
-                    view1: context.view1,
-                    attr1: context.attr1,
-                    relation: context.relation.relation,
-                    view2: context.view2,
-                    attr2: context.attr2,
-                    multiplier: context.relation.multiplier,
-                    constant: ((context.relation.constant === 'default') || !context.relation.constant) ? context.relation.constant : -context.relation.constant,
-                    priority: context.relation.priority
-                    //,variable: context.relation.variable
-                });
             }
             context.relation = undefined;
 

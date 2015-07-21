@@ -45,7 +45,8 @@ cascadedViews
   = ":" views:(connection view)+ connection:connection { return [].concat([].concat.apply([], views),[connection]); }
 
 connection
-  = "-" predicateList:predicateList "-" { return predicateList }
+  = "->" { return [{ relation: 'none', $parserOffset: offset() }] }
+  / "-" predicateList:predicateList "-" { return predicateList }
   / "-" { return [{ relation: 'equ', constant: 'default', $parserOffset: offset() }] }
   / "~" predicateList:equalSpacingPredicateList "~" { return predicateList }
   / "~" { return [{ relation: 'equ', equalSpacing: true, $parserOffset: offset() }] }
