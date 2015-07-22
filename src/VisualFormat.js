@@ -3,6 +3,12 @@ import parserExt from './parser/parserExt';
 import Attribute from './Attribute';
 import Relation from './Relation';
 
+const Orientation = {
+    HORIZONTAL: 1,
+    VERTICAL: 2,
+    ZINDEX: 4
+};
+
 /**
  * Helper function that inserts equal spacers (~).
  * @private
@@ -54,15 +60,15 @@ function _processEqualSpacer(context, stackView) {
 
     // Add constraint
     switch (context.orientation) {
-        case 'horizontal':
+        case Orientation.HORIZONTAL:
             context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
             context.attr2 = Attribute.LEFT;
             break;
-        case 'vertical':
+        case Orientation.VERTICAL:
             context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
             context.attr2 = Attribute.TOP;
             break;
-        case 'zIndex':
+        case Orientation.ZINDEX:
             context.attr1 = Attribute.ZINDEX;
             context.attr2 = Attribute.ZINDEX;
             context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
@@ -100,15 +106,15 @@ function _processProportionalSpacer(context, stackView) {
 
     // Add constraint
     switch (context.orientation) {
-        case 'horizontal':
+        case Orientation.HORIZONTAL:
             context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
             context.attr2 = Attribute.LEFT;
             break;
-        case 'vertical':
+        case Orientation.VERTICAL:
             context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
             context.attr2 = Attribute.TOP;
             break;
-        case 'zIndex':
+        case Orientation.ZINDEX:
             context.attr1 = Attribute.ZINDEX;
             context.attr2 = Attribute.ZINDEX;
             context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
@@ -126,10 +132,58 @@ function _processProportionalSpacer(context, stackView) {
 }
 
 /**
+ * In case of a stack-view, set constraints for opposite orientations
+ * @private
+ */
+function _processStackView(context, name, subView) {
+    let viewName;
+    for (var orientation = 1; orientation <= 4; orientation *= 2) {
+        if ((subView.orientations & orientation) &&
+            (subView.stack.orientation !== orientation) &&
+            !(subView.stack.processedOrientations & orientation)) {
+            subView.stack.processedOrientations = subView.stack.processedOrientations | orientation;
+            viewName = viewName || {
+                name: name,
+                type: 'stack'
+            };
+            for (var i = 0, j = subView.stack.subViews.length; i < j; i++) {
+                if (orientation === Orientation.ZINDEX) {
+                    context.constraints.push({
+                        view1: viewName,
+                        attr1: Attribute.ZINDEX,
+                        relation: Relation.EQU,
+                        view2: subView.stack.subViews[i],
+                        attr2: Attribute.ZINDEX
+                    });
+                }
+                else {
+                    context.constraints.push({
+                        view1: viewName,
+                        attr1: (orientation === Orientation.VERTICAL) ? Attribute.HEIGHT : Attribute.WIDTH,
+                        relation: Relation.EQU,
+                        view2: subView.stack.subViews[i],
+                        attr2: (orientation === Orientation.VERTICAL) ? Attribute.HEIGHT : Attribute.WIDTH
+                    });
+                    context.constraints.push({
+                        view1: viewName,
+                        attr1: (orientation === Orientation.VERTICAL) ? Attribute.TOP : Attribute.LEFT,
+                        relation: Relation.EQU,
+                        view2: subView.stack.subViews[i],
+                        attr2: (orientation === Orientation.VERTICAL) ? Attribute.TOP : Attribute.LEFT
+                    });
+                }
+            }
+        }
+    }
+}
+
+/**
  * Recursive helper function that processes the cascaded data.
  * @private
  */
 function _processCascade(context, cascade, stackView) {
+    const subViews = [];
+    let subView;
     if (stackView) {
         cascade.push({view: stackView});
     }
@@ -139,6 +193,18 @@ function _processCascade(context, cascade, stackView) {
             context.view1 = context.view2;
             context.view2 = context.item.view;
             if ((context.view1 !== undefined) && (context.view2 !== undefined) && context.relation) {
+                if (context.item.view !== stackView) {
+                    subViews.push(context.item.view);
+                    subView = context.subViews[context.item.view];
+                    if (!subView) {
+                        subView = {orientations: 0};
+                        context.subViews[context.item.view] = subView;
+                    }
+                    subView.orientations = subView.orientations | context.orientation;
+                    if (subView.stack) {
+                        _processStackView(context, context.item.view, subView);
+                    }
+                }
                 if (context.relation.equalSpacing) {
                     _processEqualSpacer(context, stackView);
                 }
@@ -147,15 +213,15 @@ function _processCascade(context, cascade, stackView) {
                 }
                 if (context.relation.relation !== 'none') {
                     switch (context.orientation) {
-                        case 'horizontal':
+                        case Orientation.HORIZONTAL:
                             context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
                             context.attr2 = (context.view2 !== stackView) ? Attribute.LEFT : Attribute.RIGHT;
                             break;
-                        case 'vertical':
+                        case Orientation.VERTICAL:
                             context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
                             context.attr2 = (context.view2 !== stackView) ? Attribute.TOP : Attribute.BOTTOM;
                             break;
-                        case 'zIndex':
+                        case Orientation.ZINDEX:
                             context.attr1 = Attribute.ZINDEX;
                             context.attr2 = Attribute.ZINDEX;
                             context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
@@ -197,30 +263,6 @@ function _processCascade(context, cascade, stackView) {
                 }
             }
 
-            // In case of a stack-view, set constraints for opposite orientation
-            if (stackView && (context.item.view !== stackView)) {
-                context.constraints.push({
-                    view1: {
-                        name: stackView,
-                        type: 'stack'
-                    },
-                    attr1: context.horizontal ? Attribute.HEIGHT : Attribute.WIDTH,
-                    relation: Relation.EQU,
-                    view2: context.item.view,
-                    attr2: context.horizontal ? Attribute.HEIGHT : Attribute.WIDTH
-                });
-                context.constraints.push({
-                    view1: {
-                        name: stackView,
-                        type: 'stack'
-                    },
-                    attr1: context.horizontal ? Attribute.TOP : Attribute.LEFT,
-                    relation: Relation.EQU,
-                    view2: context.item.view,
-                    attr2: context.horizontal ? Attribute.TOP : Attribute.LEFT
-                });
-            }
-
             // Process cascaded data (child stack-views)
             if (context.item.cascade) {
                 _processCascade(context, context.item.cascade, context.item.view);
@@ -229,6 +271,19 @@ function _processCascade(context, cascade, stackView) {
         else {
             context.relation = context.item[0];
         }
+    }
+
+    if (stackView) {
+        subView = context.subViews[stackView];
+        if (subView.stack) {
+            throw new Error('A stack with name "' + stackView + '"" already exists');
+        }
+        subView.stack = {
+            orientation: context.orientation,
+            processedOrientations: context.orientation,
+            subViews: subViews
+        };
+        _processStackView(context, stackView, subView);
     }
 }
 
@@ -262,11 +317,22 @@ class VisualFormat {
             return [res];
         }
         var context = {
-            orientation: res.orientation,
-            horizontal: (res.orientation === 'horizontal'),
             constraints: [],
-            lineIndex: (options ? options.lineIndex : undefined) || 1
+            lineIndex: (options ? options.lineIndex : undefined) || 1,
+            subViews: (options ? options.subViews : undefined) || {}
         };
+        switch (res.orientation) {
+            case 'horizontal':
+                context.orientation = Orientation.HORIZONTAL;
+                context.horizontal = true;
+                break;
+            case 'vertical':
+                context.orientation = Orientation.VERTICAL;
+                break;
+            case 'zIndex':
+                context.orientation = Orientation.ZINDEX;
+                break;
+        }
         _processCascade(context, res.cascade, null);
         return context.constraints;
     }
@@ -308,7 +374,8 @@ class VisualFormat {
             lineIndex: lineIndex,
             extended: (options && options.extended),
             strict: (options && (options.strict !== undefined)) ? options.strict : true,
-            outFormat: options ? options.outFormat : undefined
+            outFormat: options ? options.outFormat : undefined,
+            subViews: {}
         };
         try {
             for (var i = 0; i < visualFormat.length; i++) {
