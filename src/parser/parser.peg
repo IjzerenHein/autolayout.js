@@ -65,7 +65,7 @@ objectOfPredicate
   / viewName
 
 priority
-  = n:number { return { priority: n } }
+  = digits:[0-9]+ { return { priority: parseInt(digits.join(""), 10) } }
 
 constant
   = n:number { return { constant: n } }
@@ -74,4 +74,5 @@ viewName
   = f:$[a-zA-Z_]+ v:$[a-zA-Z0-9_]* { return { view: f + v } }
 
 number
-  = digits:[0-9]+ { return parseInt(digits.join(""), 10); }
+  = digits:[0-9]+ "." decimals:[0-9]+ { return parseFloat(digits.concat(".").concat(decimals).join(""), 10); }
+  / digits:[0-9]+ { return parseInt(digits.join(""), 10); }

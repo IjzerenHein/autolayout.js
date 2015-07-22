@@ -19,7 +19,16 @@ describe('ExtendedVisualFormat', function() {
         });
     });
 
-    describe('operators', function() {
-        // todo
+    describe('parse', function() {
+        it('should return 1 contraint for: ' + '[child(60)] with constant 60', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child(60)]', opts);
+            assert.equal(1, constraints.length);
+            assert.equal(constraints[0].constant, 60);
+        });
+        it('should return 1 contraint for: ' + '[child(60.6666)] with constant 60.6666', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child(60.6666)]', opts);
+            assert.equal(1, constraints.length);
+            assert.equal(constraints[0].constant, 60.6666);
+        });
     });
 });
