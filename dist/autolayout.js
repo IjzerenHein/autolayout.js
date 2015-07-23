@@ -8,8 +8,8 @@
 * @copyright Gloey Apps, 2015
 *
 * @library autolayout.js
-* @version 0.2.0
-* @generated 11-07-2015
+* @version 0.3.0
+* @generated 23-07-2015
 */
 /*-----------------------------------------------------------------------------
 | Kiwi (TypeScript version)
@@ -22,2054 +22,27 @@
 |----------------------------------------------------------------------------*/
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.AutoLayout = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module unless amdModuleId is set
-    define([], function () {
-      return (root['kiwi'] = factory());
-    });
-  } else if (typeof exports === 'object') {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory();
-  } else {
-    root['kiwi'] = factory();
-  }
-}(this, function () {
-
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-var tsu;
-(function (tsu) {
-
-    /**
-    * An iterator for an array of items.
-    */
-    var ArrayIterator = (function () {
-        /*
-        * Construct a new ArrayIterator.
-        *
-        * @param array The array of items to iterate.
-        * @param [index] The index at which to start iteration.
-        */
-        function ArrayIterator(array, index) {
-            if (typeof index === "undefined") { index = 0; }
-            this._array = array;
-            this._index = Math.max(0, Math.min(index, array.length));
-        }
-        /**
-        * Returns the next item from the iterator or undefined.
-        */
-        ArrayIterator.prototype.__next__ = function () {
-            return this._array[this._index++];
-        };
-
-        /**
-        * Returns this same iterator.
-        */
-        ArrayIterator.prototype.__iter__ = function () {
-            return this;
-        };
-        return ArrayIterator;
-    })();
-    tsu.ArrayIterator = ArrayIterator;
-
-    /**
-    * A reverse iterator for an array of items.
-    */
-    var ReverseArrayIterator = (function () {
-        /**
-        * Construct a new ReverseArrayIterator.
-        *
-        * @param array The array of items to iterate.
-        * @param [index] The index at which to start iteration.
-        */
-        function ReverseArrayIterator(array, index) {
-            if (typeof index === "undefined") { index = array.length; }
-            this._array = array;
-            this._index = Math.max(0, Math.min(index, array.length));
-        }
-        /**
-        * Returns the next item from the iterator or undefined.
-        */
-        ReverseArrayIterator.prototype.__next__ = function () {
-            return this._array[--this._index];
-        };
-
-        /**
-        * Returns this same iterator.
-        */
-        ReverseArrayIterator.prototype.__iter__ = function () {
-            return this;
-        };
-        return ReverseArrayIterator;
-    })();
-    tsu.ReverseArrayIterator = ReverseArrayIterator;
-
-    
-
-    function iter(object) {
-        if (object instanceof Array) {
-            return new ArrayIterator(object);
-        }
-        return object.__iter__();
-    }
-    tsu.iter = iter;
-
-    
-
-    function reversed(object) {
-        if (object instanceof Array) {
-            return new ReverseArrayIterator(object);
-        }
-        return object.__reversed__();
-    }
-    tsu.reversed = reversed;
-
-    /**
-    * Returns the next value from an iterator, or undefined.
-    */
-    function next(iterator) {
-        return iterator.__next__();
-    }
-    tsu.next = next;
-
-
-    function forEach(object, callback) {
-        if (object instanceof Array) {
-            for (var i = 0, n = object.length; i < n; ++i) {
-                if (callback(object[i]) === false) {
-                    return;
-                }
-            }
-        } else {
-            var value;
-            var it = object.__iter__();
-            while ((value = it.__next__()) !== undefined) {
-                if (callback(value) === false) {
-                    return;
-                }
-            }
-        }
-    }
-    tsu.forEach = forEach;
-
-})(tsu || (tsu = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-var tsu;
-(function (tsu) {
-    
-
-    /**
-    * A class which defines a generic pair object.
-    */
-    var Pair = (function () {
-        /**
-        * Construct a new Pair object.
-        *
-        * @param first The first item of the pair.
-        * @param second The second item of the pair.
-        */
-        function Pair(first, second) {
-            this.first = first;
-            this.second = second;
-        }
-        /**
-        * Create a copy of the pair.
-        */
-        Pair.prototype.copy = function () {
-            return new Pair(this.first, this.second);
-        };
-        return Pair;
-    })();
-    tsu.Pair = Pair;
-})(tsu || (tsu = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-/// <reference path="iterator.ts"/>
-/// <reference path="utility.ts"/>
-var tsu;
-(function (tsu) {
-    /**
-    * Perform a lower bound search on a sorted array.
-    *
-    * @param array The array of sorted items to search.
-    * @param value The value to located in the array.
-    * @param compare The value comparison function.
-    * @returns The index of the first element in the array which
-    *          compares greater than or equal to the given value.
-    */
-    function lowerBound(array, value, compare) {
-        var begin = 0;
-        var n = array.length;
-        var half;
-        var middle;
-        while (n > 0) {
-            half = n >> 1;
-            middle = begin + half;
-            if (compare(array[middle], value) < 0) {
-                begin = middle + 1;
-                n -= half + 1;
-            } else {
-                n = half;
-            }
-        }
-        return begin;
-    }
-    tsu.lowerBound = lowerBound;
-
-    /**
-    * Perform a binary search on a sorted array.
-    *
-    * @param array The array of sorted items to search.
-    * @param value The value to located in the array.
-    * @param compare The value comparison function.
-    * @returns The index of the found item, or -1.
-    */
-    function binarySearch(array, value, compare) {
-        var index = lowerBound(array, value, compare);
-        if (index === array.length) {
-            return -1;
-        }
-        var item = array[index];
-        if (compare(item, value) !== 0) {
-            return -1;
-        }
-        return index;
-    }
-    tsu.binarySearch = binarySearch;
-
-    /**
-    * Perform a binary find on a sorted array.
-    *
-    * @param array The array of sorted items to search.
-    * @param value The value to located in the array.
-    * @param compare The value comparison function.
-    * @returns The found item in the array, or undefined.
-    */
-    function binaryFind(array, value, compare) {
-        var index = lowerBound(array, value, compare);
-        if (index === array.length) {
-            return undefined;
-        }
-        var item = array[index];
-        if (compare(item, value) !== 0) {
-            return undefined;
-        }
-        return item;
-    }
-    tsu.binaryFind = binaryFind;
-
-})(tsu || (tsu = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-/// <reference path="iterator.ts"/>
-var tsu;
-(function (tsu) {
-    /**
-    * A base class for implementing array-based data structures.
-    *
-    * @class
-    */
-    var ArrayBase = (function () {
-        function ArrayBase() {
-            /*
-            * The internal data array.
-            *
-            * @protected
-            */
-            this._array = [];
-        }
-        /**
-        * Returns the number of items in the array.
-        */
-        ArrayBase.prototype.size = function () {
-            return this._array.length;
-        };
-
-        /**
-        * Returns true if the array is empty.
-        */
-        ArrayBase.prototype.empty = function () {
-            return this._array.length === 0;
-        };
-
-        /**
-        * Returns the item at the given array index.
-        *
-        * @param index The integer index of the desired item.
-        */
-        ArrayBase.prototype.itemAt = function (index) {
-            return this._array[index];
-        };
-
-        /**
-        * Removes and returns the item at the given index.
-        *
-        * @param index The integer index of the desired item.
-        */
-        ArrayBase.prototype.takeAt = function (index) {
-            return this._array.splice(index, 1)[0];
-        };
-
-        /**
-        * Clear the internal contents of array.
-        */
-        ArrayBase.prototype.clear = function () {
-            this._array = [];
-        };
-
-        /**
-        * Swap this array's contents with another array.
-        *
-        * @param other The array base to use for the swap.
-        */
-        ArrayBase.prototype.swap = function (other) {
-            var array = this._array;
-            this._array = other._array;
-            other._array = array;
-        };
-
-        /**
-        * Returns an iterator over the array of items.
-        */
-        ArrayBase.prototype.__iter__ = function () {
-            return tsu.iter(this._array);
-        };
-
-        /**
-        * Returns a reverse iterator over the array of items.
-        */
-        ArrayBase.prototype.__reversed__ = function () {
-            return tsu.reversed(this._array);
-        };
-        return ArrayBase;
-    })();
-    tsu.ArrayBase = ArrayBase;
-})(tsu || (tsu = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-/// <reference path="algorithm.ts"/>
-/// <reference path="array_base.ts"/>
-/// <reference path="iterator.ts"/>
-/// <reference path="utility.ts"/>
-var tsu;
-(function (tsu) {
-    /**
-    * A mapping container build on a sorted array.
-    *
-    * @class
-    */
-    var AssociativeArray = (function (_super) {
-        __extends(AssociativeArray, _super);
-        /**
-        * Construct a new AssociativeArray.
-        *
-        * @param compare The key comparison function.
-        */
-        function AssociativeArray(compare) {
-            _super.call(this);
-            this._compare = compare;
-            this._wrapped = wrapCompare(compare);
-        }
-        /**
-        * Returns the key comparison function used by this array.
-        */
-        AssociativeArray.prototype.comparitor = function () {
-            return this._compare;
-        };
-
-        /**
-        * Return the array index of the given key, or -1.
-        *
-        * @param key The key to locate in the array.
-        */
-        AssociativeArray.prototype.indexOf = function (key) {
-            return tsu.binarySearch(this._array, key, this._wrapped);
-        };
-
-        /**
-        * Returns true if the key is in the array, false otherwise.
-        *
-        * @param key The key to locate in the array.
-        */
-        AssociativeArray.prototype.contains = function (key) {
-            return tsu.binarySearch(this._array, key, this._wrapped) >= 0;
-        };
-
-        /**
-        * Returns the pair associated with the given key, or undefined.
-        *
-        * @param key The key to locate in the array.
-        */
-        AssociativeArray.prototype.find = function (key) {
-            return tsu.binaryFind(this._array, key, this._wrapped);
-        };
-
-        /**
-        * Returns the pair associated with the key if it exists.
-        *
-        * If the key does not exist, a new pair will be created and
-        * inserted using the value created by the given factory.
-        *
-        * @param key The key to locate in the array.
-        * @param factory The function which creates the default value.
-        */
-        AssociativeArray.prototype.setDefault = function (key, factory) {
-            var array = this._array;
-            var index = tsu.lowerBound(array, key, this._wrapped);
-            if (index === array.length) {
-                var pair = new tsu.Pair(key, factory());
-                array.push(pair);
-                return pair;
-            }
-            var currPair = array[index];
-            if (this._compare(currPair.first, key) !== 0) {
-                var pair = new tsu.Pair(key, factory());
-                array.splice(index, 0, pair);
-                return pair;
-            }
-            return currPair;
-        };
-
-        /**
-        * Insert the pair into the array and return the pair.
-        *
-        * This will overwrite any existing entry in the array.
-        *
-        * @param key The key portion of the pair.
-        * @param value The value portion of the pair.
-        */
-        AssociativeArray.prototype.insert = function (key, value) {
-            var array = this._array;
-            var index = tsu.lowerBound(array, key, this._wrapped);
-            if (index === array.length) {
-                var pair = new tsu.Pair(key, value);
-                array.push(pair);
-                return pair;
-            }
-            var currPair = array[index];
-            if (this._compare(currPair.first, key) !== 0) {
-                var pair = new tsu.Pair(key, value);
-                array.splice(index, 0, pair);
-                return pair;
-            }
-            currPair.second = value;
-            return currPair;
-        };
-
-        AssociativeArray.prototype.update = function (object) {
-            var _this = this;
-            if (object instanceof AssociativeArray) {
-                var obj = object;
-                this._array = merge(this._array, obj._array, this._compare);
-            } else {
-                tsu.forEach(object, function (pair) {
-                    _this.insert(pair.first, pair.second);
-                });
-            }
-        };
-
-        /**
-        * Removes and returns the pair for the given key, or undefined.
-        *
-        * @param key The key to remove from the map.
-        */
-        AssociativeArray.prototype.erase = function (key) {
-            var array = this._array;
-            var index = tsu.binarySearch(array, key, this._wrapped);
-            if (index < 0) {
-                return undefined;
-            }
-            return array.splice(index, 1)[0];
-        };
-
-        /**
-        * Create a copy of this associative array.
-        */
-        AssociativeArray.prototype.copy = function () {
-            var theCopy = new AssociativeArray(this._compare);
-            var copyArray = theCopy._array;
-            var thisArray = this._array;
-            for (var i = 0, n = thisArray.length; i < n; ++i) {
-                copyArray.push(thisArray[i].copy());
-            }
-            return theCopy;
-        };
-        return AssociativeArray;
-    })(tsu.ArrayBase);
-    tsu.AssociativeArray = AssociativeArray;
-
-    /**
-    * An internal which wraps a comparison key function.
-    */
-    function wrapCompare(cmp) {
-        return function (pair, value) {
-            return cmp(pair.first, value);
-        };
-    }
-
-    /**
-    * An internal function which merges two ordered pair arrays.
-    */
-    function merge(first, second, compare) {
-        var i = 0, j = 0;
-        var len1 = first.length;
-        var len2 = second.length;
-        var merged = [];
-        while (i < len1 && j < len2) {
-            var a = first[i];
-            var b = second[j];
-            var v = compare(a.first, b.first);
-            if (v < 0) {
-                merged.push(a.copy());
-                ++i;
-            } else if (v > 0) {
-                merged.push(b.copy());
-                ++j;
-            } else {
-                merged.push(b.copy());
-                ++i;
-                ++j;
-            }
-        }
-        while (i < len1) {
-            merged.push(first[i].copy());
-            ++i;
-        }
-        while (j < len2) {
-            merged.push(second[j].copy());
-            ++j;
-        }
-        return merged;
-    }
-})(tsu || (tsu = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-/// <reference path="algorithm.ts"/>
-/// <reference path="array_base.ts"/>
-/// <reference path="associative_array.ts"/>
-/// <reference path="iterator.ts"/>
-/// <reference path="unique_array.ts"/>
-/// <reference path="utility.ts"/>
-
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-// <reference path="expression.ts">
-// <reference path="strength.ts">
 /**
- * Kiwi is an efficient implementation of the Cassowary constraint solving
- * algorithm, based on the seminal Cassowary paper.
- * It is *not* a refactoring or port of the original C++ solver, but
- * has been designed from the ground up to be lightweight and fast.
+ * Parts Copyright (C) 2011-2012, Alex Russell (slightlyoff@chromium.org)
+ * Parts Copyright (C) Copyright (C) 1998-2000 Greg J. Badros
  *
- * **Example**
- * ```javascript
- * var kiwi = require('kiwi');
+ * Use of this source code is governed by the LGPL, which can be found in the
+ * COPYING.LGPL file.
  *
- * // Create a solver
- * var solver = new kiwi.Solver();
+ * This is a compiled version of Cassowary/JS. For source versions or to
+ * contribute, see the github project:
  *
- * // Create and add some editable variables
- * var left = new kiwi.Variable();
- * var width = new kiwi.Variable();
- * solver.addEditVariable(left, kiwi.Strength.strong);
- * solver.addEditVariable(width, kiwi.Strength.strong);
+ *  https://github.com/slightlyoff/cassowary-js-refactor
  *
- * // Create a variable calculated through a constraint
- * var centerX = new kiwi.Variable();
- * var expr = new kiwi.Expression([-1, centerX], left, [0.5, width]);
- * solver.addConstraint(new kiwi.Constraint(expr, kiwi.Operator.Eq, kiwi.Strength.required));
- *
- * // Suggest some values to the solver
- * solver.suggestValue(left, 0);
- * solver.suggestValue(width, 500);
- *
- * // Lets solve the problem!
- * solver.updateVariables();
- * assert(centerX.value(), 250);
- * ```
- *
- * ##API Documentation
- * @module kiwi
  */
-var kiwi;
-(function (kiwi) {
-    /**
-     * An enum defining the linear constraint operators.
-     *
-     * |Value|Operator|Description|
-     * |----|-----|-----|
-     * |`Le`|<=|Less than equal|
-     * |`Ge`|>=|Greater than equal|
-     * |`Eq`|==|Equal|
-     *
-     * @enum {Number}
-     */
-    (function (Operator) {
-        Operator[Operator["Le"] = 0] = "Le";
-        Operator[Operator["Ge"] = 1] = "Ge";
-        Operator[Operator["Eq"] = 2] = "Eq"; // ==
-    })(kiwi.Operator || (kiwi.Operator = {}));
-    var Operator = kiwi.Operator;
-    /**
-     * A linear constraint equation.
-     *
-     * A constraint equation is composed of an expression, an operator,
-     * and a strength. The RHS of the equation is implicitly zero.
-     *
-     * @class
-     * @param {Expression} expression The constraint expression (LHS).
-     * @param {Operator} operator The equation operator.
-     * @param {Expression} [rhs] Right hand side of the expression.
-     * @param {Number} [strength=Strength.required] The strength of the constraint.
-     */
-    var Constraint = (function () {
-        function Constraint(expression, operator, rhs, strength) {
-            if (strength === void 0) { strength = kiwi.Strength.required; }
-            this._id = CnId++;
-            this._operator = operator;
-            this._strength = kiwi.Strength.clip(strength);
-            if ((rhs === undefined) && (expression instanceof kiwi.Expression)) {
-                this._expression = expression;
-            }
-            else {
-                this._expression = expression.minus(rhs);
-            }
-        }
-        /**
-          * A static constraint comparison function.
-          * @private
-          */
-        Constraint.Compare = function (a, b) {
-            return a.id() - b.id();
-        };
-        /**
-         * Returns the unique id number of the constraint.
-         * @private
-         */
-        Constraint.prototype.id = function () {
-            return this._id;
-        };
-        /**
-         * Returns the expression of the constraint.
-         *
-         * @return {Expression} expression
-         */
-        Constraint.prototype.expression = function () {
-            return this._expression;
-        };
-        /**
-         * Returns the relational operator of the constraint.
-         *
-         * @return {Operator} linear constraint operator
-         */
-        Constraint.prototype.op = function () {
-            return this._operator;
-        };
-        /**
-         * Returns the strength of the constraint.
-         *
-         * @return {Number} strength
-         */
-        Constraint.prototype.strength = function () {
-            return this._strength;
-        };
-        return Constraint;
-    })();
-    kiwi.Constraint = Constraint;
-    /**
-     * The internal constraint id counter.
-     * @private
-     */
-    var CnId = 0;
-})(kiwi || (kiwi = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-/// <reference path="../thirdparty/tsu.d.ts"/>
-var kiwi;
-(function (kiwi) {
-    function createMap(compare) {
-        return new tsu.AssociativeArray(compare);
-    }
-    kiwi.createMap = createMap;
-})(kiwi || (kiwi = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-var kiwi;
-(function (kiwi) {
-    /**
-     * The primary user constraint variable.
-     *
-     * @class
-     * @param {String} [name=""] The name to associated with the variable.
-     */
-    var Variable = (function () {
-        function Variable(name) {
-            if (name === void 0) { name = ""; }
-            this._value = 0.0;
-            this._context = null;
-            this._id = VarId++;
-            this._name = name;
-        }
-        /**
-         * A static variable comparison function.
-         * @private
-         */
-        Variable.Compare = function (a, b) {
-            return a.id() - b.id();
-        };
-        /**
-         * Returns the unique id number of the variable.
-         * @private
-         */
-        Variable.prototype.id = function () {
-            return this._id;
-        };
-        /**
-         * Returns the name of the variable.
-         *
-         * @return {String} name of the variable
-         */
-        Variable.prototype.name = function () {
-            return this._name;
-        };
-        /**
-         * Set the name of the variable.
-         *
-         * @param {String} name Name of the variable
-         */
-        Variable.prototype.setName = function (name) {
-            this._name = name;
-        };
-        /**
-         * Returns the user context object of the variable.
-         * @private
-         */
-        Variable.prototype.context = function () {
-            return this._context;
-        };
-        /**
-         * Set the user context object of the variable.
-         * @private
-         */
-        Variable.prototype.setContext = function (context) {
-            this._context = context;
-        };
-        /**
-         * Returns the value of the variable.
-         *
-         * @return {Number} Calculated value
-         */
-        Variable.prototype.value = function () {
-            return this._value;
-        };
-        /**
-         * Set the value of the variable.
-         * @private
-         */
-        Variable.prototype.setValue = function (value) {
-            this._value = value;
-        };
-        /**
-         * Creates a new Expression by adding a number, variable or expression
-         * to the variable.
-         *
-         * @param {Number|Variable|Expression} value Value to add.
-         * @return {Expression} expression
-         */
-        Variable.prototype.plus = function (value) {
-            return new kiwi.Expression(this, value);
-        };
-        /**
-         * Creates a new Expression by substracting a number, variable or expression
-         * from the variable.
-         *
-         * @param {Number|Variable|Expression} value Value to substract.
-         * @return {Expression} expression
-         */
-        Variable.prototype.minus = function (value) {
-            return new kiwi.Expression(this, typeof value === 'number' ? -value : [-1, value]);
-        };
-        /**
-         * Creates a new Expression by multiplying with a fixed number.
-         *
-         * @param {Number} coefficient Coefficient to multiply with.
-         * @return {Expression} expression
-         */
-        Variable.prototype.multiply = function (coefficient) {
-            return new kiwi.Expression([coefficient, this]);
-        };
-        /**
-         * Creates a new Expression by dividing with a fixed number.
-         *
-         * @param {Number} coefficient Coefficient to divide by.
-         * @return {Expression} expression
-         */
-        Variable.prototype.divide = function (coefficient) {
-            return new kiwi.Expression([1 / coefficient, this]);
-        };
-        /**
-         * Returns the JSON representation of the variable.
-         * @private
-         */
-        Variable.prototype.toJSON = function () {
-            return {
-                name: this._name,
-                value: this._value
-            };
-        };
-        return Variable;
-    })();
-    kiwi.Variable = Variable;
-    /**
-     * The internal variable id counter.
-     * @private
-     */
-    var VarId = 0;
-})(kiwi || (kiwi = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-/// <reference path="../thirdparty/tsu.d.ts"/>
-/// <reference path="maptype.ts"/>
-/// <reference path="variable.ts"/>
-var kiwi;
-(function (kiwi) {
-    /**
-     * An expression of variable terms and a constant.
-     *
-     * The constructor accepts an arbitrary number of parameters,
-     * each of which must be one of the following types:
-     *  - number
-     *  - Variable
-     *  - Expression
-     *  - 2-tuple of [number, Variable|Expression]
-     *
-     * The parameters are summed. The tuples are multiplied.
-     *
-     * @class
-     * @param {...(number|Variable|Expression|Array)} args
-     */
-    var Expression = (function () {
-        function Expression() {
-            var parsed = parseArgs(arguments);
-            this._terms = parsed.terms;
-            this._constant = parsed.constant;
-        }
-        /**
-         * Returns the mapping of terms in the expression.
-         *
-         * This *must* be treated as const.
-         * @private
-         */
-        Expression.prototype.terms = function () {
-            return this._terms;
-        };
-        /**
-         * Returns the constant of the expression.
-         * @private
-         */
-        Expression.prototype.constant = function () {
-            return this._constant;
-        };
-        /**
-         * Returns the computed value of the expression.
-         *
-         * @private
-         * @return {Number} computed value of the expression
-         */
-        Expression.prototype.value = function () {
-            var result = this._constant;
-            for (var i = 0, n = this._terms.size(); i < n; i++) {
-                var pair = this._terms.itemAt(i);
-                result += pair.first.value() * pair.second;
-            }
-            return result;
-        };
-        /**
-         * Creates a new Expression by adding a number, variable or expression
-         * to the expression.
-         *
-         * @param {Number|Variable|Expression} value Value to add.
-         * @return {Expression} expression
-         */
-        Expression.prototype.plus = function (value) {
-            return new Expression(this, value);
-        };
-        /**
-         * Creates a new Expression by substracting a number, variable or expression
-         * from the expression.
-         *
-         * @param {Number|Variable|Expression} value Value to substract.
-         * @return {Expression} expression
-         */
-        Expression.prototype.minus = function (value) {
-            return new Expression(this, typeof value === 'number' ? -value : [-1, value]);
-        };
-        /**
-         * Creates a new Expression by multiplying with a fixed number.
-         *
-         * @param {Number} coefficient Coefficient to multiply with.
-         * @return {Expression} expression
-         */
-        Expression.prototype.multiply = function (coefficient) {
-            return new Expression([coefficient, this]);
-        };
-        /**
-         * Creates a new Expression by dividing with a fixed number.
-         *
-         * @param {Number} coefficient Coefficient to divide by.
-         * @return {Expression} expression
-         */
-        Expression.prototype.divide = function (coefficient) {
-            return new Expression([1 / coefficient, this]);
-        };
-        return Expression;
-    })();
-    kiwi.Expression = Expression;
-    /**
-     * An internal argument parsing function.
-     * @private
-     */
-    function parseArgs(args) {
-        var constant = 0.0;
-        var factory = function () { return 0.0; };
-        var terms = kiwi.createMap(kiwi.Variable.Compare);
-        for (var i = 0, n = args.length; i < n; ++i) {
-            var item = args[i];
-            if (typeof item === "number") {
-                constant += item;
-            }
-            else if (item instanceof kiwi.Variable) {
-                terms.setDefault(item, factory).second += 1.0;
-            }
-            else if (item instanceof Expression) {
-                constant += item.constant();
-                var terms2 = item.terms();
-                for (var j = 0, k = terms2.size(); j < k; j++) {
-                    var termPair = terms2.itemAt(j);
-                    terms.setDefault(termPair.first, factory).second += termPair.second;
-                }
-            }
-            else if (item instanceof Array) {
-                if (item.length !== 2) {
-                    throw new Error("array must have length 2");
-                }
-                var value = item[0];
-                var value2 = item[1];
-                if (typeof value !== "number") {
-                    throw new Error("array item 0 must be a number");
-                }
-                if (value2 instanceof kiwi.Variable) {
-                    terms.setDefault(value2, factory).second += value;
-                }
-                else if (value2 instanceof Expression) {
-                    constant += (value2.constant() * value);
-                    var terms2 = value2.terms();
-                    for (var j = 0, k = terms2.size(); j < k; j++) {
-                        var termPair = terms2.itemAt(j);
-                        terms.setDefault(termPair.first, factory).second += (termPair.second * value);
-                    }
-                }
-                else {
-                    throw new Error("array item 1 must be a variable or expression");
-                }
-            }
-            else {
-                throw new Error("invalid Expression argument: " + item);
-            }
-        }
-        return { terms: terms, constant: constant };
-    }
-})(kiwi || (kiwi = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-var kiwi;
-(function (kiwi) {
-    /**
-     * @class Strength
-     */
-    var Strength;
-    (function (Strength) {
-        /**
-         * Create a new symbolic strength.
-         *
-         * @param {Number} a strong
-         * @param {Number} b medium
-         * @param {Number} c weak
-         * @param {Number} [w] weight
-         * @return {Number} strength
-         */
-        function create(a, b, c, w) {
-            if (w === void 0) { w = 1.0; }
-            var result = 0.0;
-            result += Math.max(0.0, Math.min(1000.0, a * w)) * 1000000.0;
-            result += Math.max(0.0, Math.min(1000.0, b * w)) * 1000.0;
-            result += Math.max(0.0, Math.min(1000.0, c * w));
-            return result;
-        }
-        Strength.create = create;
-        /**
-         * The 'required' symbolic strength.
-         */
-        Strength.required = create(1000.0, 1000.0, 1000.0);
-        /**
-         * The 'strong' symbolic strength.
-         */
-        Strength.strong = create(1.0, 0.0, 0.0);
-        /**
-         * The 'medium' symbolic strength.
-         */
-        Strength.medium = create(0.0, 1.0, 0.0);
-        /**
-         * The 'weak' symbolic strength.
-         */
-        Strength.weak = create(0.0, 0.0, 1.0);
-        /**
-         * Clip a symbolic strength to the allowed min and max.
-         * @private
-         */
-        function clip(value) {
-            return Math.max(0.0, Math.min(Strength.required, value));
-        }
-        Strength.clip = clip;
-    })(Strength = kiwi.Strength || (kiwi.Strength = {}));
-})(kiwi || (kiwi = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-/// <reference path="../thirdparty/tsu.d.ts"/>
-/// <reference path="constraint.ts"/>
-/// <reference path="expression.ts"/>
-/// <reference path="maptype.ts"/>
-/// <reference path="strength.ts"/>
-/// <reference path="variable.ts"/>
-var kiwi;
-(function (kiwi) {
-    /**
-     * The constraint solver class.
-     *
-     * @class
-     */
-    var Solver = (function () {
-        /**
-         * Construct a new Solver.
-         */
-        function Solver() {
-            this._cnMap = createCnMap();
-            this._rowMap = createRowMap();
-            this._varMap = createVarMap();
-            this._editMap = createEditMap();
-            this._infeasibleRows = [];
-            this._objective = new Row();
-            this._artificial = null;
-            this._idTick = 0;
-        }
-        /**
-         * Creates and add a constraint to the solver.
-         *
-         * @param {Expression|Variable} lhs Left hand side of the expression
-         * @param {Operator} operator Operator
-         * @param {Expression|Variable|Number} rhs Right hand side of the expression
-         * @param {Number} [strength=Strength.required] Strength
-         */
-        Solver.prototype.createConstraint = function (lhs, operator, rhs, strength) {
-            if (strength === void 0) { strength = kiwi.Strength.required; }
-            var cn = new kiwi.Constraint(lhs, operator, rhs, strength);
-            this.addConstraint(cn);
-            return cn;
-        };
-        /**
-         * Add a constraint to the solver.
-         *
-         * @param {Constraint} constraint Constraint to add to the solver
-         */
-        Solver.prototype.addConstraint = function (constraint) {
-            var cnPair = this._cnMap.find(constraint);
-            if (cnPair !== undefined) {
-                throw new Error("duplicate constraint");
-            }
-            // Creating a row causes symbols to be reserved for the variables
-            // in the constraint. If this method exits with an exception,
-            // then its possible those variables will linger in the var map.
-            // Since its likely that those variables will be used in other
-            // constraints and since exceptional conditions are uncommon,
-            // i'm not too worried about aggressive cleanup of the var map.
-            var data = this._createRow(constraint);
-            var row = data.row;
-            var tag = data.tag;
-            var subject = this._chooseSubject(row, tag);
-            // If chooseSubject couldnt find a valid entering symbol, one
-            // last option is available if the entire row is composed of
-            // dummy variables. If the constant of the row is zero, then
-            // this represents redundant constraints and the new dummy
-            // marker can enter the basis. If the constant is non-zero,
-            // then it represents an unsatisfiable constraint.
-            if (subject.type() === 0 /* Invalid */ && row.allDummies()) {
-                if (!nearZero(row.constant())) {
-                    throw new Error("unsatisfiable constraint");
-                }
-                else {
-                    subject = tag.marker;
-                }
-            }
-            // If an entering symbol still isn't found, then the row must
-            // be added using an artificial variable. If that fails, then
-            // the row represents an unsatisfiable constraint.
-            if (subject.type() === 0 /* Invalid */) {
-                if (!this._addWithArtificialVariable(row)) {
-                    throw new Error("unsatisfiable constraint");
-                }
-            }
-            else {
-                row.solveFor(subject);
-                this._substitute(subject, row);
-                this._rowMap.insert(subject, row);
-            }
-            this._cnMap.insert(constraint, tag);
-            // Optimizing after each constraint is added performs less
-            // aggregate work due to a smaller average system size. It
-            // also ensures the solver remains in a consistent state.
-            this._optimize(this._objective);
-        };
-        /**
-         * Remove a constraint from the solver.
-         *
-         * @param {Constraint} constraint Constraint to remove from the solver
-         */
-        Solver.prototype.removeConstraint = function (constraint) {
-            var cnPair = this._cnMap.erase(constraint);
-            if (cnPair === undefined) {
-                throw new Error("unknown constraint");
-            }
-            // Remove the error effects from the objective function
-            // *before* pivoting, or substitutions into the objective
-            // will lead to incorrect solver results.
-            this._removeConstraintEffects(constraint, cnPair.second);
-            // If the marker is basic, simply drop the row. Otherwise,
-            // pivot the marker into the basis and then drop the row.
-            var marker = cnPair.second.marker;
-            var rowPair = this._rowMap.erase(marker);
-            if (rowPair === undefined) {
-                var leaving = this._getMarkerLeavingSymbol(marker);
-                if (leaving.type() === 0 /* Invalid */) {
-                    throw new Error("failed to find leaving row");
-                }
-                rowPair = this._rowMap.erase(leaving);
-                rowPair.second.solveForEx(leaving, marker);
-                this._substitute(marker, rowPair.second);
-            }
-            // Optimizing after each constraint is removed ensures that the
-            // solver remains consistent. It makes the solver api easier to
-            // use at a small tradeoff for speed.
-            this._optimize(this._objective);
-        };
-        /**
-         * Test whether the solver contains the constraint.
-         *
-         * @param {Constraint} constraint Constraint to test for
-         * @return {Bool} true or false
-         */
-        Solver.prototype.hasConstraint = function (constraint) {
-            return this._cnMap.contains(constraint);
-        };
-        /**
-         * Add an edit variable to the solver.
-         *
-         * @param {Variable} variable Edit variable to add to the solver
-         * @param {Number} strength Strength, should be less than `Strength.required`
-         */
-        Solver.prototype.addEditVariable = function (variable, strength) {
-            var editPair = this._editMap.find(variable);
-            if (editPair !== undefined) {
-                throw new Error("duplicate edit variable");
-            }
-            strength = kiwi.Strength.clip(strength);
-            if (strength === kiwi.Strength.required) {
-                throw new Error("bad required strength");
-            }
-            var expr = new kiwi.Expression(variable);
-            var cn = new kiwi.Constraint(expr, 2 /* Eq */, undefined, strength);
-            this.addConstraint(cn);
-            var tag = this._cnMap.find(cn).second;
-            var info = { tag: tag, constraint: cn, constant: 0.0 };
-            this._editMap.insert(variable, info);
-        };
-        /**
-         * Remove an edit variable from the solver.
-         *
-         * @param {Variable} variable Edit variable to remove from the solver
-         */
-        Solver.prototype.removeEditVariable = function (variable) {
-            var editPair = this._editMap.erase(variable);
-            if (editPair === undefined) {
-                throw new Error("unknown edit variable");
-            }
-            this.removeConstraint(editPair.second.constraint);
-        };
-        /**
-         * Test whether the solver contains the edit variable.
-         *
-         * @param {Variable} variable Edit variable to test for
-         * @return {Bool} true or false
-         */
-        Solver.prototype.hasEditVariable = function (variable) {
-            return this._editMap.contains(variable);
-        };
-        /**
-         * Suggest the value of an edit variable.
-         *
-         * @param {Variable} variable Edit variable to suggest a value for
-         * @param {Number} value Suggested value
-         */
-        Solver.prototype.suggestValue = function (variable, value) {
-            var editPair = this._editMap.find(variable);
-            if (editPair === undefined) {
-                throw new Error("unknown edit variable");
-            }
-            var rows = this._rowMap;
-            var info = editPair.second;
-            var delta = value - info.constant;
-            info.constant = value;
-            // Check first if the positive error variable is basic.
-            var marker = info.tag.marker;
-            var rowPair = rows.find(marker);
-            if (rowPair !== undefined) {
-                if (rowPair.second.add(-delta) < 0.0) {
-                    this._infeasibleRows.push(marker);
-                }
-                this._dualOptimize();
-                return;
-            }
-            // Check next if the negative error variable is basic.
-            var other = info.tag.other;
-            var rowPair = rows.find(other);
-            if (rowPair !== undefined) {
-                if (rowPair.second.add(delta) < 0.0) {
-                    this._infeasibleRows.push(other);
-                }
-                this._dualOptimize();
-                return;
-            }
-            for (var i = 0, n = rows.size(); i < n; ++i) {
-                var rowPair = rows.itemAt(i);
-                var row = rowPair.second;
-                var coeff = row.coefficientFor(marker);
-                if (coeff !== 0.0 && row.add(delta * coeff) < 0.0 && rowPair.first.type() !== 1 /* External */) {
-                    this._infeasibleRows.push(rowPair.first);
-                }
-            }
-            this._dualOptimize();
-        };
-        /**
-         * Update the values of the variables.
-         */
-        Solver.prototype.updateVariables = function () {
-            var vars = this._varMap;
-            var rows = this._rowMap;
-            for (var i = 0, n = vars.size(); i < n; ++i) {
-                var pair = vars.itemAt(i);
-                var rowPair = rows.find(pair.second);
-                if (rowPair !== undefined) {
-                    pair.first.setValue(rowPair.second.constant());
-                }
-                else {
-                    pair.first.setValue(0.0);
-                }
-            }
-        };
-        /**
-         * Get the symbol for the given variable.
-         *
-         * If a symbol does not exist for the variable, one will be created.
-         * @private
-         */
-        Solver.prototype._getVarSymbol = function (variable) {
-            var _this = this;
-            var factory = function () { return _this._makeSymbol(1 /* External */); };
-            return this._varMap.setDefault(variable, factory).second;
-        };
-        /**
-         * Create a new Row object for the given constraint.
-         *
-         * The terms in the constraint will be converted to cells in the row.
-         * Any term in the constraint with a coefficient of zero is ignored.
-         * This method uses the `_getVarSymbol` method to get the symbol for
-         * the variables added to the row. If the symbol for a given cell
-         * variable is basic, the cell variable will be substituted with the
-         * basic row.
-         *
-         * The necessary slack and error variables will be added to the row.
-         * If the constant for the row is negative, the sign for the row
-         * will be inverted so the constant becomes positive.
-         *
-         * Returns the created Row and the tag for tracking the constraint.
-         * @private
-         */
-        Solver.prototype._createRow = function (constraint) {
-            var expr = constraint.expression();
-            var row = new Row(expr.constant());
-            // Substitute the current basic variables into the row.
-            var terms = expr.terms();
-            for (var i = 0, n = terms.size(); i < n; ++i) {
-                var termPair = terms.itemAt(i);
-                if (!nearZero(termPair.second)) {
-                    var symbol = this._getVarSymbol(termPair.first);
-                    var basicPair = this._rowMap.find(symbol);
-                    if (basicPair !== undefined) {
-                        row.insertRow(basicPair.second, termPair.second);
-                    }
-                    else {
-                        row.insertSymbol(symbol, termPair.second);
-                    }
-                }
-            }
-            // Add the necessary slack, error, and dummy variables.
-            var objective = this._objective;
-            var strength = constraint.strength();
-            var tag = { marker: INVALID_SYMBOL, other: INVALID_SYMBOL };
-            switch (constraint.op()) {
-                case 0 /* Le */:
-                case 1 /* Ge */:
-                    {
-                        var coeff = constraint.op() === 0 /* Le */ ? 1.0 : -1.0;
-                        var slack = this._makeSymbol(2 /* Slack */);
-                        tag.marker = slack;
-                        row.insertSymbol(slack, coeff);
-                        if (strength < kiwi.Strength.required) {
-                            var error = this._makeSymbol(3 /* Error */);
-                            tag.other = error;
-                            row.insertSymbol(error, -coeff);
-                            objective.insertSymbol(error, strength);
-                        }
-                        break;
-                    }
-                case 2 /* Eq */:
-                    {
-                        if (strength < kiwi.Strength.required) {
-                            var errplus = this._makeSymbol(3 /* Error */);
-                            var errminus = this._makeSymbol(3 /* Error */);
-                            tag.marker = errplus;
-                            tag.other = errminus;
-                            row.insertSymbol(errplus, -1.0); // v = eplus - eminus
-                            row.insertSymbol(errminus, 1.0); // v - eplus + eminus = 0
-                            objective.insertSymbol(errplus, strength);
-                            objective.insertSymbol(errminus, strength);
-                        }
-                        else {
-                            var dummy = this._makeSymbol(4 /* Dummy */);
-                            tag.marker = dummy;
-                            row.insertSymbol(dummy);
-                        }
-                        break;
-                    }
-            }
-            // Ensure the row has a positive constant.
-            if (row.constant() < 0.0) {
-                row.reverseSign();
-            }
-            return { row: row, tag: tag };
-        };
-        /**
-         * Choose the subject for solving for the row.
-         *
-         * This method will choose the best subject for using as the solve
-         * target for the row. An invalid symbol will be returned if there
-         * is no valid target.
-         *
-         * The symbols are chosen according to the following precedence:
-         *
-         * 1) The first symbol representing an external variable.
-         * 2) A negative slack or error tag variable.
-         *
-         * If a subject cannot be found, an invalid symbol will be returned.
-         *
-         * @private
-         */
-        Solver.prototype._chooseSubject = function (row, tag) {
-            var cells = row.cells();
-            for (var i = 0, n = cells.size(); i < n; ++i) {
-                var pair = cells.itemAt(i);
-                if (pair.first.type() === 1 /* External */) {
-                    return pair.first;
-                }
-            }
-            var type = tag.marker.type();
-            if (type === 2 /* Slack */ || type === 3 /* Error */) {
-                if (row.coefficientFor(tag.marker) < 0.0) {
-                    return tag.marker;
-                }
-            }
-            type = tag.other.type();
-            if (type === 2 /* Slack */ || type === 3 /* Error */) {
-                if (row.coefficientFor(tag.other) < 0.0) {
-                    return tag.other;
-                }
-            }
-            return INVALID_SYMBOL;
-        };
-        /**
-         * Add the row to the tableau using an artificial variable.
-         *
-         * This will return false if the constraint cannot be satisfied.
-         *
-         * @private
-         */
-        Solver.prototype._addWithArtificialVariable = function (row) {
-            // Create and add the artificial variable to the tableau.
-            var art = this._makeSymbol(2 /* Slack */);
-            this._rowMap.insert(art, row.copy());
-            this._artificial = row.copy();
-            // Optimize the artificial objective. This is successful
-            // only if the artificial objective is optimized to zero.
-            this._optimize(this._artificial);
-            var success = nearZero(this._artificial.constant());
-            this._artificial = null;
-            // If the artificial variable is basic, pivot the row so that
-            // it becomes non-basic. If the row is constant, exit early.
-            var pair = this._rowMap.erase(art);
-            if (pair !== undefined) {
-                var basicRow = pair.second;
-                if (basicRow.isConstant()) {
-                    return success;
-                }
-                var entering = this._anyPivotableSymbol(basicRow);
-                if (entering.type() === 0 /* Invalid */) {
-                    return false; // unsatisfiable (will this ever happen?)
-                }
-                basicRow.solveForEx(art, entering);
-                this._substitute(entering, basicRow);
-                this._rowMap.insert(entering, basicRow);
-            }
-            // Remove the artificial variable from the tableau.
-            var rows = this._rowMap;
-            for (var i = 0, n = rows.size(); i < n; ++i) {
-                rows.itemAt(i).second.removeSymbol(art);
-            }
-            this._objective.removeSymbol(art);
-            return success;
-        };
-        /**
-         * Substitute the parametric symbol with the given row.
-         *
-         * This method will substitute all instances of the parametric symbol
-         * in the tableau and the objective function with the given row.
-         *
-         * @private
-         */
-        Solver.prototype._substitute = function (symbol, row) {
-            var rows = this._rowMap;
-            for (var i = 0, n = rows.size(); i < n; ++i) {
-                var pair = rows.itemAt(i);
-                pair.second.substitute(symbol, row);
-                if (pair.second.constant() < 0.0 && pair.first.type() !== 1 /* External */) {
-                    this._infeasibleRows.push(pair.first);
-                }
-            }
-            this._objective.substitute(symbol, row);
-            if (this._artificial) {
-                this._artificial.substitute(symbol, row);
-            }
-        };
-        /**
-         * Optimize the system for the given objective function.
-         *
-         * This method performs iterations of Phase 2 of the simplex method
-         * until the objective function reaches a minimum.
-         *
-         * @private
-         */
-        Solver.prototype._optimize = function (objective) {
-            while (true) {
-                var entering = this._getEnteringSymbol(objective);
-                if (entering.type() === 0 /* Invalid */) {
-                    return;
-                }
-                var leaving = this._getLeavingSymbol(entering);
-                if (leaving.type() === 0 /* Invalid */) {
-                    throw new Error("the objective is unbounded");
-                }
-                // pivot the entering symbol into the basis
-                var row = this._rowMap.erase(leaving).second;
-                row.solveForEx(leaving, entering);
-                this._substitute(entering, row);
-                this._rowMap.insert(entering, row);
-            }
-        };
-        /**
-         * Optimize the system using the dual of the simplex method.
-         *
-         * The current state of the system should be such that the objective
-         * function is optimal, but not feasible. This method will perform
-         * an iteration of the dual simplex method to make the solution both
-         * optimal and feasible.
-         *
-         * @private
-         */
-        Solver.prototype._dualOptimize = function () {
-            var rows = this._rowMap;
-            var infeasible = this._infeasibleRows;
-            while (infeasible.length !== 0) {
-                var leaving = infeasible.pop();
-                var pair = rows.find(leaving);
-                if (pair !== undefined && pair.second.constant() < 0.0) {
-                    var entering = this._getDualEnteringSymbol(pair.second);
-                    if (entering.type() === 0 /* Invalid */) {
-                        throw new Error("dual optimize failed");
-                    }
-                    // pivot the entering symbol into the basis
-                    var row = pair.second;
-                    rows.erase(leaving);
-                    row.solveForEx(leaving, entering);
-                    this._substitute(entering, row);
-                    rows.insert(entering, row);
-                }
-            }
-        };
-        /**
-         * Compute the entering variable for a pivot operation.
-         *
-         * This method will return first symbol in the objective function which
-         * is non-dummy and has a coefficient less than zero. If no symbol meets
-         * the criteria, it means the objective function is at a minimum, and an
-         * invalid symbol is returned.
-         *
-         * @private
-         */
-        Solver.prototype._getEnteringSymbol = function (objective) {
-            var cells = objective.cells();
-            for (var i = 0, n = cells.size(); i < n; ++i) {
-                var pair = cells.itemAt(i);
-                var symbol = pair.first;
-                if (pair.second < 0.0 && symbol.type() !== 4 /* Dummy */) {
-                    return symbol;
-                }
-            }
-            return INVALID_SYMBOL;
-        };
-        /**
-         * Compute the entering symbol for the dual optimize operation.
-         *
-         * This method will return the symbol in the row which has a positive
-         * coefficient and yields the minimum ratio for its respective symbol
-         * in the objective function. The provided row *must* be infeasible.
-         * If no symbol is found which meats the criteria, an invalid symbol
-         * is returned.
-         *
-         * @private
-         */
-        Solver.prototype._getDualEnteringSymbol = function (row) {
-            var ratio = Number.MAX_VALUE;
-            var entering = INVALID_SYMBOL;
-            var cells = row.cells();
-            for (var i = 0, n = cells.size(); i < n; ++i) {
-                var pair = cells.itemAt(i);
-                var symbol = pair.first;
-                var c = pair.second;
-                if (c > 0.0 && symbol.type() !== 4 /* Dummy */) {
-                    var coeff = this._objective.coefficientFor(symbol);
-                    var r = coeff / c;
-                    if (r < ratio) {
-                        ratio = r;
-                        entering = symbol;
-                    }
-                }
-            }
-            return entering;
-        };
-        /**
-         * Compute the symbol for pivot exit row.
-         *
-         * This method will return the symbol for the exit row in the row
-         * map. If no appropriate exit symbol is found, an invalid symbol
-         * will be returned. This indicates that the objective function is
-         * unbounded.
-         *
-         * @private
-         */
-        Solver.prototype._getLeavingSymbol = function (entering) {
-            var ratio = Number.MAX_VALUE;
-            var found = INVALID_SYMBOL;
-            var rows = this._rowMap;
-            for (var i = 0, n = rows.size(); i < n; ++i) {
-                var pair = rows.itemAt(i);
-                var symbol = pair.first;
-                if (symbol.type() !== 1 /* External */) {
-                    var row = pair.second;
-                    var temp = row.coefficientFor(entering);
-                    if (temp < 0.0) {
-                        var temp_ratio = -row.constant() / temp;
-                        if (temp_ratio < ratio) {
-                            ratio = temp_ratio;
-                            found = symbol;
-                        }
-                    }
-                }
-            }
-            return found;
-        };
-        /**
-         * Compute the leaving symbol for a marker variable.
-         *
-         * This method will return a symbol corresponding to a basic row
-         * which holds the given marker variable. The row will be chosen
-         * according to the following precedence:
-         *
-         * 1) The row with a restricted basic varible and a negative coefficient
-         *    for the marker with the smallest ratio of -constant / coefficient.
-         *
-         * 2) The row with a restricted basic variable and the smallest ratio
-         *    of constant / coefficient.
-         *
-         * 3) The last unrestricted row which contains the marker.
-         *
-         * If the marker does not exist in any row, an invalid symbol will be
-         * returned. This indicates an internal solver error since the marker
-         * *should* exist somewhere in the tableau.
-         *
-         * @private
-         */
-        Solver.prototype._getMarkerLeavingSymbol = function (marker) {
-            var dmax = Number.MAX_VALUE;
-            var r1 = dmax;
-            var r2 = dmax;
-            var invalid = INVALID_SYMBOL;
-            var first = invalid;
-            var second = invalid;
-            var third = invalid;
-            var rows = this._rowMap;
-            for (var i = 0, n = rows.size(); i < n; ++i) {
-                var pair = rows.itemAt(i);
-                var row = pair.second;
-                var c = row.coefficientFor(marker);
-                if (c === 0.0) {
-                    continue;
-                }
-                var symbol = pair.first;
-                if (symbol.type() === 1 /* External */) {
-                    third = symbol;
-                }
-                else if (c < 0.0) {
-                    var r = -row.constant() / c;
-                    if (r < r1) {
-                        r1 = r;
-                        first = symbol;
-                    }
-                }
-                else {
-                    var r = row.constant() / c;
-                    if (r < r2) {
-                        r2 = r;
-                        second = symbol;
-                    }
-                }
-            }
-            if (first !== invalid) {
-                return first;
-            }
-            if (second !== invalid) {
-                return second;
-            }
-            return third;
-        };
-        /**
-         * Remove the effects of a constraint on the objective function.
-         *
-         * @private
-         */
-        Solver.prototype._removeConstraintEffects = function (cn, tag) {
-            if (tag.marker.type() === 3 /* Error */) {
-                this._removeMarkerEffects(tag.marker, cn.strength());
-            }
-            if (tag.other.type() === 3 /* Error */) {
-                this._removeMarkerEffects(tag.other, cn.strength());
-            }
-        };
-        /**
-         * Remove the effects of an error marker on the objective function.
-         *
-         * @private
-         */
-        Solver.prototype._removeMarkerEffects = function (marker, strength) {
-            var pair = this._rowMap.find(marker);
-            if (pair !== undefined) {
-                this._objective.insertRow(pair.second, -strength);
-            }
-            else {
-                this._objective.insertSymbol(marker, -strength);
-            }
-        };
-        /**
-         * Get the first Slack or Error symbol in the row.
-         *
-         * If no such symbol is present, an invalid symbol will be returned.
-         *
-         * @private
-         */
-        Solver.prototype._anyPivotableSymbol = function (row) {
-            var cells = row.cells();
-            for (var i = 0, n = cells.size(); i < n; ++i) {
-                var pair = cells.itemAt(i);
-                var type = pair.first.type();
-                if (type === 2 /* Slack */ || type === 3 /* Error */) {
-                    return pair.first;
-                }
-            }
-            return INVALID_SYMBOL;
-        };
-        /**
-         * Returns a new Symbol of the given type.
-         *
-         * @private
-         */
-        Solver.prototype._makeSymbol = function (type) {
-            return new Symbol(type, this._idTick++);
-        };
-        return Solver;
-    })();
-    kiwi.Solver = Solver;
-    /**
-     * Test whether a value is approximately zero.
-     * @private
-     */
-    function nearZero(value) {
-        var eps = 1.0e-8;
-        return value < 0.0 ? -value < eps : value < eps;
-    }
-    /**
-     * An internal function for creating a constraint map.
-     * @private
-     */
-    function createCnMap() {
-        return kiwi.createMap(kiwi.Constraint.Compare);
-    }
-    /**
-     * An internal function for creating a row map.
-     * @private
-     */
-    function createRowMap() {
-        return kiwi.createMap(Symbol.Compare);
-    }
-    /**
-     * An internal function for creating a variable map.
-     * @private
-     */
-    function createVarMap() {
-        return kiwi.createMap(kiwi.Variable.Compare);
-    }
-    /**
-     * An internal function for creating an edit map.
-     * @private
-     */
-    function createEditMap() {
-        return kiwi.createMap(kiwi.Variable.Compare);
-    }
-    /**
-     * An enum defining the available symbol types.
-     * @private
-     */
-    var SymbolType;
-    (function (SymbolType) {
-        SymbolType[SymbolType["Invalid"] = 0] = "Invalid";
-        SymbolType[SymbolType["External"] = 1] = "External";
-        SymbolType[SymbolType["Slack"] = 2] = "Slack";
-        SymbolType[SymbolType["Error"] = 3] = "Error";
-        SymbolType[SymbolType["Dummy"] = 4] = "Dummy";
-    })(SymbolType || (SymbolType = {}));
-    /**
-     * An internal class representing a symbol in the solver.
-     * @private
-     */
-    var Symbol = (function () {
-        /**
-         * Construct a new Symbol
-         *
-         * @param [type] The type of the symbol.
-         * @param [id] The unique id number of the symbol.
-         */
-        function Symbol(type, id) {
-            this._id = id;
-            this._type = type;
-        }
-        /**
-         * The static Symbol comparison function.
-         */
-        Symbol.Compare = function (a, b) {
-            return a.id() - b.id();
-        };
-        /**
-         * Returns the unique id number of the symbol.
-         */
-        Symbol.prototype.id = function () {
-            return this._id;
-        };
-        /**
-         * Returns the type of the symbol.
-         */
-        Symbol.prototype.type = function () {
-            return this._type;
-        };
-        return Symbol;
-    })();
-    /**
-     * A static invalid symbol
-     * @private
-     */
-    var INVALID_SYMBOL = new Symbol(0 /* Invalid */, -1);
-    /**
-     * An internal row class used by the solver.
-     * @private
-     */
-    var Row = (function () {
-        /**
-         * Construct a new Row.
-         */
-        function Row(constant) {
-            if (constant === void 0) { constant = 0.0; }
-            this._cellMap = kiwi.createMap(Symbol.Compare);
-            this._constant = constant;
-        }
-        /**
-         * Returns the mapping of symbols to coefficients.
-         */
-        Row.prototype.cells = function () {
-            return this._cellMap;
-        };
-        /**
-         * Returns the constant for the row.
-         */
-        Row.prototype.constant = function () {
-            return this._constant;
-        };
-        /**
-         * Returns true if the row is a constant value.
-         */
-        Row.prototype.isConstant = function () {
-            return this._cellMap.empty();
-        };
-        /**
-         * Returns true if the Row has all dummy symbols.
-         */
-        Row.prototype.allDummies = function () {
-            var cells = this._cellMap;
-            for (var i = 0, n = cells.size(); i < n; ++i) {
-                var pair = cells.itemAt(i);
-                if (pair.first.type() !== 4 /* Dummy */) {
-                    return false;
-                }
-            }
-            return true;
-        };
-        /**
-         * Create a copy of the row.
-         */
-        Row.prototype.copy = function () {
-            var theCopy = new Row(this._constant);
-            theCopy._cellMap = this._cellMap.copy();
-            return theCopy;
-        };
-        /**
-         * Add a constant value to the row constant.
-         *
-         * Returns the new value of the constant.
-         */
-        Row.prototype.add = function (value) {
-            return this._constant += value;
-        };
-        /**
-         * Insert the symbol into the row with the given coefficient.
-         *
-         * If the symbol already exists in the row, the coefficient
-         * will be added to the existing coefficient. If the resulting
-         * coefficient is zero, the symbol will be removed from the row.
-         */
-        Row.prototype.insertSymbol = function (symbol, coefficient) {
-            if (coefficient === void 0) { coefficient = 1.0; }
-            var pair = this._cellMap.setDefault(symbol, function () { return 0.0; });
-            if (nearZero(pair.second += coefficient)) {
-                this._cellMap.erase(symbol);
-            }
-        };
-        /**
-         * Insert a row into this row with a given coefficient.
-         *
-         * The constant and the cells of the other row will be
-         * multiplied by the coefficient and added to this row. Any
-         * cell with a resulting coefficient of zero will be removed
-         * from the row.
-         */
-        Row.prototype.insertRow = function (other, coefficient) {
-            if (coefficient === void 0) { coefficient = 1.0; }
-            this._constant += other._constant * coefficient;
-            var cells = other._cellMap;
-            for (var i = 0, n = cells.size(); i < n; ++i) {
-                var pair = cells.itemAt(i);
-                this.insertSymbol(pair.first, pair.second * coefficient);
-            }
-        };
-        /**
-         * Remove a symbol from the row.
-         */
-        Row.prototype.removeSymbol = function (symbol) {
-            this._cellMap.erase(symbol);
-        };
-        /**
-         * Reverse the sign of the constant and cells in the row.
-         */
-        Row.prototype.reverseSign = function () {
-            this._constant = -this._constant;
-            var cells = this._cellMap;
-            for (var i = 0, n = cells.size(); i < n; ++i) {
-                var pair = cells.itemAt(i);
-                pair.second = -pair.second;
-            }
-        };
-        /**
-         * Solve the row for the given symbol.
-         *
-         * This method assumes the row is of the form
-         * a * x + b * y + c = 0 and (assuming solve for x) will modify
-         * the row to represent the right hand side of
-         * x = -b/a * y - c / a. The target symbol will be removed from
-         * the row, and the constant and other cells will be multiplied
-         * by the negative inverse of the target coefficient.
-         *
-         * The given symbol *must* exist in the row.
-         */
-        Row.prototype.solveFor = function (symbol) {
-            var cells = this._cellMap;
-            var pair = cells.erase(symbol);
-            var coeff = -1.0 / pair.second;
-            this._constant *= coeff;
-            for (var i = 0, n = cells.size(); i < n; ++i) {
-                cells.itemAt(i).second *= coeff;
-            }
-        };
-        /**
-         * Solve the row for the given symbols.
-         *
-         * This method assumes the row is of the form
-         * x = b * y + c and will solve the row such that
-         * y = x / b - c / b. The rhs symbol will be removed from the
-         * row, the lhs added, and the result divided by the negative
-         * inverse of the rhs coefficient.
-         *
-         * The lhs symbol *must not* exist in the row, and the rhs
-         * symbol must* exist in the row.
-         */
-        Row.prototype.solveForEx = function (lhs, rhs) {
-            this.insertSymbol(lhs, -1.0);
-            this.solveFor(rhs);
-        };
-        /**
-         * Returns the coefficient for the given symbol.
-         */
-        Row.prototype.coefficientFor = function (symbol) {
-            var pair = this._cellMap.find(symbol);
-            return pair !== undefined ? pair.second : 0.0;
-        };
-        /**
-         * Substitute a symbol with the data from another row.
-         *
-         * Given a row of the form a * x + b and a substitution of the
-         * form x = 3 * y + c the row will be updated to reflect the
-         * expression 3 * a * y + a * c + b.
-         *
-         * If the symbol does not exist in the row, this is a no-op.
-         */
-        Row.prototype.substitute = function (symbol, row) {
-            var pair = this._cellMap.erase(symbol);
-            if (pair !== undefined) {
-                this.insertRow(row, pair.second);
-            }
-        };
-        return Row;
-    })();
-})(kiwi || (kiwi = {}));
-/*-----------------------------------------------------------------------------
-| Copyright (c) 2014, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
-/// <reference path="constraint.ts"/>
-/// <reference path="expression.ts"/>
-/// <reference path="maptype.ts"/>
-/// <reference path="solver.ts"/>
-/// <reference path="strength.ts"/>
-/// <reference path="variable.ts"/>
 
-return kiwi;
-
-}));
+(function() {
+(function(a){"use strict";try{(function(){}).bind(a)}catch(b){Object.defineProperty(Function.prototype,"bind",{value:function(a){var b=this;return function(){return b.apply(a,arguments)}},enumerable:!1,configurable:!0,writable:!0})}var c=a.HTMLElement!==void 0,d=function(a){for(var b=null;a&&a!=Object.prototype;){if(a.tagName){b=a.tagName;break}a=a.prototype}return b||"div"},e=1e-8,f={},g=function(a,b){if(a&&b){if("function"==typeof a[b])return a[b];var c=a.prototype;if(c&&"function"==typeof c[b])return c[b];if(c!==Object.prototype&&c!==Function.prototype)return"function"==typeof a.__super__?g(a.__super__,b):void 0}},h=a.c={debug:!1,trace:!1,verbose:!1,traceAdded:!1,GC:!1,GEQ:1,LEQ:2,inherit:function(b){var e=null,g=null;b["extends"]&&(g=b["extends"],delete b["extends"]),b.initialize&&(e=b.initialize,delete b.initialize);var h=e||function(){};Object.defineProperty(h,"__super__",{value:g?g:Object,enumerable:!1,configurable:!0,writable:!1}),b._t&&(f[b._t]=h);var i=h.prototype=Object.create(g?g.prototype:Object.prototype);if(this.extend(i,b),c&&g&&g.prototype instanceof a.HTMLElement){var j=h,k=d(i),l=function(a){return a.__proto__=i,j.apply(a,arguments),i.created&&a.created(),i.decorate&&a.decorate(),a};this.extend(i,{upgrade:l}),h=function(){return l(a.document.createElement(k))},h.prototype=i,this.extend(h,{ctor:j})}return h},extend:function(a,b){return this.own(b,function(c){var d=Object.getOwnPropertyDescriptor(b,c);try{"function"==typeof d.get||"function"==typeof d.set?Object.defineProperty(a,c,d):"function"==typeof d.value||"_"===c.charAt(0)?(d.writable=!0,d.configurable=!0,d.enumerable=!1,Object.defineProperty(a,c,d)):a[c]=b[c]}catch(e){}}),a},own:function(b,c,d){return Object.getOwnPropertyNames(b).forEach(c,d||a),b},traceprint:function(a){h.verbose&&console.log(a)},fnenterprint:function(a){console.log("* "+a)},fnexitprint:function(a){console.log("- "+a)},assert:function(a,b){if(!a)throw new h.InternalError("Assertion failed: "+b)},plus:function(a,b){return a instanceof h.Expression||(a=new h.Expression(a)),b instanceof h.Expression||(b=new h.Expression(b)),a.plus(b)},minus:function(a,b){return a instanceof h.Expression||(a=new h.Expression(a)),b instanceof h.Expression||(b=new h.Expression(b)),a.minus(b)},times:function(a,b){return("number"==typeof a||a instanceof h.Variable)&&(a=new h.Expression(a)),("number"==typeof b||b instanceof h.Variable)&&(b=new h.Expression(b)),a.times(b)},divide:function(a,b){return("number"==typeof a||a instanceof h.Variable)&&(a=new h.Expression(a)),("number"==typeof b||b instanceof h.Variable)&&(b=new h.Expression(b)),a.divide(b)},approx:function(a,b){if(a===b)return!0;var c,d;return c=a instanceof h.Variable?a.value:a,d=b instanceof h.Variable?b.value:b,0==c?e>Math.abs(d):0==d?e>Math.abs(c):Math.abs(c-d)<Math.abs(c)*e},_inc:function(a){return function(){return a++}}(0),parseJSON:function(a){return JSON.parse(a,function(a,b){if("object"!=typeof b||"string"!=typeof b._t)return b;var c=b._t,d=f[c];if(c&&d){var e=g(d,"fromJSON");if(e)return e(b,d)}return b})}};"function"==typeof require&&"undefined"!=typeof module&&"undefined"==typeof load&&(a.exports=h)})(this),function(a){"use strict";var b=function(a){var b=a.hashCode?a.hashCode:""+a;return b},c=function(a,b){Object.keys(a).forEach(function(c){b[c]=a[c]})},d={};a.HashTable=a.inherit({initialize:function(){this.size=0,this._store={},this._keyStrMap={},this._deleted=0},set:function(a,c){var d=b(a);this._store.hasOwnProperty(d)||this.size++,this._store[d]=c,this._keyStrMap[d]=a},get:function(a){if(!this.size)return null;a=b(a);var c=this._store[a];return c!==void 0?this._store[a]:null},clear:function(){this.size=0,this._store={},this._keyStrMap={}},_compact:function(){var a={};c(this._store,a),this._store=a},_compactThreshold:100,_perhapsCompact:function(){this._size>64||this._deleted>this._compactThreshold&&(this._compact(),this._deleted=0)},"delete":function(a){a=b(a),this._store.hasOwnProperty(a)&&(this._deleted++,delete this._store[a],this.size>0&&this.size--)},each:function(a,b){if(this.size){this._perhapsCompact();var c=this._store,d=this._keyStrMap;Object.keys(this._store).forEach(function(e){a.call(b||null,d[e],c[e])},this)}},escapingEach:function(a,b){if(this.size){this._perhapsCompact();for(var c=this,e=this._store,f=this._keyStrMap,g=d,h=Object.keys(e),i=0;h.length>i;i++)if(function(d){c._store.hasOwnProperty(d)&&(g=a.call(b||null,f[d],e[d]))}(h[i]),g){if(void 0!==g.retval)return g;if(g.brk)break}}},clone:function(){var b=new a.HashTable;return this.size&&(b.size=this.size,c(this._store,b._store),c(this._keyStrMap,b._keyStrMap)),b},equals:function(b){if(b===this)return!0;if(!(b instanceof a.HashTable)||b._size!==this._size)return!1;for(var c=Object.keys(this._store),d=0;c.length>d;d++){var e=c[d];if(this._keyStrMap[e]!==b._keyStrMap[e]||this._store[e]!==b._store[e])return!1}return!0},toString:function(){var b="";return this.each(function(a,c){b+=a+" => "+c+"\n"}),b}})}(this.c||module.parent.exports||{}),function(a){"use strict";a.HashSet=a.inherit({_t:"c.HashSet",initialize:function(){this.storage=[],this.size=0},add:function(a){var b=this.storage;b.indexOf(a),-1==b.indexOf(a)&&b.push(a),this.size=this.storage.length},values:function(){return this.storage},has:function(a){var b=this.storage;return-1!=b.indexOf(a)},"delete":function(a){var b=this.storage.indexOf(a);return-1==b?null:(this.storage.splice(b,1)[0],this.size=this.storage.length,void 0)},clear:function(){this.storage.length=0},each:function(a,b){this.size&&this.storage.forEach(a,b)},escapingEach:function(a,b){this.size&&this.storage.forEach(a,b)},toString:function(){var a=this.size+" {",b=!0;return this.each(function(c){b?b=!1:a+=", ",a+=c}),a+="}\n"},toJSON:function(){var a=[];return this.each(function(b){a.push(b.toJSON())}),{_t:"c.HashSet",data:a}},fromJSON:function(b){var c=new a.HashSet;return b.data&&(c.size=b.data.length,c.storage=b.data),c}})}(this.c||module.parent.exports||{}),function(a){"use strict";a.Error=a.inherit({initialize:function(a){a&&(this._description=a)},_name:"c.Error",_description:"An error has occured in Cassowary",set description(a){this._description=a},get description(){return"("+this._name+") "+this._description},get message(){return this.description},toString:function(){return this.description}});var b=function(b,c){return a.inherit({"extends":a.Error,initialize:function(){a.Error.apply(this,arguments)},_name:b||"",_description:c||""})};a.ConstraintNotFound=b("c.ConstraintNotFound","Tried to remove a constraint never added to the tableu"),a.InternalError=b("c.InternalError"),a.NonExpression=b("c.NonExpression","The resulting expression would be non"),a.NotEnoughStays=b("c.NotEnoughStays","There are not enough stays to give specific values to every variable"),a.RequiredFailure=b("c.RequiredFailure","A required constraint cannot be satisfied"),a.TooDifficult=b("c.TooDifficult","The constraints are too difficult to solve")}(this.c||module.parent.exports||{}),function(a){"use strict";var b=1e3;a.SymbolicWeight=a.inherit({_t:"c.SymbolicWeight",initialize:function(){this.value=0;for(var a=1,c=arguments.length-1;c>=0;--c)this.value+=arguments[c]*a,a*=b},toJSON:function(){return{_t:this._t,value:this.value}}})}(this.c||module.parent.exports||{}),function(a){a.Strength=a.inherit({initialize:function(b,c,d,e){this.name=b,this.symbolicWeight=c instanceof a.SymbolicWeight?c:new a.SymbolicWeight(c,d,e)},get required(){return this===a.Strength.required},toString:function(){return this.name+(this.isRequired?"":":"+this.symbolicWeight)}}),a.Strength.required=new a.Strength("<Required>",1e3,1e3,1e3),a.Strength.strong=new a.Strength("strong",1,0,0),a.Strength.medium=new a.Strength("medium",0,1,0),a.Strength.weak=new a.Strength("weak",0,0,1)}(this.c||("undefined"!=typeof module?module.parent.exports.c:{})),function(a){"use strict";a.AbstractVariable=a.inherit({isDummy:!1,isExternal:!1,isPivotable:!1,isRestricted:!1,_init:function(b,c){this.hashCode=a._inc(),this.name=(c||"")+this.hashCode,b&&(b.name!==void 0&&(this.name=b.name),b.value!==void 0&&(this.value=b.value),b.prefix!==void 0&&(this._prefix=b.prefix))},_prefix:"",name:"",value:0,toJSON:function(){var a={};return this._t&&(a._t=this._t),this.name&&(a.name=this.name),this.value!==void 0&&(a.value=this.value),this._prefix&&(a._prefix=this._prefix),this._t&&(a._t=this._t),a},fromJSON:function(b,c){var d=new c;return a.extend(d,b),d},toString:function(){return this._prefix+"["+this.name+":"+this.value+"]"}}),a.Variable=a.inherit({_t:"c.Variable","extends":a.AbstractVariable,initialize:function(b){this._init(b,"v");var c=a.Variable._map;c&&(c[this.name]=this)},isExternal:!0}),a.DummyVariable=a.inherit({_t:"c.DummyVariable","extends":a.AbstractVariable,initialize:function(a){this._init(a,"d")},isDummy:!0,isRestricted:!0,value:"dummy"}),a.ObjectiveVariable=a.inherit({_t:"c.ObjectiveVariable","extends":a.AbstractVariable,initialize:function(a){this._init(a,"o")},value:"obj"}),a.SlackVariable=a.inherit({_t:"c.SlackVariable","extends":a.AbstractVariable,initialize:function(a){this._init(a,"s")},isPivotable:!0,isRestricted:!0,value:"slack"})}(this.c||module.parent.exports||{}),function(a){"use strict";a.Point=a.inherit({initialize:function(b,c,d){if(b instanceof a.Variable)this._x=b;else{var e={value:b};d&&(e.name="x"+d),this._x=new a.Variable(e)}if(c instanceof a.Variable)this._y=c;else{var f={value:c};d&&(f.name="y"+d),this._y=new a.Variable(f)}},get x(){return this._x},set x(b){b instanceof a.Variable?this._x=b:this._x.value=b},get y(){return this._y},set y(b){b instanceof a.Variable?this._y=b:this._y.value=b},toString:function(){return"("+this.x+", "+this.y+")"}})}(this.c||module.parent.exports||{}),function(a){"use strict";a.Expression=a.inherit({initialize:function(b,c,d){a.GC&&console.log("new c.Expression"),this.constant="number"!=typeof d||isNaN(d)?0:d,this.terms=new a.HashTable,b instanceof a.AbstractVariable?this.setVariable(b,"number"==typeof c?c:1):"number"==typeof b&&(isNaN(b)?console.trace():this.constant=b)},initializeFromHash:function(b,c){return a.verbose&&(console.log("*******************************"),console.log("clone c.initializeFromHash"),console.log("*******************************")),a.GC&&console.log("clone c.Expression"),this.constant=b,this.terms=c.clone(),this},multiplyMe:function(a){this.constant*=a;var b=this.terms;return b.each(function(c,d){b.set(c,d*a)}),this},clone:function(){a.verbose&&(console.log("*******************************"),console.log("clone c.Expression"),console.log("*******************************"));var b=new a.Expression;return b.initializeFromHash(this.constant,this.terms),b},times:function(b){if("number"==typeof b)return this.clone().multiplyMe(b);if(this.isConstant)return b.times(this.constant);if(b.isConstant)return this.times(b.constant);throw new a.NonExpression},plus:function(b){return b instanceof a.Expression?this.clone().addExpression(b,1):b instanceof a.Variable?this.clone().addVariable(b,1):void 0},minus:function(b){return b instanceof a.Expression?this.clone().addExpression(b,-1):b instanceof a.Variable?this.clone().addVariable(b,-1):void 0},divide:function(b){if("number"==typeof b){if(a.approx(b,0))throw new a.NonExpression;return this.times(1/b)}if(b instanceof a.Expression){if(!b.isConstant)throw new a.NonExpression;return this.times(1/b.constant)}},addExpression:function(b,c,d,e){return b instanceof a.AbstractVariable&&(b=new a.Expression(b),a.trace&&console.log("addExpression: Had to cast a var to an expression")),c=c||1,this.constant+=c*b.constant,b.terms.each(function(a,b){this.addVariable(a,b*c,d,e)},this),this},addVariable:function(b,c,d,e){null==c&&(c=1),a.trace&&console.log("c.Expression::addVariable():",b,c);var f=this.terms.get(b);if(f){var g=f+c;0==g||a.approx(g,0)?(e&&e.noteRemovedVariable(b,d),this.terms.delete(b)):this.setVariable(b,g)}else a.approx(c,0)||(this.setVariable(b,c),e&&e.noteAddedVariable(b,d));return this},setVariable:function(a,b){return this.terms.set(a,b),this},anyPivotableVariable:function(){if(this.isConstant)throw new a.InternalError("anyPivotableVariable called on a constant");var b=this.terms.escapingEach(function(a){return a.isPivotable?{retval:a}:void 0});return b&&void 0!==b.retval?b.retval:null},substituteOut:function(b,c,d,e){a.trace&&(a.fnenterprint("CLE:substituteOut: "+b+", "+c+", "+d+", ..."),a.traceprint("this = "+this));var f=this.setVariable.bind(this),g=this.terms,h=g.get(b);g.delete(b),this.constant+=h*c.constant,c.terms.each(function(b,c){var i=g.get(b);if(i){var j=i+h*c;a.approx(j,0)?(e.noteRemovedVariable(b,d),g.delete(b)):f(b,j)}else f(b,h*c),e&&e.noteAddedVariable(b,d)}),a.trace&&a.traceprint("Now this is "+this)},changeSubject:function(a,b){this.setVariable(a,this.newSubject(b))},newSubject:function(b){a.trace&&a.fnenterprint("newSubject:"+b);var c=1/this.terms.get(b);return this.terms.delete(b),this.multiplyMe(-c),c},coefficientFor:function(a){return this.terms.get(a)||0},get isConstant(){return 0==this.terms.size},toString:function(){var b="",c=!1;if(!a.approx(this.constant,0)||this.isConstant){if(b+=this.constant,this.isConstant)return b;c=!0}return this.terms.each(function(a,d){c&&(b+=" + "),b+=d+"*"+a,c=!0}),b},equals:function(b){return b===this?!0:b instanceof a.Expression&&b.constant===this.constant&&b.terms.equals(this.terms)},Plus:function(a,b){return a.plus(b)},Minus:function(a,b){return a.minus(b)},Times:function(a,b){return a.times(b)},Divide:function(a,b){return a.divide(b)}})}(this.c||module.parent.exports||{}),function(a){"use strict";a.AbstractConstraint=a.inherit({initialize:function(b,c){this.hashCode=a._inc(),this.strength=b||a.Strength.required,this.weight=c||1},isEditConstraint:!1,isInequality:!1,isStayConstraint:!1,get required(){return this.strength===a.Strength.required},toString:function(){return this.strength+" {"+this.weight+"} ("+this.expression+")"}});var b=a.AbstractConstraint.prototype.toString,c=function(b,c,d){a.AbstractConstraint.call(this,c||a.Strength.strong,d),this.variable=b,this.expression=new a.Expression(b,-1,b.value)};a.EditConstraint=a.inherit({"extends":a.AbstractConstraint,initialize:function(){c.apply(this,arguments)},isEditConstraint:!0,toString:function(){return"edit:"+b.call(this)}}),a.StayConstraint=a.inherit({"extends":a.AbstractConstraint,initialize:function(){c.apply(this,arguments)},isStayConstraint:!0,toString:function(){return"stay:"+b.call(this)}});var d=a.Constraint=a.inherit({"extends":a.AbstractConstraint,initialize:function(b,c,d){a.AbstractConstraint.call(this,c,d),this.expression=b}});a.Inequality=a.inherit({"extends":a.Constraint,_cloneOrNewCle:function(b){return b.clone?b.clone():new a.Expression(b)},initialize:function(b,c,e,f,g){var h=b instanceof a.Expression,i=e instanceof a.Expression,j=b instanceof a.AbstractVariable,k=e instanceof a.AbstractVariable,l="number"==typeof b,m="number"==typeof e;if((h||l)&&k){var n=b,o=c,p=e,q=f,r=g;if(d.call(this,this._cloneOrNewCle(n),q,r),o==a.LEQ)this.expression.multiplyMe(-1),this.expression.addVariable(p);else{if(o!=a.GEQ)throw new a.InternalError("Invalid operator in c.Inequality constructor");this.expression.addVariable(p,-1)}}else if(j&&(i||m)){var n=e,o=c,p=b,q=f,r=g;if(d.call(this,this._cloneOrNewCle(n),q,r),o==a.GEQ)this.expression.multiplyMe(-1),this.expression.addVariable(p);else{if(o!=a.LEQ)throw new a.InternalError("Invalid operator in c.Inequality constructor");this.expression.addVariable(p,-1)}}else{if(h&&m){var s=b,o=c,t=e,q=f,r=g;if(d.call(this,this._cloneOrNewCle(s),q,r),o==a.LEQ)this.expression.multiplyMe(-1),this.expression.addExpression(this._cloneOrNewCle(t));else{if(o!=a.GEQ)throw new a.InternalError("Invalid operator in c.Inequality constructor");this.expression.addExpression(this._cloneOrNewCle(t),-1)}return this}if(l&&i){var s=e,o=c,t=b,q=f,r=g;if(d.call(this,this._cloneOrNewCle(s),q,r),o==a.GEQ)this.expression.multiplyMe(-1),this.expression.addExpression(this._cloneOrNewCle(t));else{if(o!=a.LEQ)throw new a.InternalError("Invalid operator in c.Inequality constructor");this.expression.addExpression(this._cloneOrNewCle(t),-1)}return this}if(h&&i){var s=b,o=c,t=e,q=f,r=g;if(d.call(this,this._cloneOrNewCle(t),q,r),o==a.GEQ)this.expression.multiplyMe(-1),this.expression.addExpression(this._cloneOrNewCle(s));else{if(o!=a.LEQ)throw new a.InternalError("Invalid operator in c.Inequality constructor");this.expression.addExpression(this._cloneOrNewCle(s),-1)}}else{if(h)return d.call(this,b,c,e);if(c==a.GEQ)d.call(this,new a.Expression(e),f,g),this.expression.multiplyMe(-1),this.expression.addVariable(b);else{if(c!=a.LEQ)throw new a.InternalError("Invalid operator in c.Inequality constructor");d.call(this,new a.Expression(e),f,g),this.expression.addVariable(b,-1)}}}},isInequality:!0,toString:function(){return d.prototype.toString.call(this)+" >= 0) id: "+this.hashCode}}),a.Equation=a.inherit({"extends":a.Constraint,initialize:function(b,c,e,f){if(b instanceof a.Expression&&!c||c instanceof a.Strength)d.call(this,b,c,e);else if(b instanceof a.AbstractVariable&&c instanceof a.Expression){var g=b,h=c,i=e,j=f;d.call(this,h.clone(),i,j),this.expression.addVariable(g,-1)}else if(b instanceof a.AbstractVariable&&"number"==typeof c){var g=b,k=c,i=e,j=f;d.call(this,new a.Expression(k),i,j),this.expression.addVariable(g,-1)}else if(b instanceof a.Expression&&c instanceof a.AbstractVariable){var h=b,g=c,i=e,j=f;d.call(this,h.clone(),i,j),this.expression.addVariable(g,-1)}else{if(!(b instanceof a.Expression||b instanceof a.AbstractVariable||"number"==typeof b)||!(c instanceof a.Expression||c instanceof a.AbstractVariable||"number"==typeof c))throw"Bad initializer to c.Equation";b=b instanceof a.Expression?b.clone():new a.Expression(b),c=c instanceof a.Expression?c.clone():new a.Expression(c),d.call(this,b,e,f),this.expression.addExpression(c,-1)}a.assert(this.strength instanceof a.Strength,"_strength not set")},toString:function(){return d.prototype.toString.call(this)+" = 0)"}})}(this.c||module.parent.exports||{}),function(a){"use strict";a.EditInfo=a.inherit({initialize:function(a,b,c,d,e){this.constraint=a,this.editPlus=b,this.editMinus=c,this.prevEditConstant=d,this.index=e},toString:function(){return"<cn="+this.constraint+", ep="+this.editPlus+", em="+this.editMinus+", pec="+this.prevEditConstant+", index="+this.index+">"}})}(this.c||module.parent.exports||{}),function(a){"use strict";a.Tableau=a.inherit({initialize:function(){this.columns=new a.HashTable,this.rows=new a.HashTable,this._infeasibleRows=new a.HashSet,this._externalRows=new a.HashSet,this._externalParametricVars=new a.HashSet},noteRemovedVariable:function(b,c){a.trace&&console.log("c.Tableau::noteRemovedVariable: ",b,c);var d=this.columns.get(b);c&&d&&d.delete(c)},noteAddedVariable:function(a,b){b&&this.insertColVar(a,b)},getInternalInfo:function(){var a="Tableau Information:\n";return a+="Rows: "+this.rows.size,a+=" (= "+(this.rows.size-1)+" constraints)",a+="\nColumns: "+this.columns.size,a+="\nInfeasible Rows: "+this._infeasibleRows.size,a+="\nExternal basic variables: "+this._externalRows.size,a+="\nExternal parametric variables: ",a+=this._externalParametricVars.size,a+="\n"},toString:function(){var a="Tableau:\n";return this.rows.each(function(b,c){a+=b,a+=" <==> ",a+=c,a+="\n"}),a+="\nColumns:\n",a+=this.columns,a+="\nInfeasible rows: ",a+=this._infeasibleRows,a+="External basic variables: ",a+=this._externalRows,a+="External parametric variables: ",a+=this._externalParametricVars},insertColVar:function(b,c){var d=this.columns.get(b);d||(d=new a.HashSet,this.columns.set(b,d)),d.add(c)},addRow:function(b,c){a.trace&&a.fnenterprint("addRow: "+b+", "+c),this.rows.set(b,c),c.terms.each(function(a){this.insertColVar(a,b),a.isExternal&&this._externalParametricVars.add(a)},this),b.isExternal&&this._externalRows.add(b),a.trace&&a.traceprint(""+this)},removeColumn:function(b){a.trace&&a.fnenterprint("removeColumn:"+b);var c=this.columns.get(b);c?(this.columns.delete(b),c.each(function(a){var c=this.rows.get(a);c.terms.delete(b)},this)):a.trace&&console.log("Could not find var",b,"in columns"),b.isExternal&&(this._externalRows.delete(b),this._externalParametricVars.delete(b))},removeRow:function(b){a.trace&&a.fnenterprint("removeRow:"+b);var c=this.rows.get(b);return a.assert(null!=c),c.terms.each(function(c){var e=this.columns.get(c);null!=e&&(a.trace&&console.log("removing from varset:",b),e.delete(b))},this),this._infeasibleRows.delete(b),b.isExternal&&this._externalRows.delete(b),this.rows.delete(b),a.trace&&a.fnexitprint("returning "+c),c},substituteOut:function(b,c){a.trace&&a.fnenterprint("substituteOut:"+b+", "+c),a.trace&&a.traceprint(""+this);var d=this.columns.get(b);d.each(function(a){var d=this.rows.get(a);d.substituteOut(b,c,a,this),a.isRestricted&&0>d.constant&&this._infeasibleRows.add(a)},this),b.isExternal&&(this._externalRows.add(b),this._externalParametricVars.delete(b)),this.columns.delete(b)},columnsHasKey:function(a){return!!this.columns.get(a)}})}(this.c||module.parent.exports||{}),function(a){var b=a.Tableau,c=b.prototype,d=1e-8,e=a.Strength.weak;a.SimplexSolver=a.inherit({"extends":a.Tableau,initialize:function(){a.Tableau.call(this),this._stayMinusErrorVars=[],this._stayPlusErrorVars=[],this._errorVars=new a.HashTable,this._markerVars=new a.HashTable,this._objective=new a.ObjectiveVariable({name:"Z"}),this._editVarMap=new a.HashTable,this._editVarList=[],this._slackCounter=0,this._artificialCounter=0,this._dummyCounter=0,this.autoSolve=!0,this._fNeedsSolving=!1,this._optimizeCount=0,this.rows.set(this._objective,new a.Expression),this._stkCedcns=[0],a.trace&&a.traceprint("objective expr == "+this.rows.get(this._objective))},addLowerBound:function(b,c){var d=new a.Inequality(b,a.GEQ,new a.Expression(c));return this.addConstraint(d)},addUpperBound:function(b,c){var d=new a.Inequality(b,a.LEQ,new a.Expression(c));return this.addConstraint(d)},addBounds:function(a,b,c){return this.addLowerBound(a,b),this.addUpperBound(a,c),this},add:function(){for(var a=0;arguments.length>a;a++)this.addConstraint(arguments[a]);return this},addConstraint:function(b){a.trace&&a.fnenterprint("addConstraint: "+b);var c=Array(2),d=Array(1),e=this.newExpression(b,c,d);if(d=d[0],this.tryAddingDirectly(e)||this.addWithArtificialVariable(e),this._fNeedsSolving=!0,b.isEditConstraint){var f=this._editVarMap.size,g=c[0],h=c[1];!g instanceof a.SlackVariable&&console.warn("cvEplus not a slack variable =",g),!h instanceof a.SlackVariable&&console.warn("cvEminus not a slack variable =",h),a.debug&&console.log("new c.EditInfo("+b+", "+g+", "+h+", "+d+", "+f+")");var i=new a.EditInfo(b,g,h,d,f);this._editVarMap.set(b.variable,i),this._editVarList[f]={v:b.variable,info:i}}return this.autoSolve&&(this.optimize(this._objective),this._setExternalVariables()),this},addConstraintNoException:function(b){a.trace&&a.fnenterprint("addConstraintNoException: "+b);try{return this.addConstraint(b),!0}catch(c){return!1}},addEditVar:function(b,c){return a.trace&&a.fnenterprint("addEditVar: "+b+" @ "+c),this.addConstraint(new a.EditConstraint(b,c||a.Strength.strong))},beginEdit:function(){return a.assert(this._editVarMap.size>0,"_editVarMap.size > 0"),this._infeasibleRows.clear(),this._resetStayConstants(),this._stkCedcns.push(this._editVarMap.size),this},endEdit:function(){return a.assert(this._editVarMap.size>0,"_editVarMap.size > 0"),this.resolve(),this._stkCedcns.pop(),this.removeEditVarsTo(this._stkCedcns[this._stkCedcns.length-1]),this},removeAllEditVars:function(){return this.removeEditVarsTo(0)},removeEditVarsTo:function(b){try{for(var c=this._editVarList.length,d=b;c>d;d++)this._editVarList[d]&&this.removeConstraint(this._editVarMap.get(this._editVarList[d].v).constraint);return this._editVarList.length=b,a.assert(this._editVarMap.size==b,"_editVarMap.size == n"),this}catch(e){throw new a.InternalError("Constraint not found in removeEditVarsTo")}},addPointStays:function(b){return a.trace&&console.log("addPointStays",b),b.forEach(function(a,b){this.addStay(a.x,e,Math.pow(2,b)),this.addStay(a.y,e,Math.pow(2,b))},this),this},addStay:function(b,c,d){var f=new a.StayConstraint(b,c||e,d||1);return this.addConstraint(f)},removeConstraint:function(a){return this.removeConstraintInternal(a),this},removeConstraintInternal:function(b){a.trace&&a.fnenterprint("removeConstraintInternal: "+b),a.trace&&a.traceprint(""+this),this._fNeedsSolving=!0,this._resetStayConstants();var c=this.rows.get(this._objective),d=this._errorVars.get(b);a.trace&&a.traceprint("eVars == "+d),null!=d&&d.each(function(e){var f=this.rows.get(e);null==f?c.addVariable(e,-b.weight*b.strength.symbolicWeight.value,this._objective,this):c.addExpression(f,-b.weight*b.strength.symbolicWeight.value,this._objective,this),a.trace&&a.traceprint("now eVars == "+d)},this);var e=this._markerVars.get(b);if(this._markerVars.delete(b),null==e)throw new a.InternalError("Constraint not found in removeConstraintInternal");if(a.trace&&a.traceprint("Looking to remove var "+e),null==this.rows.get(e)){var f=this.columns.get(e);a.trace&&a.traceprint("Must pivot -- columns are "+f);var g=null,h=0;f.each(function(b){if(b.isRestricted){var c=this.rows.get(b),d=c.coefficientFor(e);if(a.trace&&a.traceprint("Marker "+e+"'s coefficient in "+c+" is "+d),0>d){var f=-c.constant/d;(null==g||h>f||a.approx(f,h)&&b.hashCode<g.hashCode)&&(h=f,g=b)}}},this),null==g&&(a.trace&&a.traceprint("exitVar is still null"),f.each(function(a){if(a.isRestricted){var b=this.rows.get(a),c=b.coefficientFor(e),d=b.constant/c;(null==g||h>d)&&(h=d,g=a)}},this)),null==g&&(0==f.size?this.removeColumn(e):f.escapingEach(function(a){return a!=this._objective?(g=a,{brk:!0}):void 0},this)),null!=g&&this.pivot(e,g)}if(null!=this.rows.get(e)&&this.removeRow(e),null!=d&&d.each(function(a){a!=e&&this.removeColumn(a)},this),b.isStayConstraint){if(null!=d)for(var j=0;this._stayPlusErrorVars.length>j;j++)d.delete(this._stayPlusErrorVars[j]),d.delete(this._stayMinusErrorVars[j])}else if(b.isEditConstraint){a.assert(null!=d,"eVars != null");var k=this._editVarMap.get(b.variable);this.removeColumn(k.editMinus),this._editVarMap.delete(b.variable)}return null!=d&&this._errorVars.delete(d),this.autoSolve&&(this.optimize(this._objective),this._setExternalVariables()),this},reset:function(){throw a.trace&&a.fnenterprint("reset"),new a.InternalError("reset not implemented")},resolveArray:function(b){a.trace&&a.fnenterprint("resolveArray"+b);var c=b.length;this._editVarMap.each(function(a,d){var e=d.index;c>e&&this.suggestValue(a,b[e])},this),this.resolve()},resolvePair:function(a,b){this.suggestValue(this._editVarList[0].v,a),this.suggestValue(this._editVarList[1].v,b),this.resolve()},resolve:function(){a.trace&&a.fnenterprint("resolve()"),this.dualOptimize(),this._setExternalVariables(),this._infeasibleRows.clear(),this._resetStayConstants()},suggestValue:function(b,c){a.trace&&console.log("suggestValue("+b+", "+c+")");var d=this._editVarMap.get(b);if(!d)throw new a.Error("suggestValue for variable "+b+", but var is not an edit variable");var e=c-d.prevEditConstant;return d.prevEditConstant=c,this.deltaEditConstant(e,d.editPlus,d.editMinus),this},solve:function(){return this._fNeedsSolving&&(this.optimize(this._objective),this._setExternalVariables()),this},setEditedValue:function(b,c){if(!this.columnsHasKey(b)&&null==this.rows.get(b))return b.value=c,this;if(!a.approx(c,b.value)){this.addEditVar(b),this.beginEdit();try{this.suggestValue(b,c)}catch(d){throw new a.InternalError("Error in setEditedValue")}this.endEdit()}return this},addVar:function(b){if(!this.columnsHasKey(b)&&null==this.rows.get(b)){try{this.addStay(b)}catch(c){throw new a.InternalError("Error in addVar -- required failure is impossible")}a.trace&&a.traceprint("added initial stay on "+b)}return this},getInternalInfo:function(){var a=c.getInternalInfo.call(this);return a+="\nSolver info:\n",a+="Stay Error Variables: ",a+=this._stayPlusErrorVars.length+this._stayMinusErrorVars.length,a+=" ("+this._stayPlusErrorVars.length+" +, ",a+=this._stayMinusErrorVars.length+" -)\n",a+="Edit Variables: "+this._editVarMap.size,a+="\n"},getDebugInfo:function(){return""+this+this.getInternalInfo()+"\n"},toString:function(){var a=c.getInternalInfo.call(this);return a+="\n_stayPlusErrorVars: ",a+="["+this._stayPlusErrorVars+"]",a+="\n_stayMinusErrorVars: ",a+="["+this._stayMinusErrorVars+"]",a+="\n",a+="_editVarMap:\n"+this._editVarMap,a+="\n"},getConstraintMap:function(){return this._markerVars},addWithArtificialVariable:function(b){a.trace&&a.fnenterprint("addWithArtificialVariable: "+b);var c=new a.SlackVariable({value:++this._artificialCounter,prefix:"a"}),d=new a.ObjectiveVariable({name:"az"}),e=b.clone();a.trace&&a.traceprint("before addRows:\n"+this),this.addRow(d,e),this.addRow(c,b),a.trace&&a.traceprint("after addRows:\n"+this),this.optimize(d);var f=this.rows.get(d);if(a.trace&&a.traceprint("azTableauRow.constant == "+f.constant),!a.approx(f.constant,0))throw this.removeRow(d),this.removeColumn(c),new a.RequiredFailure;var g=this.rows.get(c);if(null!=g){if(g.isConstant)return this.removeRow(c),this.removeRow(d),void 0;var h=g.anyPivotableVariable();this.pivot(h,c)}a.assert(null==this.rows.get(c),"rowExpression(av) == null"),this.removeColumn(c),this.removeRow(d)},tryAddingDirectly:function(b){a.trace&&a.fnenterprint("tryAddingDirectly: "+b);var c=this.chooseSubject(b);return null==c?(a.trace&&a.fnexitprint("returning false"),!1):(b.newSubject(c),this.columnsHasKey(c)&&this.substituteOut(c,b),this.addRow(c,b),a.trace&&a.fnexitprint("returning true"),!0)},chooseSubject:function(b){a.trace&&a.fnenterprint("chooseSubject: "+b);var c=null,d=!1,e=!1,f=b.terms,g=f.escapingEach(function(a,b){if(d){if(!a.isRestricted&&!this.columnsHasKey(a))return{retval:a}}else if(a.isRestricted){if(!e&&!a.isDummy&&0>b){var f=this.columns.get(a);(null==f||1==f.size&&this.columnsHasKey(this._objective))&&(c=a,e=!0)}}else c=a,d=!0},this);if(g&&void 0!==g.retval)return g.retval;if(null!=c)return c;var h=0,g=f.escapingEach(function(a,b){return a.isDummy?(this.columnsHasKey(a)||(c=a,h=b),void 0):{retval:null}},this);if(g&&void 0!==g.retval)return g.retval;if(!a.approx(b.constant,0))throw new a.RequiredFailure;return h>0&&b.multiplyMe(-1),c},deltaEditConstant:function(b,c,d){a.trace&&a.fnenterprint("deltaEditConstant :"+b+", "+c+", "+d);var e=this.rows.get(c);if(null!=e)return e.constant+=b,0>e.constant&&this._infeasibleRows.add(c),void 0;var f=this.rows.get(d);if(null!=f)return f.constant+=-b,0>f.constant&&this._infeasibleRows.add(d),void 0;var g=this.columns.get(d);g||console.log("columnVars is null -- tableau is:\n"+this),g.each(function(a){var c=this.rows.get(a),e=c.coefficientFor(d);c.constant+=e*b,a.isRestricted&&0>c.constant&&this._infeasibleRows.add(a)},this)},dualOptimize:function(){a.trace&&a.fnenterprint("dualOptimize:");for(var b=this.rows.get(this._objective);this._infeasibleRows.size;){var c=this._infeasibleRows.values()[0];this._infeasibleRows.delete(c);var d=null,e=this.rows.get(c);if(e&&0>e.constant){var g,f=Number.MAX_VALUE,h=e.terms;if(h.each(function(c,e){if(e>0&&c.isPivotable){var h=b.coefficientFor(c);g=h/e,(f>g||a.approx(g,f)&&c.hashCode<d.hashCode)&&(d=c,f=g)}}),f==Number.MAX_VALUE)throw new a.InternalError("ratio == nil (MAX_VALUE) in dualOptimize");this.pivot(d,c)}}},newExpression:function(b,c,d){a.trace&&(a.fnenterprint("newExpression: "+b),a.traceprint("cn.isInequality == "+b.isInequality),a.traceprint("cn.required == "+b.required));var e=b.expression,f=new a.Expression(e.constant),g=new a.SlackVariable,h=new a.DummyVariable,i=new a.SlackVariable,j=new a.SlackVariable,k=e.terms;if(k.each(function(a,b){var c=this.rows.get(a);c?f.addExpression(c,b):f.addVariable(a,b)},this),b.isInequality){if(a.trace&&a.traceprint("Inequality, adding slack"),++this._slackCounter,g=new a.SlackVariable({value:this._slackCounter,prefix:"s"}),f.setVariable(g,-1),this._markerVars.set(b,g),!b.required){++this._slackCounter,i=new a.SlackVariable({value:this._slackCounter,prefix:"em"}),f.setVariable(i,1);
+var l=this.rows.get(this._objective);l.setVariable(i,b.strength.symbolicWeight.value*b.weight),this.insertErrorVar(b,i),this.noteAddedVariable(i,this._objective)}}else if(b.required)a.trace&&a.traceprint("Equality, required"),++this._dummyCounter,h=new a.DummyVariable({value:this._dummyCounter,prefix:"d"}),f.setVariable(h,1),this._markerVars.set(b,h),a.trace&&a.traceprint("Adding dummyVar == d"+this._dummyCounter);else{a.trace&&a.traceprint("Equality, not required"),++this._slackCounter,j=new a.SlackVariable({value:this._slackCounter,prefix:"ep"}),i=new a.SlackVariable({value:this._slackCounter,prefix:"em"}),f.setVariable(j,-1),f.setVariable(i,1),this._markerVars.set(b,j);var l=this.rows.get(this._objective);a.trace&&console.log(l);var m=b.strength.symbolicWeight.value*b.weight;0==m&&(a.trace&&a.traceprint("cn == "+b),a.trace&&a.traceprint("adding "+j+" and "+i+" with swCoeff == "+m)),l.setVariable(j,m),this.noteAddedVariable(j,this._objective),l.setVariable(i,m),this.noteAddedVariable(i,this._objective),this.insertErrorVar(b,i),this.insertErrorVar(b,j),b.isStayConstraint?(this._stayPlusErrorVars.push(j),this._stayMinusErrorVars.push(i)):b.isEditConstraint&&(c[0]=j,c[1]=i,d[0]=e.constant)}return 0>f.constant&&f.multiplyMe(-1),a.trace&&a.fnexitprint("returning "+f),f},optimize:function(b){a.trace&&a.fnenterprint("optimize: "+b),a.trace&&a.traceprint(""+this),this._optimizeCount++;var c=this.rows.get(b);a.assert(null!=c,"zRow != null");for(var g,h,e=null,f=null;;){if(g=0,h=c.terms,h.escapingEach(function(a,b){return a.isPivotable&&g>b?(g=b,e=a,{brk:1}):void 0},this),g>=-d)return;a.trace&&console.log("entryVar:",e,"objectiveCoeff:",g);var i=Number.MAX_VALUE,j=this.columns.get(e),k=0;if(j.each(function(b){if(a.trace&&a.traceprint("Checking "+b),b.isPivotable){var c=this.rows.get(b),d=c.coefficientFor(e);a.trace&&a.traceprint("pivotable, coeff = "+d),0>d&&(k=-c.constant/d,(i>k||a.approx(k,i)&&b.hashCode<f.hashCode)&&(i=k,f=b))}},this),i==Number.MAX_VALUE)throw new a.InternalError("Objective function is unbounded in optimize");this.pivot(e,f),a.trace&&a.traceprint(""+this)}},pivot:function(b,c){a.trace&&console.log("pivot: ",b,c);var d=!1;d&&console.time(" SimplexSolver::pivot"),null==b&&console.warn("pivot: entryVar == null"),null==c&&console.warn("pivot: exitVar == null"),d&&console.time("  removeRow");var e=this.removeRow(c);d&&console.timeEnd("  removeRow"),d&&console.time("  changeSubject"),e.changeSubject(c,b),d&&console.timeEnd("  changeSubject"),d&&console.time("  substituteOut"),this.substituteOut(b,e),d&&console.timeEnd("  substituteOut"),d&&console.time("  addRow"),this.addRow(b,e),d&&console.timeEnd("  addRow"),d&&console.timeEnd(" SimplexSolver::pivot")},_resetStayConstants:function(){a.trace&&console.log("_resetStayConstants");for(var b=0;this._stayPlusErrorVars.length>b;b++){var c=this.rows.get(this._stayPlusErrorVars[b]);null==c&&(c=this.rows.get(this._stayMinusErrorVars[b])),null!=c&&(c.constant=0)}},_setExternalVariables:function(){a.trace&&a.fnenterprint("_setExternalVariables:"),a.trace&&a.traceprint(""+this),this._externalParametricVars.each(function(b){null!=this.rows.get(b)?a.trace&&console.log("Error: variable"+b+" in _externalParametricVars is basic"):b.value=0},this),this._externalRows.each(function(a){var b=this.rows.get(a);a.value!=b.constant&&(a.value=b.constant)},this),this._fNeedsSolving=!1,this.onsolved()},onsolved:function(){},insertErrorVar:function(b,c){a.trace&&a.fnenterprint("insertErrorVar:"+b+", "+c);var d=this._errorVars.get(c);d||(d=new a.HashSet,this._errorVars.set(b,d)),d.add(c)}})}(this.c||module.parent.exports||{}),function(a){"use strict";a.Timer=a.inherit({initialize:function(){this.isRunning=!1,this._elapsedMs=0},start:function(){return this.isRunning=!0,this._startReading=new Date,this},stop:function(){return this.isRunning=!1,this._elapsedMs+=new Date-this._startReading,this},reset:function(){return this.isRunning=!1,this._elapsedMs=0,this},elapsedTime:function(){return this.isRunning?(this._elapsedMs+(new Date-this._startReading))/1e3:this._elapsedMs/1e3}})}(this.c||module.parent.exports||{}),__cassowary_parser=function(){function a(a){return'"'+a.replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/\x08/g,"\\b").replace(/\t/g,"\\t").replace(/\n/g,"\\n").replace(/\f/g,"\\f").replace(/\r/g,"\\r").replace(/[\x00-\x07\x0B\x0E-\x1F\x80-\uFFFF]/g,escape)+'"'}var b={parse:function(b,c){function k(a){g>e||(e>g&&(g=e,h=[]),h.push(a))}function l(){var a,b,c,d,f;if(d=e,f=e,a=z(),null!==a){if(c=m(),null!==c)for(b=[];null!==c;)b.push(c),c=m();else b=null;null!==b?(c=z(),null!==c?a=[a,b,c]:(a=null,e=f)):(a=null,e=f)}else a=null,e=f;return null!==a&&(a=function(a,b){return b}(d,a[1])),null===a&&(e=d),a}function m(){var a,b,c,d;return c=e,d=e,a=P(),null!==a?(b=s(),null!==b?a=[a,b]:(a=null,e=d)):(a=null,e=d),null!==a&&(a=function(a,b){return b}(c,a[0])),null===a&&(e=c),a}function n(){var a;return b.length>e?(a=b.charAt(e),e++):(a=null,0===f&&k("any character")),a}function o(){var a;return/^[a-zA-Z]/.test(b.charAt(e))?(a=b.charAt(e),e++):(a=null,0===f&&k("[a-zA-Z]")),null===a&&(36===b.charCodeAt(e)?(a="$",e++):(a=null,0===f&&k('"$"')),null===a&&(95===b.charCodeAt(e)?(a="_",e++):(a=null,0===f&&k('"_"')))),a}function p(){var a;return f++,/^[\t\x0B\f \xA0\uFEFF]/.test(b.charAt(e))?(a=b.charAt(e),e++):(a=null,0===f&&k("[\\t\\x0B\\f \\xA0\\uFEFF]")),f--,0===f&&null===a&&k("whitespace"),a}function q(){var a;return/^[\n\r\u2028\u2029]/.test(b.charAt(e))?(a=b.charAt(e),e++):(a=null,0===f&&k("[\\n\\r\\u2028\\u2029]")),a}function r(){var a;return f++,10===b.charCodeAt(e)?(a="\n",e++):(a=null,0===f&&k('"\\n"')),null===a&&("\r\n"===b.substr(e,2)?(a="\r\n",e+=2):(a=null,0===f&&k('"\\r\\n"')),null===a&&(13===b.charCodeAt(e)?(a="\r",e++):(a=null,0===f&&k('"\\r"')),null===a&&(8232===b.charCodeAt(e)?(a="\u2028",e++):(a=null,0===f&&k('"\\u2028"')),null===a&&(8233===b.charCodeAt(e)?(a="\u2029",e++):(a=null,0===f&&k('"\\u2029"')))))),f--,0===f&&null===a&&k("end of line"),a}function s(){var a,c,d;return d=e,a=z(),null!==a?(59===b.charCodeAt(e)?(c=";",e++):(c=null,0===f&&k('";"')),null!==c?a=[a,c]:(a=null,e=d)):(a=null,e=d),null===a&&(d=e,a=y(),null!==a?(c=r(),null!==c?a=[a,c]:(a=null,e=d)):(a=null,e=d),null===a&&(d=e,a=z(),null!==a?(c=t(),null!==c?a=[a,c]:(a=null,e=d)):(a=null,e=d))),a}function t(){var a,c;return c=e,f++,b.length>e?(a=b.charAt(e),e++):(a=null,0===f&&k("any character")),f--,null===a?a="":(a=null,e=c),a}function u(){var a;return f++,a=v(),null===a&&(a=x()),f--,0===f&&null===a&&k("comment"),a}function v(){var a,c,d,g,h,i,j;if(h=e,"/*"===b.substr(e,2)?(a="/*",e+=2):(a=null,0===f&&k('"/*"')),null!==a){for(c=[],i=e,j=e,f++,"*/"===b.substr(e,2)?(d="*/",e+=2):(d=null,0===f&&k('"*/"')),f--,null===d?d="":(d=null,e=j),null!==d?(g=n(),null!==g?d=[d,g]:(d=null,e=i)):(d=null,e=i);null!==d;)c.push(d),i=e,j=e,f++,"*/"===b.substr(e,2)?(d="*/",e+=2):(d=null,0===f&&k('"*/"')),f--,null===d?d="":(d=null,e=j),null!==d?(g=n(),null!==g?d=[d,g]:(d=null,e=i)):(d=null,e=i);null!==c?("*/"===b.substr(e,2)?(d="*/",e+=2):(d=null,0===f&&k('"*/"')),null!==d?a=[a,c,d]:(a=null,e=h)):(a=null,e=h)}else a=null,e=h;return a}function w(){var a,c,d,g,h,i,j;if(h=e,"/*"===b.substr(e,2)?(a="/*",e+=2):(a=null,0===f&&k('"/*"')),null!==a){for(c=[],i=e,j=e,f++,"*/"===b.substr(e,2)?(d="*/",e+=2):(d=null,0===f&&k('"*/"')),null===d&&(d=q()),f--,null===d?d="":(d=null,e=j),null!==d?(g=n(),null!==g?d=[d,g]:(d=null,e=i)):(d=null,e=i);null!==d;)c.push(d),i=e,j=e,f++,"*/"===b.substr(e,2)?(d="*/",e+=2):(d=null,0===f&&k('"*/"')),null===d&&(d=q()),f--,null===d?d="":(d=null,e=j),null!==d?(g=n(),null!==g?d=[d,g]:(d=null,e=i)):(d=null,e=i);null!==c?("*/"===b.substr(e,2)?(d="*/",e+=2):(d=null,0===f&&k('"*/"')),null!==d?a=[a,c,d]:(a=null,e=h)):(a=null,e=h)}else a=null,e=h;return a}function x(){var a,c,d,g,h,i,j;if(h=e,"//"===b.substr(e,2)?(a="//",e+=2):(a=null,0===f&&k('"//"')),null!==a){for(c=[],i=e,j=e,f++,d=q(),f--,null===d?d="":(d=null,e=j),null!==d?(g=n(),null!==g?d=[d,g]:(d=null,e=i)):(d=null,e=i);null!==d;)c.push(d),i=e,j=e,f++,d=q(),f--,null===d?d="":(d=null,e=j),null!==d?(g=n(),null!==g?d=[d,g]:(d=null,e=i)):(d=null,e=i);null!==c?a=[a,c]:(a=null,e=h)}else a=null,e=h;return a}function y(){var a,b;for(a=[],b=p(),null===b&&(b=w(),null===b&&(b=x()));null!==b;)a.push(b),b=p(),null===b&&(b=w(),null===b&&(b=x()));return a}function z(){var a,b;for(a=[],b=p(),null===b&&(b=r(),null===b&&(b=u()));null!==b;)a.push(b),b=p(),null===b&&(b=r(),null===b&&(b=u()));return a}function A(){var a,b;return b=e,a=C(),null===a&&(a=B()),null!==a&&(a=function(a,b){return{type:"NumericLiteral",value:b}}(b,a)),null===a&&(e=b),a}function B(){var a,c,d;if(d=e,/^[0-9]/.test(b.charAt(e))?(c=b.charAt(e),e++):(c=null,0===f&&k("[0-9]")),null!==c)for(a=[];null!==c;)a.push(c),/^[0-9]/.test(b.charAt(e))?(c=b.charAt(e),e++):(c=null,0===f&&k("[0-9]"));else a=null;return null!==a&&(a=function(a,b){return parseInt(b.join(""))}(d,a)),null===a&&(e=d),a}function C(){var a,c,d,g,h;return g=e,h=e,a=B(),null!==a?(46===b.charCodeAt(e)?(c=".",e++):(c=null,0===f&&k('"."')),null!==c?(d=B(),null!==d?a=[a,c,d]:(a=null,e=h)):(a=null,e=h)):(a=null,e=h),null!==a&&(a=function(a,b){return parseFloat(b.join(""))}(g,a)),null===a&&(e=g),a}function D(){var a,c,d,g;if(g=e,/^[\-+]/.test(b.charAt(e))?(a=b.charAt(e),e++):(a=null,0===f&&k("[\\-+]")),a=null!==a?a:"",null!==a){if(/^[0-9]/.test(b.charAt(e))?(d=b.charAt(e),e++):(d=null,0===f&&k("[0-9]")),null!==d)for(c=[];null!==d;)c.push(d),/^[0-9]/.test(b.charAt(e))?(d=b.charAt(e),e++):(d=null,0===f&&k("[0-9]"));else c=null;null!==c?a=[a,c]:(a=null,e=g)}else a=null,e=g;return a}function E(){var a,b;return f++,b=e,a=F(),null!==a&&(a=function(a,b){return b}(b,a)),null===a&&(e=b),f--,0===f&&null===a&&k("identifier"),a}function F(){var a,b,c,d,g;if(f++,d=e,g=e,a=o(),null!==a){for(b=[],c=o();null!==c;)b.push(c),c=o();null!==b?a=[a,b]:(a=null,e=g)}else a=null,e=g;return null!==a&&(a=function(a,b,c){return b+c.join("")}(d,a[0],a[1])),null===a&&(e=d),f--,0===f&&null===a&&k("identifier"),a}function G(){var a,c,d,g,h,i,j;return i=e,a=E(),null!==a&&(a=function(a,b){return{type:"Variable",name:b}}(i,a)),null===a&&(e=i),null===a&&(a=A(),null===a&&(i=e,j=e,40===b.charCodeAt(e)?(a="(",e++):(a=null,0===f&&k('"("')),null!==a?(c=z(),null!==c?(d=P(),null!==d?(g=z(),null!==g?(41===b.charCodeAt(e)?(h=")",e++):(h=null,0===f&&k('")"')),null!==h?a=[a,c,d,g,h]:(a=null,e=j)):(a=null,e=j)):(a=null,e=j)):(a=null,e=j)):(a=null,e=j),null!==a&&(a=function(a,b){return b}(i,a[2])),null===a&&(e=i))),a}function H(){var a,b,c,d,f;return a=G(),null===a&&(d=e,f=e,a=I(),null!==a?(b=z(),null!==b?(c=H(),null!==c?a=[a,b,c]:(a=null,e=f)):(a=null,e=f)):(a=null,e=f),null!==a&&(a=function(a,b,c){return{type:"UnaryExpression",operator:b,expression:c}}(d,a[0],a[2])),null===a&&(e=d)),a}function I(){var a;return 43===b.charCodeAt(e)?(a="+",e++):(a=null,0===f&&k('"+"')),null===a&&(45===b.charCodeAt(e)?(a="-",e++):(a=null,0===f&&k('"-"')),null===a&&(33===b.charCodeAt(e)?(a="!",e++):(a=null,0===f&&k('"!"')))),a}function J(){var a,b,c,d,f,g,h,i,j;if(h=e,i=e,a=H(),null!==a){for(b=[],j=e,c=z(),null!==c?(d=K(),null!==d?(f=z(),null!==f?(g=H(),null!==g?c=[c,d,f,g]:(c=null,e=j)):(c=null,e=j)):(c=null,e=j)):(c=null,e=j);null!==c;)b.push(c),j=e,c=z(),null!==c?(d=K(),null!==d?(f=z(),null!==f?(g=H(),null!==g?c=[c,d,f,g]:(c=null,e=j)):(c=null,e=j)):(c=null,e=j)):(c=null,e=j);null!==b?a=[a,b]:(a=null,e=i)}else a=null,e=i;return null!==a&&(a=function(a,b,c){for(var d=b,e=0;c.length>e;e++)d={type:"MultiplicativeExpression",operator:c[e][1],left:d,right:c[e][3]};return d}(h,a[0],a[1])),null===a&&(e=h),a}function K(){var a;return 42===b.charCodeAt(e)?(a="*",e++):(a=null,0===f&&k('"*"')),null===a&&(47===b.charCodeAt(e)?(a="/",e++):(a=null,0===f&&k('"/"'))),a}function L(){var a,b,c,d,f,g,h,i,j;if(h=e,i=e,a=J(),null!==a){for(b=[],j=e,c=z(),null!==c?(d=M(),null!==d?(f=z(),null!==f?(g=J(),null!==g?c=[c,d,f,g]:(c=null,e=j)):(c=null,e=j)):(c=null,e=j)):(c=null,e=j);null!==c;)b.push(c),j=e,c=z(),null!==c?(d=M(),null!==d?(f=z(),null!==f?(g=J(),null!==g?c=[c,d,f,g]:(c=null,e=j)):(c=null,e=j)):(c=null,e=j)):(c=null,e=j);null!==b?a=[a,b]:(a=null,e=i)}else a=null,e=i;return null!==a&&(a=function(a,b,c){for(var d=b,e=0;c.length>e;e++)d={type:"AdditiveExpression",operator:c[e][1],left:d,right:c[e][3]};return d}(h,a[0],a[1])),null===a&&(e=h),a}function M(){var a;return 43===b.charCodeAt(e)?(a="+",e++):(a=null,0===f&&k('"+"')),null===a&&(45===b.charCodeAt(e)?(a="-",e++):(a=null,0===f&&k('"-"'))),a}function N(){var a,b,c,d,f,g,h,i,j;if(h=e,i=e,a=L(),null!==a){for(b=[],j=e,c=z(),null!==c?(d=O(),null!==d?(f=z(),null!==f?(g=L(),null!==g?c=[c,d,f,g]:(c=null,e=j)):(c=null,e=j)):(c=null,e=j)):(c=null,e=j);null!==c;)b.push(c),j=e,c=z(),null!==c?(d=O(),null!==d?(f=z(),null!==f?(g=L(),null!==g?c=[c,d,f,g]:(c=null,e=j)):(c=null,e=j)):(c=null,e=j)):(c=null,e=j);null!==b?a=[a,b]:(a=null,e=i)}else a=null,e=i;return null!==a&&(a=function(a,b,c){for(var d=b,e=0;c.length>e;e++)d={type:"Inequality",operator:c[e][1],left:d,right:c[e][3]};return d}(h,a[0],a[1])),null===a&&(e=h),a}function O(){var a;return"<="===b.substr(e,2)?(a="<=",e+=2):(a=null,0===f&&k('"<="')),null===a&&(">="===b.substr(e,2)?(a=">=",e+=2):(a=null,0===f&&k('">="')),null===a&&(60===b.charCodeAt(e)?(a="<",e++):(a=null,0===f&&k('"<"')),null===a&&(62===b.charCodeAt(e)?(a=">",e++):(a=null,0===f&&k('">"'))))),a}function P(){var a,c,d,g,h,i,j,l,m;if(j=e,l=e,a=N(),null!==a){for(c=[],m=e,d=z(),null!==d?("=="===b.substr(e,2)?(g="==",e+=2):(g=null,0===f&&k('"=="')),null!==g?(h=z(),null!==h?(i=N(),null!==i?d=[d,g,h,i]:(d=null,e=m)):(d=null,e=m)):(d=null,e=m)):(d=null,e=m);null!==d;)c.push(d),m=e,d=z(),null!==d?("=="===b.substr(e,2)?(g="==",e+=2):(g=null,0===f&&k('"=="')),null!==g?(h=z(),null!==h?(i=N(),null!==i?d=[d,g,h,i]:(d=null,e=m)):(d=null,e=m)):(d=null,e=m)):(d=null,e=m);null!==c?a=[a,c]:(a=null,e=l)}else a=null,e=l;return null!==a&&(a=function(a,b,c){for(var d=b,e=0;c.length>e;e++)d={type:"Equality",operator:c[e][1],left:d,right:c[e][3]};return d}(j,a[0],a[1])),null===a&&(e=j),a}function Q(a){a.sort();for(var b=null,c=[],d=0;a.length>d;d++)a[d]!==b&&(c.push(a[d]),b=a[d]);return c}function R(){for(var a=1,c=1,d=!1,f=0;Math.max(e,g)>f;f++){var h=b.charAt(f);"\n"===h?(d||a++,c=1,d=!1):"\r"===h||"\u2028"===h||"\u2029"===h?(a++,c=1,d=!0):(c++,d=!1)}return{line:a,column:c}}var d={start:l,Statement:m,SourceCharacter:n,IdentifierStart:o,WhiteSpace:p,LineTerminator:q,LineTerminatorSequence:r,EOS:s,EOF:t,Comment:u,MultiLineComment:v,MultiLineCommentNoLineTerminator:w,SingleLineComment:x,_:y,__:z,Literal:A,Integer:B,Real:C,SignedInteger:D,Identifier:E,IdentifierName:F,PrimaryExpression:G,UnaryExpression:H,UnaryOperator:I,MultiplicativeExpression:J,MultiplicativeOperator:K,AdditiveExpression:L,AdditiveOperator:M,InequalityExpression:N,InequalityOperator:O,LinearExpression:P};if(void 0!==c){if(void 0===d[c])throw Error("Invalid rule name: "+a(c)+".")}else c="start";var e=0,f=0,g=0,h=[],S=d[c]();if(null===S||e!==b.length){var T=Math.max(e,g),U=b.length>T?b.charAt(T):null,V=R();throw new this.SyntaxError(Q(h),U,T,V.line,V.column)}return S},toSource:function(){return this._source}};return b.SyntaxError=function(b,c,d,e,f){function g(b,c){var d,e;switch(b.length){case 0:d="end of input";break;case 1:d=b[0];break;default:d=b.slice(0,b.length-1).join(", ")+" or "+b[b.length-1]}return e=c?a(c):"end of input","Expected "+d+" but "+e+" found."}this.name="SyntaxError",this.expected=b,this.found=c,this.message=g(b,c),this.offset=d,this.line=e,this.column=f},b.SyntaxError.prototype=Error.prototype,b}();
+}).call(
+  (typeof module != "undefined") ?
+      (module.compiled = true && module) : this
+);
 
 },{}],2:[function(require,module,exports){
 'use strict';
@@ -2078,7 +51,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var kiwi = require('kiwi/ts/bin/kiwi');
+var c = require('cassowary/bin/c');
 
 'use strict';
 
@@ -2237,22 +210,27 @@ var parser = (function () {
         peg$c44 = function peg$c44() {
       return { relation: 'geq', $parserOffset: offset() };
     },
-        peg$c45 = function peg$c45(n) {
-      return { priority: n };
+        peg$c45 = /^[0-9]/,
+        peg$c46 = { type: 'class', value: '[0-9]', description: '[0-9]' },
+        peg$c47 = function peg$c47(digits) {
+      return { priority: parseInt(digits.join(''), 10) };
     },
-        peg$c46 = function peg$c46(n) {
+        peg$c48 = function peg$c48(n) {
       return { constant: n };
     },
-        peg$c47 = /^[a-zA-Z_]/,
-        peg$c48 = { type: 'class', value: '[a-zA-Z_]', description: '[a-zA-Z_]' },
-        peg$c49 = /^[a-zA-Z0-9_]/,
-        peg$c50 = { type: 'class', value: '[a-zA-Z0-9_]', description: '[a-zA-Z0-9_]' },
-        peg$c51 = function peg$c51(f, v) {
+        peg$c49 = /^[a-zA-Z_]/,
+        peg$c50 = { type: 'class', value: '[a-zA-Z_]', description: '[a-zA-Z_]' },
+        peg$c51 = /^[a-zA-Z0-9_]/,
+        peg$c52 = { type: 'class', value: '[a-zA-Z0-9_]', description: '[a-zA-Z0-9_]' },
+        peg$c53 = function peg$c53(f, v) {
       return { view: f + v };
     },
-        peg$c52 = /^[0-9]/,
-        peg$c53 = { type: 'class', value: '[0-9]', description: '[0-9]' },
-        peg$c54 = function peg$c54(digits) {
+        peg$c54 = '.',
+        peg$c55 = { type: 'literal', value: '.', description: '"."' },
+        peg$c56 = function peg$c56(digits, decimals) {
+      return parseFloat(digits.concat('.').concat(decimals).join(''), 10);
+    },
+        peg$c57 = function peg$c57(digits) {
       return parseInt(digits.join(''), 10);
     },
         peg$currPos = 0,
@@ -2973,13 +951,38 @@ var parser = (function () {
     }
 
     function peg$parsepriority() {
-      var s0, s1;
+      var s0, s1, s2;
 
       s0 = peg$currPos;
-      s1 = peg$parsenumber();
+      s1 = [];
+      if (peg$c45.test(input.charAt(peg$currPos))) {
+        s2 = input.charAt(peg$currPos);
+        peg$currPos++;
+      } else {
+        s2 = peg$FAILED;
+        if (peg$silentFails === 0) {
+          peg$fail(peg$c46);
+        }
+      }
+      if (s2 !== peg$FAILED) {
+        while (s2 !== peg$FAILED) {
+          s1.push(s2);
+          if (peg$c45.test(input.charAt(peg$currPos))) {
+            s2 = input.charAt(peg$currPos);
+            peg$currPos++;
+          } else {
+            s2 = peg$FAILED;
+            if (peg$silentFails === 0) {
+              peg$fail(peg$c46);
+            }
+          }
+        }
+      } else {
+        s1 = peg$c0;
+      }
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c45(s1);
+        s1 = peg$c47(s1);
       }
       s0 = s1;
 
@@ -2993,7 +996,7 @@ var parser = (function () {
       s1 = peg$parsenumber();
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c46(s1);
+        s1 = peg$c48(s1);
       }
       s0 = s1;
 
@@ -3006,25 +1009,25 @@ var parser = (function () {
       s0 = peg$currPos;
       s1 = peg$currPos;
       s2 = [];
-      if (peg$c47.test(input.charAt(peg$currPos))) {
+      if (peg$c49.test(input.charAt(peg$currPos))) {
         s3 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s3 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c48);
+          peg$fail(peg$c50);
         }
       }
       if (s3 !== peg$FAILED) {
         while (s3 !== peg$FAILED) {
           s2.push(s3);
-          if (peg$c47.test(input.charAt(peg$currPos))) {
+          if (peg$c49.test(input.charAt(peg$currPos))) {
             s3 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c48);
+              peg$fail(peg$c50);
             }
           }
         }
@@ -3038,24 +1041,24 @@ var parser = (function () {
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         s3 = [];
-        if (peg$c49.test(input.charAt(peg$currPos))) {
+        if (peg$c51.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
           if (peg$silentFails === 0) {
-            peg$fail(peg$c50);
+            peg$fail(peg$c52);
           }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c49.test(input.charAt(peg$currPos))) {
+          if (peg$c51.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c50);
+              peg$fail(peg$c52);
             }
           }
         }
@@ -3065,7 +1068,7 @@ var parser = (function () {
         s2 = s3;
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c51(s1, s2);
+          s1 = peg$c53(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -3080,29 +1083,29 @@ var parser = (function () {
     }
 
     function peg$parsenumber() {
-      var s0, s1, s2;
+      var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c52.test(input.charAt(peg$currPos))) {
+      if (peg$c45.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c53);
+          peg$fail(peg$c46);
         }
       }
       if (s2 !== peg$FAILED) {
         while (s2 !== peg$FAILED) {
           s1.push(s2);
-          if (peg$c52.test(input.charAt(peg$currPos))) {
+          if (peg$c45.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c53);
+              peg$fail(peg$c46);
             }
           }
         }
@@ -3110,10 +1113,92 @@ var parser = (function () {
         s1 = peg$c0;
       }
       if (s1 !== peg$FAILED) {
-        peg$reportedPos = s0;
-        s1 = peg$c54(s1);
+        if (input.charCodeAt(peg$currPos) === 46) {
+          s2 = peg$c54;
+          peg$currPos++;
+        } else {
+          s2 = peg$FAILED;
+          if (peg$silentFails === 0) {
+            peg$fail(peg$c55);
+          }
+        }
+        if (s2 !== peg$FAILED) {
+          s3 = [];
+          if (peg$c45.test(input.charAt(peg$currPos))) {
+            s4 = input.charAt(peg$currPos);
+            peg$currPos++;
+          } else {
+            s4 = peg$FAILED;
+            if (peg$silentFails === 0) {
+              peg$fail(peg$c46);
+            }
+          }
+          if (s4 !== peg$FAILED) {
+            while (s4 !== peg$FAILED) {
+              s3.push(s4);
+              if (peg$c45.test(input.charAt(peg$currPos))) {
+                s4 = input.charAt(peg$currPos);
+                peg$currPos++;
+              } else {
+                s4 = peg$FAILED;
+                if (peg$silentFails === 0) {
+                  peg$fail(peg$c46);
+                }
+              }
+            }
+          } else {
+            s3 = peg$c0;
+          }
+          if (s3 !== peg$FAILED) {
+            peg$reportedPos = s0;
+            s1 = peg$c56(s1, s3);
+            s0 = s1;
+          } else {
+            peg$currPos = s0;
+            s0 = peg$c0;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c0;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c0;
       }
-      s0 = s1;
+      if (s0 === peg$FAILED) {
+        s0 = peg$currPos;
+        s1 = [];
+        if (peg$c45.test(input.charAt(peg$currPos))) {
+          s2 = input.charAt(peg$currPos);
+          peg$currPos++;
+        } else {
+          s2 = peg$FAILED;
+          if (peg$silentFails === 0) {
+            peg$fail(peg$c46);
+          }
+        }
+        if (s2 !== peg$FAILED) {
+          while (s2 !== peg$FAILED) {
+            s1.push(s2);
+            if (peg$c45.test(input.charAt(peg$currPos))) {
+              s2 = input.charAt(peg$currPos);
+              peg$currPos++;
+            } else {
+              s2 = peg$FAILED;
+              if (peg$silentFails === 0) {
+                peg$fail(peg$c46);
+              }
+            }
+          }
+        } else {
+          s1 = peg$c0;
+        }
+        if (s1 !== peg$FAILED) {
+          peg$reportedPos = s0;
+          s1 = peg$c57(s1);
+        }
+        s0 = s1;
+      }
 
       return s0;
     }
@@ -3221,139 +1306,152 @@ var parserExt = (function () {
         peg$c26 = function peg$c26(views, connection) {
       return [].concat([].concat.apply([], views), [connection]);
     },
-        peg$c27 = '-',
-        peg$c28 = { type: 'literal', value: '-', description: '"-"' },
-        peg$c29 = function peg$c29(predicateList) {
+        peg$c27 = '->',
+        peg$c28 = { type: 'literal', value: '->', description: '"->"' },
+        peg$c29 = function peg$c29() {
+      return [{ relation: 'none', $parserOffset: offset() }];
+    },
+        peg$c30 = '-',
+        peg$c31 = { type: 'literal', value: '-', description: '"-"' },
+        peg$c32 = function peg$c32(predicateList) {
       return predicateList;
     },
-        peg$c30 = function peg$c30() {
+        peg$c33 = function peg$c33() {
       return [{ relation: 'equ', constant: 'default', $parserOffset: offset() }];
     },
-        peg$c31 = '~',
-        peg$c32 = { type: 'literal', value: '~', description: '"~"' },
-        peg$c33 = function peg$c33() {
+        peg$c34 = '~',
+        peg$c35 = { type: 'literal', value: '~', description: '"~"' },
+        peg$c36 = function peg$c36() {
       return [{ relation: 'equ', equalSpacing: true, $parserOffset: offset() }];
     },
-        peg$c34 = '',
-        peg$c35 = function peg$c35() {
+        peg$c37 = '',
+        peg$c38 = function peg$c38() {
       return [{ relation: 'equ', constant: 0, $parserOffset: offset() }];
     },
-        peg$c36 = function peg$c36(n) {
+        peg$c39 = function peg$c39(p) {
+      return [{ relation: 'equ', multiplier: p.multiplier, $parserOffset: offset() }];
+    },
+        peg$c40 = function peg$c40(n) {
       return [{ relation: 'equ', constant: n, $parserOffset: offset() }];
     },
-        peg$c37 = '(',
-        peg$c38 = { type: 'literal', value: '(', description: '"("' },
-        peg$c39 = ',',
-        peg$c40 = { type: 'literal', value: ',', description: '","' },
-        peg$c41 = ')',
-        peg$c42 = { type: 'literal', value: ')', description: '")"' },
-        peg$c43 = function peg$c43(p, ps) {
+        peg$c41 = '(',
+        peg$c42 = { type: 'literal', value: '(', description: '"("' },
+        peg$c43 = ',',
+        peg$c44 = { type: 'literal', value: ',', description: '","' },
+        peg$c45 = ')',
+        peg$c46 = { type: 'literal', value: ')', description: '")"' },
+        peg$c47 = function peg$c47(p, ps) {
       return [p].concat(ps.map(function (p) {
         return p[1];
       }));
     },
-        peg$c44 = '@',
-        peg$c45 = { type: 'literal', value: '@', description: '"@"' },
-        peg$c46 = function peg$c46(r, o, p) {
+        peg$c48 = '@',
+        peg$c49 = { type: 'literal', value: '@', description: '"@"' },
+        peg$c50 = function peg$c50(r, o, p) {
       return extend({ relation: 'equ' }, r || {}, o, p ? p[1] : {});
     },
-        peg$c47 = function peg$c47(r, o, p) {
+        peg$c51 = function peg$c51(r, o, p) {
       return extend({ relation: 'equ', equalSpacing: true }, r || {}, o, p ? p[1] : {});
     },
-        peg$c48 = '==',
-        peg$c49 = { type: 'literal', value: '==', description: '"=="' },
-        peg$c50 = function peg$c50() {
+        peg$c52 = '==',
+        peg$c53 = { type: 'literal', value: '==', description: '"=="' },
+        peg$c54 = function peg$c54() {
       return { relation: 'equ', $parserOffset: offset() };
     },
-        peg$c51 = '<=',
-        peg$c52 = { type: 'literal', value: '<=', description: '"<="' },
-        peg$c53 = function peg$c53() {
+        peg$c55 = '<=',
+        peg$c56 = { type: 'literal', value: '<=', description: '"<="' },
+        peg$c57 = function peg$c57() {
       return { relation: 'leq', $parserOffset: offset() };
     },
-        peg$c54 = '>=',
-        peg$c55 = { type: 'literal', value: '>=', description: '">="' },
-        peg$c56 = function peg$c56() {
+        peg$c58 = '>=',
+        peg$c59 = { type: 'literal', value: '>=', description: '">="' },
+        peg$c60 = function peg$c60() {
       return { relation: 'geq', $parserOffset: offset() };
     },
-        peg$c57 = function peg$c57(n) {
-      return { priority: n };
+        peg$c61 = /^[0-9]/,
+        peg$c62 = { type: 'class', value: '[0-9]', description: '[0-9]' },
+        peg$c63 = function peg$c63(digits) {
+      return { priority: parseInt(digits.join(''), 10) };
     },
-        peg$c58 = function peg$c58(n) {
+        peg$c64 = function peg$c64(n) {
       return { constant: n };
     },
-        peg$c59 = '%',
-        peg$c60 = { type: 'literal', value: '%', description: '"%"' },
-        peg$c61 = function peg$c61(n) {
+        peg$c65 = '%',
+        peg$c66 = { type: 'literal', value: '%', description: '"%"' },
+        peg$c67 = function peg$c67(n) {
       return { view: null, multiplier: n / 100 };
     },
-        peg$c62 = function peg$c62(vn, a, m, c) {
+        peg$c68 = function peg$c68(vn, a, m, c) {
       return { view: vn.view, attribute: a ? a : undefined, multiplier: m ? m : 1, constant: c ? c : undefined };
     },
-        peg$c63 = '.left',
-        peg$c64 = { type: 'literal', value: '.left', description: '".left"' },
-        peg$c65 = function peg$c65() {
+        peg$c69 = '.left',
+        peg$c70 = { type: 'literal', value: '.left', description: '".left"' },
+        peg$c71 = function peg$c71() {
       return 'left';
     },
-        peg$c66 = '.right',
-        peg$c67 = { type: 'literal', value: '.right', description: '".right"' },
-        peg$c68 = function peg$c68() {
+        peg$c72 = '.right',
+        peg$c73 = { type: 'literal', value: '.right', description: '".right"' },
+        peg$c74 = function peg$c74() {
       return 'right';
     },
-        peg$c69 = '.top',
-        peg$c70 = { type: 'literal', value: '.top', description: '".top"' },
-        peg$c71 = function peg$c71() {
+        peg$c75 = '.top',
+        peg$c76 = { type: 'literal', value: '.top', description: '".top"' },
+        peg$c77 = function peg$c77() {
       return 'top';
     },
-        peg$c72 = '.bottom',
-        peg$c73 = { type: 'literal', value: '.bottom', description: '".bottom"' },
-        peg$c74 = function peg$c74() {
+        peg$c78 = '.bottom',
+        peg$c79 = { type: 'literal', value: '.bottom', description: '".bottom"' },
+        peg$c80 = function peg$c80() {
       return 'bottom';
     },
-        peg$c75 = '.width',
-        peg$c76 = { type: 'literal', value: '.width', description: '".width"' },
-        peg$c77 = function peg$c77() {
+        peg$c81 = '.width',
+        peg$c82 = { type: 'literal', value: '.width', description: '".width"' },
+        peg$c83 = function peg$c83() {
       return 'width';
     },
-        peg$c78 = '.height',
-        peg$c79 = { type: 'literal', value: '.height', description: '".height"' },
-        peg$c80 = function peg$c80() {
+        peg$c84 = '.height',
+        peg$c85 = { type: 'literal', value: '.height', description: '".height"' },
+        peg$c86 = function peg$c86() {
       return 'height';
     },
-        peg$c81 = '.centerX',
-        peg$c82 = { type: 'literal', value: '.centerX', description: '".centerX"' },
-        peg$c83 = function peg$c83() {
+        peg$c87 = '.centerX',
+        peg$c88 = { type: 'literal', value: '.centerX', description: '".centerX"' },
+        peg$c89 = function peg$c89() {
       return 'centerX';
     },
-        peg$c84 = '.centerY',
-        peg$c85 = { type: 'literal', value: '.centerY', description: '".centerY"' },
-        peg$c86 = function peg$c86() {
+        peg$c90 = '.centerY',
+        peg$c91 = { type: 'literal', value: '.centerY', description: '".centerY"' },
+        peg$c92 = function peg$c92() {
       return 'centerY';
     },
-        peg$c87 = '/',
-        peg$c88 = { type: 'literal', value: '/', description: '"/"' },
-        peg$c89 = function peg$c89(n) {
+        peg$c93 = '/',
+        peg$c94 = { type: 'literal', value: '/', description: '"/"' },
+        peg$c95 = function peg$c95(n) {
       return 1 / n;
     },
-        peg$c90 = '*',
-        peg$c91 = { type: 'literal', value: '*', description: '"*"' },
-        peg$c92 = function peg$c92(n) {
+        peg$c96 = '*',
+        peg$c97 = { type: 'literal', value: '*', description: '"*"' },
+        peg$c98 = function peg$c98(n) {
       return n;
     },
-        peg$c93 = function peg$c93(n) {
+        peg$c99 = function peg$c99(n) {
       return -n;
     },
-        peg$c94 = '+',
-        peg$c95 = { type: 'literal', value: '+', description: '"+"' },
-        peg$c96 = /^[a-zA-Z_]/,
-        peg$c97 = { type: 'class', value: '[a-zA-Z_]', description: '[a-zA-Z_]' },
-        peg$c98 = /^[a-zA-Z0-9_]/,
-        peg$c99 = { type: 'class', value: '[a-zA-Z0-9_]', description: '[a-zA-Z0-9_]' },
-        peg$c100 = function peg$c100(f, v) {
+        peg$c100 = '+',
+        peg$c101 = { type: 'literal', value: '+', description: '"+"' },
+        peg$c102 = /^[a-zA-Z_]/,
+        peg$c103 = { type: 'class', value: '[a-zA-Z_]', description: '[a-zA-Z_]' },
+        peg$c104 = /^[a-zA-Z0-9_]/,
+        peg$c105 = { type: 'class', value: '[a-zA-Z0-9_]', description: '[a-zA-Z0-9_]' },
+        peg$c106 = function peg$c106(f, v) {
       return { view: f + v };
     },
-        peg$c101 = /^[0-9]/,
-        peg$c102 = { type: 'class', value: '[0-9]', description: '[0-9]' },
-        peg$c103 = function peg$c103(digits) {
+        peg$c107 = '.',
+        peg$c108 = { type: 'literal', value: '.', description: '"."' },
+        peg$c109 = function peg$c109(digits, decimals) {
+      return parseFloat(digits.concat('.').concat(decimals).join(''), 10);
+    },
+        peg$c110 = function peg$c110(digits) {
       return parseInt(digits.join(''), 10);
     },
         peg$currPos = 0,
@@ -3938,9 +2036,9 @@ var parserExt = (function () {
       var s0, s1, s2, s3;
 
       s0 = peg$currPos;
-      if (input.charCodeAt(peg$currPos) === 45) {
+      if (input.substr(peg$currPos, 2) === peg$c27) {
         s1 = peg$c27;
-        peg$currPos++;
+        peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) {
@@ -3948,80 +2046,37 @@ var parserExt = (function () {
         }
       }
       if (s1 !== peg$FAILED) {
-        s2 = peg$parsepredicateList();
-        if (s2 !== peg$FAILED) {
-          if (input.charCodeAt(peg$currPos) === 45) {
-            s3 = peg$c27;
-            peg$currPos++;
-          } else {
-            s3 = peg$FAILED;
-            if (peg$silentFails === 0) {
-              peg$fail(peg$c28);
-            }
-          }
-          if (s3 !== peg$FAILED) {
-            peg$reportedPos = s0;
-            s1 = peg$c29(s2);
-            s0 = s1;
-          } else {
-            peg$currPos = s0;
-            s0 = peg$c0;
-          }
-        } else {
-          peg$currPos = s0;
-          s0 = peg$c0;
-        }
-      } else {
-        peg$currPos = s0;
-        s0 = peg$c0;
+        peg$reportedPos = s0;
+        s1 = peg$c29();
       }
+      s0 = s1;
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 45) {
-          s1 = peg$c27;
+          s1 = peg$c30;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
           if (peg$silentFails === 0) {
-            peg$fail(peg$c28);
+            peg$fail(peg$c31);
           }
         }
         if (s1 !== peg$FAILED) {
-          peg$reportedPos = s0;
-          s1 = peg$c30();
-        }
-        s0 = s1;
-        if (s0 === peg$FAILED) {
-          s0 = peg$currPos;
-          if (input.charCodeAt(peg$currPos) === 126) {
-            s1 = peg$c31;
-            peg$currPos++;
-          } else {
-            s1 = peg$FAILED;
-            if (peg$silentFails === 0) {
-              peg$fail(peg$c32);
+          s2 = peg$parsepredicateList();
+          if (s2 !== peg$FAILED) {
+            if (input.charCodeAt(peg$currPos) === 45) {
+              s3 = peg$c30;
+              peg$currPos++;
+            } else {
+              s3 = peg$FAILED;
+              if (peg$silentFails === 0) {
+                peg$fail(peg$c31);
+              }
             }
-          }
-          if (s1 !== peg$FAILED) {
-            s2 = peg$parseequalSpacingPredicateList();
-            if (s2 !== peg$FAILED) {
-              if (input.charCodeAt(peg$currPos) === 126) {
-                s3 = peg$c31;
-                peg$currPos++;
-              } else {
-                s3 = peg$FAILED;
-                if (peg$silentFails === 0) {
-                  peg$fail(peg$c32);
-                }
-              }
-              if (s3 !== peg$FAILED) {
-                peg$reportedPos = s0;
-                s1 = peg$c29(s2);
-                s0 = s1;
-              } else {
-                peg$currPos = s0;
-                s0 = peg$c0;
-              }
+            if (s3 !== peg$FAILED) {
+              peg$reportedPos = s0;
+              s1 = peg$c32(s2);
+              s0 = s1;
             } else {
               peg$currPos = s0;
               s0 = peg$c0;
@@ -4030,30 +2085,90 @@ var parserExt = (function () {
             peg$currPos = s0;
             s0 = peg$c0;
           }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c0;
+        }
+        if (s0 === peg$FAILED) {
+          s0 = peg$currPos;
+          if (input.charCodeAt(peg$currPos) === 45) {
+            s1 = peg$c30;
+            peg$currPos++;
+          } else {
+            s1 = peg$FAILED;
+            if (peg$silentFails === 0) {
+              peg$fail(peg$c31);
+            }
+          }
+          if (s1 !== peg$FAILED) {
+            peg$reportedPos = s0;
+            s1 = peg$c33();
+          }
+          s0 = s1;
           if (s0 === peg$FAILED) {
             s0 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 126) {
-              s1 = peg$c31;
+              s1 = peg$c34;
               peg$currPos++;
             } else {
               s1 = peg$FAILED;
               if (peg$silentFails === 0) {
-                peg$fail(peg$c32);
+                peg$fail(peg$c35);
               }
             }
             if (s1 !== peg$FAILED) {
-              peg$reportedPos = s0;
-              s1 = peg$c33();
+              s2 = peg$parseequalSpacingPredicateList();
+              if (s2 !== peg$FAILED) {
+                if (input.charCodeAt(peg$currPos) === 126) {
+                  s3 = peg$c34;
+                  peg$currPos++;
+                } else {
+                  s3 = peg$FAILED;
+                  if (peg$silentFails === 0) {
+                    peg$fail(peg$c35);
+                  }
+                }
+                if (s3 !== peg$FAILED) {
+                  peg$reportedPos = s0;
+                  s1 = peg$c32(s2);
+                  s0 = s1;
+                } else {
+                  peg$currPos = s0;
+                  s0 = peg$c0;
+                }
+              } else {
+                peg$currPos = s0;
+                s0 = peg$c0;
+              }
+            } else {
+              peg$currPos = s0;
+              s0 = peg$c0;
             }
-            s0 = s1;
             if (s0 === peg$FAILED) {
               s0 = peg$currPos;
-              s1 = peg$c34;
+              if (input.charCodeAt(peg$currPos) === 126) {
+                s1 = peg$c34;
+                peg$currPos++;
+              } else {
+                s1 = peg$FAILED;
+                if (peg$silentFails === 0) {
+                  peg$fail(peg$c35);
+                }
+              }
               if (s1 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c35();
+                s1 = peg$c36();
               }
               s0 = s1;
+              if (s0 === peg$FAILED) {
+                s0 = peg$currPos;
+                s1 = peg$c37;
+                if (s1 !== peg$FAILED) {
+                  peg$reportedPos = s0;
+                  s1 = peg$c38();
+                }
+                s0 = s1;
+              }
             }
           }
         }
@@ -4077,12 +2192,21 @@ var parserExt = (function () {
       var s0, s1;
 
       s0 = peg$currPos;
-      s1 = peg$parsenumber();
+      s1 = peg$parsepercentage();
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c36(s1);
+        s1 = peg$c39(s1);
       }
       s0 = s1;
+      if (s0 === peg$FAILED) {
+        s0 = peg$currPos;
+        s1 = peg$parsenumber();
+        if (s1 !== peg$FAILED) {
+          peg$reportedPos = s0;
+          s1 = peg$c40(s1);
+        }
+        s0 = s1;
+      }
 
       return s0;
     }
@@ -4092,12 +2216,12 @@ var parserExt = (function () {
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 40) {
-        s1 = peg$c37;
+        s1 = peg$c41;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c38);
+          peg$fail(peg$c42);
         }
       }
       if (s1 !== peg$FAILED) {
@@ -4106,12 +2230,12 @@ var parserExt = (function () {
           s3 = [];
           s4 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 44) {
-            s5 = peg$c39;
+            s5 = peg$c43;
             peg$currPos++;
           } else {
             s5 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c40);
+              peg$fail(peg$c44);
             }
           }
           if (s5 !== peg$FAILED) {
@@ -4131,12 +2255,12 @@ var parserExt = (function () {
             s3.push(s4);
             s4 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 44) {
-              s5 = peg$c39;
+              s5 = peg$c43;
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
               if (peg$silentFails === 0) {
-                peg$fail(peg$c40);
+                peg$fail(peg$c44);
               }
             }
             if (s5 !== peg$FAILED) {
@@ -4155,17 +2279,17 @@ var parserExt = (function () {
           }
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 41) {
-              s4 = peg$c41;
+              s4 = peg$c45;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
               if (peg$silentFails === 0) {
-                peg$fail(peg$c42);
+                peg$fail(peg$c46);
               }
             }
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c43(s2, s3);
+              s1 = peg$c47(s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -4200,12 +2324,12 @@ var parserExt = (function () {
         if (s2 !== peg$FAILED) {
           s3 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 64) {
-            s4 = peg$c44;
+            s4 = peg$c48;
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c45);
+              peg$fail(peg$c49);
             }
           }
           if (s4 !== peg$FAILED) {
@@ -4226,7 +2350,7 @@ var parserExt = (function () {
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c46(s1, s2, s3);
+            s1 = peg$c50(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -4249,12 +2373,12 @@ var parserExt = (function () {
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 40) {
-        s1 = peg$c37;
+        s1 = peg$c41;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c38);
+          peg$fail(peg$c42);
         }
       }
       if (s1 !== peg$FAILED) {
@@ -4263,12 +2387,12 @@ var parserExt = (function () {
           s3 = [];
           s4 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 44) {
-            s5 = peg$c39;
+            s5 = peg$c43;
             peg$currPos++;
           } else {
             s5 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c40);
+              peg$fail(peg$c44);
             }
           }
           if (s5 !== peg$FAILED) {
@@ -4288,12 +2412,12 @@ var parserExt = (function () {
             s3.push(s4);
             s4 = peg$currPos;
             if (input.charCodeAt(peg$currPos) === 44) {
-              s5 = peg$c39;
+              s5 = peg$c43;
               peg$currPos++;
             } else {
               s5 = peg$FAILED;
               if (peg$silentFails === 0) {
-                peg$fail(peg$c40);
+                peg$fail(peg$c44);
               }
             }
             if (s5 !== peg$FAILED) {
@@ -4312,17 +2436,17 @@ var parserExt = (function () {
           }
           if (s3 !== peg$FAILED) {
             if (input.charCodeAt(peg$currPos) === 41) {
-              s4 = peg$c41;
+              s4 = peg$c45;
               peg$currPos++;
             } else {
               s4 = peg$FAILED;
               if (peg$silentFails === 0) {
-                peg$fail(peg$c42);
+                peg$fail(peg$c46);
               }
             }
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c43(s2, s3);
+              s1 = peg$c47(s2, s3);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -4357,12 +2481,12 @@ var parserExt = (function () {
         if (s2 !== peg$FAILED) {
           s3 = peg$currPos;
           if (input.charCodeAt(peg$currPos) === 64) {
-            s4 = peg$c44;
+            s4 = peg$c48;
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c45);
+              peg$fail(peg$c49);
             }
           }
           if (s4 !== peg$FAILED) {
@@ -4383,7 +2507,7 @@ var parserExt = (function () {
           }
           if (s3 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c47(s1, s2, s3);
+            s1 = peg$c51(s1, s2, s3);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -4405,50 +2529,50 @@ var parserExt = (function () {
       var s0, s1;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 2) === peg$c48) {
-        s1 = peg$c48;
+      if (input.substr(peg$currPos, 2) === peg$c52) {
+        s1 = peg$c52;
         peg$currPos += 2;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c49);
+          peg$fail(peg$c53);
         }
       }
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c50();
+        s1 = peg$c54();
       }
       s0 = s1;
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
-        if (input.substr(peg$currPos, 2) === peg$c51) {
-          s1 = peg$c51;
+        if (input.substr(peg$currPos, 2) === peg$c55) {
+          s1 = peg$c55;
           peg$currPos += 2;
         } else {
           s1 = peg$FAILED;
           if (peg$silentFails === 0) {
-            peg$fail(peg$c52);
+            peg$fail(peg$c56);
           }
         }
         if (s1 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c53();
+          s1 = peg$c57();
         }
         s0 = s1;
         if (s0 === peg$FAILED) {
           s0 = peg$currPos;
-          if (input.substr(peg$currPos, 2) === peg$c54) {
-            s1 = peg$c54;
+          if (input.substr(peg$currPos, 2) === peg$c58) {
+            s1 = peg$c58;
             peg$currPos += 2;
           } else {
             s1 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c55);
+              peg$fail(peg$c59);
             }
           }
           if (s1 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c56();
+            s1 = peg$c60();
           }
           s0 = s1;
         }
@@ -4472,13 +2596,38 @@ var parserExt = (function () {
     }
 
     function peg$parsepriority() {
-      var s0, s1;
+      var s0, s1, s2;
 
       s0 = peg$currPos;
-      s1 = peg$parsenumber();
+      s1 = [];
+      if (peg$c61.test(input.charAt(peg$currPos))) {
+        s2 = input.charAt(peg$currPos);
+        peg$currPos++;
+      } else {
+        s2 = peg$FAILED;
+        if (peg$silentFails === 0) {
+          peg$fail(peg$c62);
+        }
+      }
+      if (s2 !== peg$FAILED) {
+        while (s2 !== peg$FAILED) {
+          s1.push(s2);
+          if (peg$c61.test(input.charAt(peg$currPos))) {
+            s2 = input.charAt(peg$currPos);
+            peg$currPos++;
+          } else {
+            s2 = peg$FAILED;
+            if (peg$silentFails === 0) {
+              peg$fail(peg$c62);
+            }
+          }
+        }
+      } else {
+        s1 = peg$c0;
+      }
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c57(s1);
+        s1 = peg$c63(s1);
       }
       s0 = s1;
 
@@ -4492,7 +2641,7 @@ var parserExt = (function () {
       s1 = peg$parsenumber();
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c58(s1);
+        s1 = peg$c64(s1);
       }
       s0 = s1;
 
@@ -4506,17 +2655,17 @@ var parserExt = (function () {
       s1 = peg$parsenumber();
       if (s1 !== peg$FAILED) {
         if (input.charCodeAt(peg$currPos) === 37) {
-          s2 = peg$c59;
+          s2 = peg$c65;
           peg$currPos++;
         } else {
           s2 = peg$FAILED;
           if (peg$silentFails === 0) {
-            peg$fail(peg$c60);
+            peg$fail(peg$c66);
           }
         }
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c61(s1);
+          s1 = peg$c67(s1);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -4552,7 +2701,7 @@ var parserExt = (function () {
             }
             if (s4 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c62(s1, s2, s3, s4);
+              s1 = peg$c68(s1, s2, s3, s4);
               s0 = s1;
             } else {
               peg$currPos = s0;
@@ -4578,130 +2727,130 @@ var parserExt = (function () {
       var s0, s1;
 
       s0 = peg$currPos;
-      if (input.substr(peg$currPos, 5) === peg$c63) {
-        s1 = peg$c63;
+      if (input.substr(peg$currPos, 5) === peg$c69) {
+        s1 = peg$c69;
         peg$currPos += 5;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c64);
+          peg$fail(peg$c70);
         }
       }
       if (s1 !== peg$FAILED) {
         peg$reportedPos = s0;
-        s1 = peg$c65();
+        s1 = peg$c71();
       }
       s0 = s1;
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
-        if (input.substr(peg$currPos, 6) === peg$c66) {
-          s1 = peg$c66;
+        if (input.substr(peg$currPos, 6) === peg$c72) {
+          s1 = peg$c72;
           peg$currPos += 6;
         } else {
           s1 = peg$FAILED;
           if (peg$silentFails === 0) {
-            peg$fail(peg$c67);
+            peg$fail(peg$c73);
           }
         }
         if (s1 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c68();
+          s1 = peg$c74();
         }
         s0 = s1;
         if (s0 === peg$FAILED) {
           s0 = peg$currPos;
-          if (input.substr(peg$currPos, 4) === peg$c69) {
-            s1 = peg$c69;
+          if (input.substr(peg$currPos, 4) === peg$c75) {
+            s1 = peg$c75;
             peg$currPos += 4;
           } else {
             s1 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c70);
+              peg$fail(peg$c76);
             }
           }
           if (s1 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c71();
+            s1 = peg$c77();
           }
           s0 = s1;
           if (s0 === peg$FAILED) {
             s0 = peg$currPos;
-            if (input.substr(peg$currPos, 7) === peg$c72) {
-              s1 = peg$c72;
+            if (input.substr(peg$currPos, 7) === peg$c78) {
+              s1 = peg$c78;
               peg$currPos += 7;
             } else {
               s1 = peg$FAILED;
               if (peg$silentFails === 0) {
-                peg$fail(peg$c73);
+                peg$fail(peg$c79);
               }
             }
             if (s1 !== peg$FAILED) {
               peg$reportedPos = s0;
-              s1 = peg$c74();
+              s1 = peg$c80();
             }
             s0 = s1;
             if (s0 === peg$FAILED) {
               s0 = peg$currPos;
-              if (input.substr(peg$currPos, 6) === peg$c75) {
-                s1 = peg$c75;
+              if (input.substr(peg$currPos, 6) === peg$c81) {
+                s1 = peg$c81;
                 peg$currPos += 6;
               } else {
                 s1 = peg$FAILED;
                 if (peg$silentFails === 0) {
-                  peg$fail(peg$c76);
+                  peg$fail(peg$c82);
                 }
               }
               if (s1 !== peg$FAILED) {
                 peg$reportedPos = s0;
-                s1 = peg$c77();
+                s1 = peg$c83();
               }
               s0 = s1;
               if (s0 === peg$FAILED) {
                 s0 = peg$currPos;
-                if (input.substr(peg$currPos, 7) === peg$c78) {
-                  s1 = peg$c78;
+                if (input.substr(peg$currPos, 7) === peg$c84) {
+                  s1 = peg$c84;
                   peg$currPos += 7;
                 } else {
                   s1 = peg$FAILED;
                   if (peg$silentFails === 0) {
-                    peg$fail(peg$c79);
+                    peg$fail(peg$c85);
                   }
                 }
                 if (s1 !== peg$FAILED) {
                   peg$reportedPos = s0;
-                  s1 = peg$c80();
+                  s1 = peg$c86();
                 }
                 s0 = s1;
                 if (s0 === peg$FAILED) {
                   s0 = peg$currPos;
-                  if (input.substr(peg$currPos, 8) === peg$c81) {
-                    s1 = peg$c81;
+                  if (input.substr(peg$currPos, 8) === peg$c87) {
+                    s1 = peg$c87;
                     peg$currPos += 8;
                   } else {
                     s1 = peg$FAILED;
                     if (peg$silentFails === 0) {
-                      peg$fail(peg$c82);
+                      peg$fail(peg$c88);
                     }
                   }
                   if (s1 !== peg$FAILED) {
                     peg$reportedPos = s0;
-                    s1 = peg$c83();
+                    s1 = peg$c89();
                   }
                   s0 = s1;
                   if (s0 === peg$FAILED) {
                     s0 = peg$currPos;
-                    if (input.substr(peg$currPos, 8) === peg$c84) {
-                      s1 = peg$c84;
+                    if (input.substr(peg$currPos, 8) === peg$c90) {
+                      s1 = peg$c90;
                       peg$currPos += 8;
                     } else {
                       s1 = peg$FAILED;
                       if (peg$silentFails === 0) {
-                        peg$fail(peg$c85);
+                        peg$fail(peg$c91);
                       }
                     }
                     if (s1 !== peg$FAILED) {
                       peg$reportedPos = s0;
-                      s1 = peg$c86();
+                      s1 = peg$c92();
                     }
                     s0 = s1;
                   }
@@ -4720,19 +2869,19 @@ var parserExt = (function () {
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 47) {
-        s1 = peg$c87;
+        s1 = peg$c93;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c88);
+          peg$fail(peg$c94);
         }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsenumber();
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c89(s2);
+          s1 = peg$c95(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -4745,19 +2894,19 @@ var parserExt = (function () {
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 42) {
-          s1 = peg$c90;
+          s1 = peg$c96;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
           if (peg$silentFails === 0) {
-            peg$fail(peg$c91);
+            peg$fail(peg$c97);
           }
         }
         if (s1 !== peg$FAILED) {
           s2 = peg$parsenumber();
           if (s2 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c92(s2);
+            s1 = peg$c98(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -4777,19 +2926,19 @@ var parserExt = (function () {
 
       s0 = peg$currPos;
       if (input.charCodeAt(peg$currPos) === 45) {
-        s1 = peg$c27;
+        s1 = peg$c30;
         peg$currPos++;
       } else {
         s1 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c28);
+          peg$fail(peg$c31);
         }
       }
       if (s1 !== peg$FAILED) {
         s2 = peg$parsenumber();
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c93(s2);
+          s1 = peg$c99(s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -4802,19 +2951,19 @@ var parserExt = (function () {
       if (s0 === peg$FAILED) {
         s0 = peg$currPos;
         if (input.charCodeAt(peg$currPos) === 43) {
-          s1 = peg$c94;
+          s1 = peg$c100;
           peg$currPos++;
         } else {
           s1 = peg$FAILED;
           if (peg$silentFails === 0) {
-            peg$fail(peg$c95);
+            peg$fail(peg$c101);
           }
         }
         if (s1 !== peg$FAILED) {
           s2 = peg$parsenumber();
           if (s2 !== peg$FAILED) {
             peg$reportedPos = s0;
-            s1 = peg$c92(s2);
+            s1 = peg$c98(s2);
             s0 = s1;
           } else {
             peg$currPos = s0;
@@ -4835,25 +2984,25 @@ var parserExt = (function () {
       s0 = peg$currPos;
       s1 = peg$currPos;
       s2 = [];
-      if (peg$c96.test(input.charAt(peg$currPos))) {
+      if (peg$c102.test(input.charAt(peg$currPos))) {
         s3 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s3 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c97);
+          peg$fail(peg$c103);
         }
       }
       if (s3 !== peg$FAILED) {
         while (s3 !== peg$FAILED) {
           s2.push(s3);
-          if (peg$c96.test(input.charAt(peg$currPos))) {
+          if (peg$c102.test(input.charAt(peg$currPos))) {
             s3 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s3 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c97);
+              peg$fail(peg$c103);
             }
           }
         }
@@ -4867,24 +3016,24 @@ var parserExt = (function () {
       if (s1 !== peg$FAILED) {
         s2 = peg$currPos;
         s3 = [];
-        if (peg$c98.test(input.charAt(peg$currPos))) {
+        if (peg$c104.test(input.charAt(peg$currPos))) {
           s4 = input.charAt(peg$currPos);
           peg$currPos++;
         } else {
           s4 = peg$FAILED;
           if (peg$silentFails === 0) {
-            peg$fail(peg$c99);
+            peg$fail(peg$c105);
           }
         }
         while (s4 !== peg$FAILED) {
           s3.push(s4);
-          if (peg$c98.test(input.charAt(peg$currPos))) {
+          if (peg$c104.test(input.charAt(peg$currPos))) {
             s4 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s4 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c99);
+              peg$fail(peg$c105);
             }
           }
         }
@@ -4894,7 +3043,7 @@ var parserExt = (function () {
         s2 = s3;
         if (s2 !== peg$FAILED) {
           peg$reportedPos = s0;
-          s1 = peg$c100(s1, s2);
+          s1 = peg$c106(s1, s2);
           s0 = s1;
         } else {
           peg$currPos = s0;
@@ -4909,29 +3058,29 @@ var parserExt = (function () {
     }
 
     function peg$parsenumber() {
-      var s0, s1, s2;
+      var s0, s1, s2, s3, s4;
 
       s0 = peg$currPos;
       s1 = [];
-      if (peg$c101.test(input.charAt(peg$currPos))) {
+      if (peg$c61.test(input.charAt(peg$currPos))) {
         s2 = input.charAt(peg$currPos);
         peg$currPos++;
       } else {
         s2 = peg$FAILED;
         if (peg$silentFails === 0) {
-          peg$fail(peg$c102);
+          peg$fail(peg$c62);
         }
       }
       if (s2 !== peg$FAILED) {
         while (s2 !== peg$FAILED) {
           s1.push(s2);
-          if (peg$c101.test(input.charAt(peg$currPos))) {
+          if (peg$c61.test(input.charAt(peg$currPos))) {
             s2 = input.charAt(peg$currPos);
             peg$currPos++;
           } else {
             s2 = peg$FAILED;
             if (peg$silentFails === 0) {
-              peg$fail(peg$c102);
+              peg$fail(peg$c62);
             }
           }
         }
@@ -4939,10 +3088,92 @@ var parserExt = (function () {
         s1 = peg$c0;
       }
       if (s1 !== peg$FAILED) {
-        peg$reportedPos = s0;
-        s1 = peg$c103(s1);
+        if (input.charCodeAt(peg$currPos) === 46) {
+          s2 = peg$c107;
+          peg$currPos++;
+        } else {
+          s2 = peg$FAILED;
+          if (peg$silentFails === 0) {
+            peg$fail(peg$c108);
+          }
+        }
+        if (s2 !== peg$FAILED) {
+          s3 = [];
+          if (peg$c61.test(input.charAt(peg$currPos))) {
+            s4 = input.charAt(peg$currPos);
+            peg$currPos++;
+          } else {
+            s4 = peg$FAILED;
+            if (peg$silentFails === 0) {
+              peg$fail(peg$c62);
+            }
+          }
+          if (s4 !== peg$FAILED) {
+            while (s4 !== peg$FAILED) {
+              s3.push(s4);
+              if (peg$c61.test(input.charAt(peg$currPos))) {
+                s4 = input.charAt(peg$currPos);
+                peg$currPos++;
+              } else {
+                s4 = peg$FAILED;
+                if (peg$silentFails === 0) {
+                  peg$fail(peg$c62);
+                }
+              }
+            }
+          } else {
+            s3 = peg$c0;
+          }
+          if (s3 !== peg$FAILED) {
+            peg$reportedPos = s0;
+            s1 = peg$c109(s1, s3);
+            s0 = s1;
+          } else {
+            peg$currPos = s0;
+            s0 = peg$c0;
+          }
+        } else {
+          peg$currPos = s0;
+          s0 = peg$c0;
+        }
+      } else {
+        peg$currPos = s0;
+        s0 = peg$c0;
       }
-      s0 = s1;
+      if (s0 === peg$FAILED) {
+        s0 = peg$currPos;
+        s1 = [];
+        if (peg$c61.test(input.charAt(peg$currPos))) {
+          s2 = input.charAt(peg$currPos);
+          peg$currPos++;
+        } else {
+          s2 = peg$FAILED;
+          if (peg$silentFails === 0) {
+            peg$fail(peg$c62);
+          }
+        }
+        if (s2 !== peg$FAILED) {
+          while (s2 !== peg$FAILED) {
+            s1.push(s2);
+            if (peg$c61.test(input.charAt(peg$currPos))) {
+              s2 = input.charAt(peg$currPos);
+              peg$currPos++;
+            } else {
+              s2 = peg$FAILED;
+              if (peg$silentFails === 0) {
+                peg$fail(peg$c62);
+              }
+            }
+          }
+        } else {
+          s1 = peg$c0;
+        }
+        if (s1 !== peg$FAILED) {
+          peg$reportedPos = s0;
+          s1 = peg$c110(s1);
+        }
+        s0 = s1;
+      }
 
       return s0;
     }
@@ -4975,6 +3206,16 @@ var parserExt = (function () {
   };
 })();
 
+var Orientation = {
+  HORIZONTAL: 1,
+  VERTICAL: 2,
+  ZINDEX: 4
+};
+
+/**
+ * Helper function that inserts equal spacers (~).
+ * @private
+ */
 function _processEqualSpacer(context, stackView) {
 
   // Determine unique name for the spacer
@@ -5021,15 +3262,15 @@ function _processEqualSpacer(context, stackView) {
 
   // Add constraint
   switch (context.orientation) {
-    case 'horizontal':
+    case Orientation.HORIZONTAL:
       context.attr1 = context.view1 !== stackView ? Attribute.RIGHT : Attribute.LEFT;
       context.attr2 = Attribute.LEFT;
       break;
-    case 'vertical':
+    case Orientation.VERTICAL:
       context.attr1 = context.view1 !== stackView ? Attribute.BOTTOM : Attribute.TOP;
       context.attr2 = Attribute.TOP;
       break;
-    case 'zIndex':
+    case Orientation.ZINDEX:
       context.attr1 = Attribute.ZINDEX;
       context.attr2 = Attribute.ZINDEX;
       context.relation.constant = context.view1 !== stackView ? 'default' : 0;
@@ -5047,10 +3288,101 @@ function _processEqualSpacer(context, stackView) {
 }
 
 /**
+ * Helper function that inserts proportional spacers (-12%-).
+ * @private
+ */
+function _processProportionalSpacer(context, stackView) {
+  context.proportionalSpacerIndex = context.proportionalSpacerIndex || 1;
+  var name = '_-' + context.lineIndex + ':' + context.proportionalSpacerIndex + '-';
+  context.proportionalSpacerIndex++;
+  context.constraints.push({
+    view1: name,
+    attr1: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
+    relation: context.relation.relation || Relation.EQU,
+    view2: null, // or relative to the stackView... food for thought
+    attr2: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
+    priority: context.relation.priority,
+    multiplier: context.relation.multiplier
+  });
+  context.relation.multiplier = undefined;
+
+  // Add constraint
+  switch (context.orientation) {
+    case Orientation.HORIZONTAL:
+      context.attr1 = context.view1 !== stackView ? Attribute.RIGHT : Attribute.LEFT;
+      context.attr2 = Attribute.LEFT;
+      break;
+    case Orientation.VERTICAL:
+      context.attr1 = context.view1 !== stackView ? Attribute.BOTTOM : Attribute.TOP;
+      context.attr2 = Attribute.TOP;
+      break;
+    case Orientation.ZINDEX:
+      context.attr1 = Attribute.ZINDEX;
+      context.attr2 = Attribute.ZINDEX;
+      context.relation.constant = context.view1 !== stackView ? 'default' : 0;
+      break;
+  }
+  context.constraints.push({
+    view1: context.view1,
+    attr1: context.attr1,
+    relation: context.relation.relation,
+    view2: name,
+    attr2: context.attr2,
+    priority: context.relation.priority
+  });
+  context.view1 = name;
+}
+
+/**
+ * In case of a stack-view, set constraints for opposite orientations
+ * @private
+ */
+function _processStackView(context, name, subView) {
+  var viewName = undefined;
+  for (var orientation = 1; orientation <= 4; orientation *= 2) {
+    if (subView.orientations & orientation && subView.stack.orientation !== orientation && !(subView.stack.processedOrientations & orientation)) {
+      subView.stack.processedOrientations = subView.stack.processedOrientations | orientation;
+      viewName = viewName || {
+        name: name,
+        type: 'stack'
+      };
+      for (var i = 0, j = subView.stack.subViews.length; i < j; i++) {
+        if (orientation === Orientation.ZINDEX) {
+          context.constraints.push({
+            view1: viewName,
+            attr1: Attribute.ZINDEX,
+            relation: Relation.EQU,
+            view2: subView.stack.subViews[i],
+            attr2: Attribute.ZINDEX
+          });
+        } else {
+          context.constraints.push({
+            view1: viewName,
+            attr1: orientation === Orientation.VERTICAL ? Attribute.HEIGHT : Attribute.WIDTH,
+            relation: Relation.EQU,
+            view2: subView.stack.subViews[i],
+            attr2: orientation === Orientation.VERTICAL ? Attribute.HEIGHT : Attribute.WIDTH
+          });
+          context.constraints.push({
+            view1: viewName,
+            attr1: orientation === Orientation.VERTICAL ? Attribute.TOP : Attribute.LEFT,
+            relation: Relation.EQU,
+            view2: subView.stack.subViews[i],
+            attr2: orientation === Orientation.VERTICAL ? Attribute.TOP : Attribute.LEFT
+          });
+        }
+      }
+    }
+  }
+}
+
+/**
  * Recursive helper function that processes the cascaded data.
  * @private
  */
 function _processCascade(context, cascade, stackView) {
+  var subViews = [];
+  var subView = undefined;
   if (stackView) {
     cascade.push({ view: stackView });
   }
@@ -5060,35 +3392,52 @@ function _processCascade(context, cascade, stackView) {
       context.view1 = context.view2;
       context.view2 = context.item.view;
       if (context.view1 !== undefined && context.view2 !== undefined && context.relation) {
+        if (context.item.view !== stackView) {
+          subViews.push(context.item.view);
+          subView = context.subViews[context.item.view];
+          if (!subView) {
+            subView = { orientations: 0 };
+            context.subViews[context.item.view] = subView;
+          }
+          subView.orientations = subView.orientations | context.orientation;
+          if (subView.stack) {
+            _processStackView(context, context.item.view, subView);
+          }
+        }
         if (context.relation.equalSpacing) {
           _processEqualSpacer(context, stackView);
         }
-        switch (context.orientation) {
-          case 'horizontal':
-            context.attr1 = context.view1 !== stackView ? Attribute.RIGHT : Attribute.LEFT;
-            context.attr2 = context.view2 !== stackView ? Attribute.LEFT : Attribute.RIGHT;
-            break;
-          case 'vertical':
-            context.attr1 = context.view1 !== stackView ? Attribute.BOTTOM : Attribute.TOP;
-            context.attr2 = context.view2 !== stackView ? Attribute.TOP : Attribute.BOTTOM;
-            break;
-          case 'zIndex':
-            context.attr1 = Attribute.ZINDEX;
-            context.attr2 = Attribute.ZINDEX;
-            context.relation.constant = context.view1 !== stackView ? 'default' : 0;
-            break;
+        if (context.relation.multiplier) {
+          _processProportionalSpacer(context, stackView);
         }
-        context.constraints.push({
-          view1: context.view1,
-          attr1: context.attr1,
-          relation: context.relation.relation,
-          view2: context.view2,
-          attr2: context.attr2,
-          multiplier: context.relation.multiplier,
-          constant: context.relation.constant === 'default' || !context.relation.constant ? context.relation.constant : -context.relation.constant,
-          priority: context.relation.priority
-          //,variable: context.relation.variable
-        });
+        if (context.relation.relation !== 'none') {
+          switch (context.orientation) {
+            case Orientation.HORIZONTAL:
+              context.attr1 = context.view1 !== stackView ? Attribute.RIGHT : Attribute.LEFT;
+              context.attr2 = context.view2 !== stackView ? Attribute.LEFT : Attribute.RIGHT;
+              break;
+            case Orientation.VERTICAL:
+              context.attr1 = context.view1 !== stackView ? Attribute.BOTTOM : Attribute.TOP;
+              context.attr2 = context.view2 !== stackView ? Attribute.TOP : Attribute.BOTTOM;
+              break;
+            case Orientation.ZINDEX:
+              context.attr1 = Attribute.ZINDEX;
+              context.attr2 = Attribute.ZINDEX;
+              context.relation.constant = context.view1 !== stackView ? 'default' : 0;
+              break;
+          }
+          context.constraints.push({
+            view1: context.view1,
+            attr1: context.attr1,
+            relation: context.relation.relation,
+            view2: context.view2,
+            attr2: context.attr2,
+            multiplier: context.relation.multiplier,
+            constant: context.relation.constant === 'default' || !context.relation.constant ? context.relation.constant : -context.relation.constant,
+            priority: context.relation.priority
+            //,variable: context.relation.variable
+          });
+        }
       }
       context.relation = undefined;
 
@@ -5111,30 +3460,6 @@ function _processCascade(context, cascade, stackView) {
         }
       }
 
-      // In case of a stack-view, set constraints for opposite orientation
-      if (stackView && context.item.view !== stackView) {
-        context.constraints.push({
-          view1: {
-            name: stackView,
-            type: 'stack'
-          },
-          attr1: context.horizontal ? Attribute.HEIGHT : Attribute.WIDTH,
-          relation: Relation.EQU,
-          view2: context.item.view,
-          attr2: context.horizontal ? Attribute.HEIGHT : Attribute.WIDTH
-        });
-        context.constraints.push({
-          view1: {
-            name: stackView,
-            type: 'stack'
-          },
-          attr1: context.horizontal ? Attribute.TOP : Attribute.LEFT,
-          relation: Relation.EQU,
-          view2: context.item.view,
-          attr2: context.horizontal ? Attribute.TOP : Attribute.LEFT
-        });
-      }
-
       // Process cascaded data (child stack-views)
       if (context.item.cascade) {
         _processCascade(context, context.item.cascade, context.item.view);
@@ -5142,6 +3467,19 @@ function _processCascade(context, cascade, stackView) {
     } else {
       context.relation = context.item[0];
     }
+  }
+
+  if (stackView) {
+    subView = context.subViews[stackView];
+    if (subView.stack) {
+      throw new Error('A stack with name "' + stackView + '"" already exists');
+    }
+    subView.stack = {
+      orientation: context.orientation,
+      processedOrientations: context.orientation,
+      subViews: subViews
+    };
+    _processStackView(context, stackView, subView);
   }
 }
 
@@ -5181,11 +3519,22 @@ var VisualFormat = (function () {
         return [res];
       }
       var context = {
-        orientation: res.orientation,
-        horizontal: res.orientation === 'horizontal',
         constraints: [],
-        lineIndex: (options ? options.lineIndex : undefined) || 1
+        lineIndex: (options ? options.lineIndex : undefined) || 1,
+        subViews: (options ? options.subViews : undefined) || {}
       };
+      switch (res.orientation) {
+        case 'horizontal':
+          context.orientation = Orientation.HORIZONTAL;
+          context.horizontal = true;
+          break;
+        case 'vertical':
+          context.orientation = Orientation.VERTICAL;
+          break;
+        case 'zIndex':
+          context.orientation = Orientation.ZINDEX;
+          break;
+      }
       _processCascade(context, res.cascade, null);
       return context.constraints;
     }
@@ -5201,6 +3550,7 @@ var VisualFormat = (function () {
      * @param {String|Array} visualFormat One or more visual format strings.
      * @param {Object} [options] Configuration options.
      * @param {Boolean} [options.extended] When set to true uses the extended syntax (default: false).
+     * @param {Boolean} [options.strict] When set to false trims any leading/trailing spaces and ignores empty lines (default: true).
      * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
      * @param {String} [options.outFormat] Output format (`constraints` or `raw`) (default: `constraints`).
      * @return {Array} Array of constraint definitions.
@@ -5226,7 +3576,9 @@ var VisualFormat = (function () {
       var parseOptions = {
         lineIndex: lineIndex,
         extended: options && options.extended,
-        outFormat: options ? options.outFormat : undefined
+        strict: options && options.strict !== undefined ? options.strict : true,
+        outFormat: options ? options.outFormat : undefined,
+        subViews: {}
       };
       try {
         for (var i = 0; i < visualFormat.length; i++) {
@@ -5235,7 +3587,12 @@ var VisualFormat = (function () {
             line = lines[j];
             lineIndex++;
             parseOptions.lineIndex = lineIndex;
-            constraints = constraints.concat(this.parseLine(line, parseOptions));
+            if (!parseOptions.strict) {
+              line = line.trim();
+            }
+            if (parseOptions.strict || line.length) {
+              constraints = constraints.concat(this.parseLine(line, parseOptions));
+            }
           }
         }
       } catch (err) {
@@ -5250,14 +3607,6 @@ var VisualFormat = (function () {
   return VisualFormat;
 })();
 
-var SubView__USE_CASSOWARYJS = false;
-
-/**
- * A SubView is automatically generated when constraints are added to a View.
- *
- * @namespace SubView
- */
-
 var SubView = (function () {
   function SubView(options) {
     _classCallCheck(this, SubView);
@@ -5267,7 +3616,7 @@ var SubView = (function () {
     this._solver = options.solver;
     this._attr = {};
     if (!options.name) {
-      if (SubView__USE_CASSOWARYJS) {
+      if (true) {
         this._attr[Attribute.LEFT] = new c.Variable();
         this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.LEFT], c.Strength.required));
         this._attr[Attribute.TOP] = new c.Variable();
@@ -5321,7 +3670,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.LEFT).value();
+      return this._getAttr(Attribute.LEFT).value;
     }
   }, {
     key: 'right',
@@ -5332,7 +3681,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.RIGHT).value();
+      return this._getAttr(Attribute.RIGHT).value;
     }
   }, {
     key: 'width',
@@ -5342,7 +3691,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.WIDTH).value();
+      return this._getAttr(Attribute.WIDTH).value;
     }
   }, {
     key: 'height',
@@ -5353,7 +3702,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.HEIGHT).value();
+      return this._getAttr(Attribute.HEIGHT).value;
     }
   }, {
     key: 'intrinsicWidth',
@@ -5379,7 +3728,7 @@ var SubView = (function () {
       if (value !== undefined && value !== this._intrinsicWidth) {
         var attr = this._getAttr(Attribute.WIDTH);
         if (this._intrinsicWidth === undefined) {
-          if (SubView__USE_CASSOWARYJS) {
+          if (true) {
             this._solver.addEditVar(attr, new c.Strength('required', this._name ? 998 : 999, 1000, 1000));
           } else {
             this._solver.addEditVariable(attr, kiwi.Strength.create(this._name ? 998 : 999, 1000, 1000));
@@ -5387,7 +3736,7 @@ var SubView = (function () {
         }
         this._intrinsicWidth = value;
         this._solver.suggestValue(attr, value);
-        if (SubView__USE_CASSOWARYJS) {
+        if (true) {
           this._solver.resolve();
         } else {
           this._solver.updateVariables();
@@ -5411,7 +3760,7 @@ var SubView = (function () {
       if (value !== undefined && value !== this._intrinsicHeight) {
         var attr = this._getAttr(Attribute.HEIGHT);
         if (this._intrinsicHeight === undefined) {
-          if (SubView__USE_CASSOWARYJS) {
+          if (true) {
             this._solver.addEditVar(attr, new c.Strength('required', this._name ? 998 : 999, 1000, 1000));
           } else {
             this._solver.addEditVariable(attr, kiwi.Strength.create(this._name ? 998 : 999, 1000, 1000));
@@ -5419,7 +3768,7 @@ var SubView = (function () {
         }
         this._intrinsicHeight = value;
         this._solver.suggestValue(attr, value);
-        if (SubView__USE_CASSOWARYJS) {
+        if (true) {
           this._solver.resolve();
         } else {
           this._solver.updateVariables();
@@ -5435,7 +3784,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.TOP).value();
+      return this._getAttr(Attribute.TOP).value;
     }
   }, {
     key: 'bottom',
@@ -5446,7 +3795,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.BOTTOM).value();
+      return this._getAttr(Attribute.BOTTOM).value;
     }
   }, {
     key: 'centerX',
@@ -5457,7 +3806,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.CENTERX).value();
+      return this._getAttr(Attribute.CENTERX).value;
     }
   }, {
     key: 'centerY',
@@ -5468,7 +3817,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.CENTERY).value();
+      return this._getAttr(Attribute.CENTERY).value;
     }
   }, {
     key: 'zIndex',
@@ -5479,7 +3828,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.ZINDEX).value();
+      return this._getAttr(Attribute.ZINDEX).value;
     }
   }, {
     key: 'type',
@@ -5502,7 +3851,7 @@ var SubView = (function () {
      * @return {Number} value or `undefined`
      */
     value: function getValue(attr) {
-      return this._attr[attr] ? this._attr[attr].value() : undefined;
+      return this._attr[attr] ? this._attr[attr].value : undefined;
     }
   }, {
     key: '_getAttr',
@@ -5514,12 +3863,12 @@ var SubView = (function () {
       if (this._attr[attr]) {
         return this._attr[attr];
       }
-      this._attr[attr] = SubView__USE_CASSOWARYJS ? new c.Variable() : new kiwi.Variable();
+      this._attr[attr] = true ? new c.Variable() : new kiwi.Variable();
       switch (attr) {
         case Attribute.RIGHT:
           this._getAttr(Attribute.LEFT);
           this._getAttr(Attribute.WIDTH);
-          if (SubView__USE_CASSOWARYJS) {
+          if (true) {
             this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.LEFT], this._attr[Attribute.WIDTH])));
           } else {
             this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.LEFT].plus(this._attr[Attribute.WIDTH])));
@@ -5528,7 +3877,7 @@ var SubView = (function () {
         case Attribute.BOTTOM:
           this._getAttr(Attribute.TOP);
           this._getAttr(Attribute.HEIGHT);
-          if (SubView__USE_CASSOWARYJS) {
+          if (true) {
             this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.TOP], this._attr[Attribute.HEIGHT])));
           } else {
             this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.TOP].plus(this._attr[Attribute.HEIGHT])));
@@ -5537,7 +3886,7 @@ var SubView = (function () {
         case Attribute.CENTERX:
           this._getAttr(Attribute.LEFT);
           this._getAttr(Attribute.WIDTH);
-          if (SubView__USE_CASSOWARYJS) {
+          if (true) {
             this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.LEFT], c.divide(this._attr[Attribute.WIDTH], 2))));
           } else {
             this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.LEFT].plus(this._attr[Attribute.WIDTH].divide(2))));
@@ -5546,14 +3895,14 @@ var SubView = (function () {
         case Attribute.CENTERY:
           this._getAttr(Attribute.TOP);
           this._getAttr(Attribute.HEIGHT);
-          if (SubView__USE_CASSOWARYJS) {
+          if (true) {
             this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.TOP], c.divide(this._attr[Attribute.HEIGHT], 2))));
           } else {
             this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.TOP].plus(this._attr[Attribute.HEIGHT].divide(2))));
           }
           break;
       }
-      if (!SubView__USE_CASSOWARYJS) {
+      if (!true) {
         this._solver.updateVariables();
       }
       return this._attr[attr];
@@ -5563,12 +3912,10 @@ var SubView = (function () {
   return SubView;
 })();
 
-var View__USE_CASSOWARYJS = false;
-
-var defaultPriorityStrength = View__USE_CASSOWARYJS ? new c.Strength('defaultPriority', 0, 1000, 1000) : kiwi.Strength.create(0, 1000, 1000);
+var defaultPriorityStrength = true ? new c.Strength('defaultPriority', 0, 1000, 1000) : kiwi.Strength.create(0, 1000, 1000);
 
 function _getConst(name, value) {
-  if (View__USE_CASSOWARYJS) {
+  if (true) {
     var vr = new c.Variable({ value: value });
     this._solver.addConstraint(new c.StayConstraint(vr, c.Strength.required, 0));
     return vr;
@@ -5627,7 +3974,7 @@ function _getSpacing(constraint) {
   this._spacingVars = this._spacingVars || new Array(7);
   this._spacingExpr = this._spacingExpr || new Array(7);
   if (!this._spacingVars[index]) {
-    if (View__USE_CASSOWARYJS) {
+    if (true) {
       this._spacingVars[index] = new c.Variable();
       this._solver.addEditVar(this._spacingVars[index]);
       this._spacingExpr[index] = c.minus(0, this._spacingVars[index]);
@@ -5641,7 +3988,7 @@ function _getSpacing(constraint) {
   return this._spacingExpr[index];
 }
 
-function _addConstraintCassowary(constraint) {
+function _addConstraint(constraint) {
   //this.constraints.push(constraint);
   var relation = undefined;
   var multiplier = constraint.multiplier !== undefined ? constraint.multiplier : 1;
@@ -5651,70 +3998,60 @@ function _addConstraintCassowary(constraint) {
   }
   var attr1 = _getSubView.call(this, constraint.view1)._getAttr(constraint.attr1);
   var attr2 = undefined;
-  if (constraint.attr2 === Attribute.CONST) {
-    attr2 = _getConst.call(this, undefined, constraint.constant);
-  } else {
-    attr2 = _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
-    if (multiplier !== 1 && constant) {
-      attr2 = c.plus(c.times(attr2, multiplier), constant);
-    } else if (constant) {
-      attr2 = c.plus(attr2, constant);
-    } else if (multiplier !== 1) {
-      attr2 = c.times(attr2, multiplier);
+  if (true) {
+    if (constraint.attr2 === Attribute.CONST) {
+      attr2 = _getConst.call(this, undefined, constraint.constant);
+    } else {
+      attr2 = _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
+      if (multiplier !== 1 && constant) {
+        attr2 = c.plus(c.times(attr2, multiplier), constant);
+      } else if (constant) {
+        attr2 = c.plus(attr2, constant);
+      } else if (multiplier !== 1) {
+        attr2 = c.times(attr2, multiplier);
+      }
     }
-  }
-  var strength = constraint.priority !== undefined && constraint.priority < 1000 ? new c.Strength('priority', 0, constraint.priority, 1000) : defaultPriorityStrength;
-  switch (constraint.relation) {
-    case Relation.EQU:
-      relation = new c.Equation(attr1, attr2, strength);
-      break;
-    case Relation.GEQ:
-      relation = new c.Inequality(attr1, c.GEQ, attr2, strength);
-      break;
-    case Relation.LEQ:
-      relation = new c.Inequality(attr1, c.LEQ, attr2, strength);
-      break;
-    default:
-      throw 'Invalid relation specified: ' + constraint.relation;
-  }
-  this._solver.addConstraint(relation);
-}
-
-function _addConstraintKiwi(constraint) {
-  //this.constraints.push(constraint);
-  var relation = undefined;
-  var multiplier = constraint.multiplier !== undefined ? constraint.multiplier : 1;
-  var constant = constraint.constant !== undefined ? constraint.constant : 0;
-  if (constant === 'default') {
-    constant = _getSpacing.call(this, constraint);
-  }
-  var attr1 = _getSubView.call(this, constraint.view1)._getAttr(constraint.attr1);
-  var attr2 = undefined;
-  if (constraint.attr2 === Attribute.CONST) {
-    attr2 = _getConst.call(this, undefined, constraint.constant);
-  } else {
-    attr2 = _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
-    if (multiplier !== 1 && constant) {
-      attr2 = attr2.multiply(multiplier).plus(constant);
-    } else if (constant) {
-      attr2 = attr2.plus(constant);
-    } else if (multiplier !== 1) {
-      attr2 = attr2.multiply(multiplier);
+    var strength = constraint.priority !== undefined && constraint.priority < 1000 ? new c.Strength('priority', 0, constraint.priority, 1000) : defaultPriorityStrength;
+    switch (constraint.relation) {
+      case Relation.EQU:
+        relation = new c.Equation(attr1, attr2, strength);
+        break;
+      case Relation.GEQ:
+        relation = new c.Inequality(attr1, c.GEQ, attr2, strength);
+        break;
+      case Relation.LEQ:
+        relation = new c.Inequality(attr1, c.LEQ, attr2, strength);
+        break;
+      default:
+        throw 'Invalid relation specified: ' + constraint.relation;
     }
-  }
-  var strength = constraint.priority !== undefined && constraint.priority < 1000 ? kiwi.Strength.create(0, constraint.priority, 1000) : defaultPriorityStrength;
-  switch (constraint.relation) {
-    case Relation.EQU:
-      relation = new kiwi.Constraint(attr1, kiwi.Operator.Eq, attr2, strength);
-      break;
-    case Relation.GEQ:
-      relation = new kiwi.Constraint(attr1, kiwi.Operator.Ge, attr2, strength);
-      break;
-    case Relation.LEQ:
-      relation = new kiwi.Constraint(attr1, kiwi.Operator.Le, attr2, strength);
-      break;
-    default:
-      throw 'Invalid relation specified: ' + constraint.relation;
+  } else {
+    if (constraint.attr2 === Attribute.CONST) {
+      attr2 = _getConst.call(this, undefined, constraint.constant);
+    } else {
+      attr2 = _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
+      if (multiplier !== 1 && constant) {
+        attr2 = attr2.multiply(multiplier).plus(constant);
+      } else if (constant) {
+        attr2 = attr2.plus(constant);
+      } else if (multiplier !== 1) {
+        attr2 = attr2.multiply(multiplier);
+      }
+    }
+    var strength = constraint.priority !== undefined && constraint.priority < 1000 ? kiwi.Strength.create(0, constraint.priority, 1000) : defaultPriorityStrength;
+    switch (constraint.relation) {
+      case Relation.EQU:
+        relation = new kiwi.Constraint(attr1, kiwi.Operator.Eq, attr2, strength);
+        break;
+      case Relation.GEQ:
+        relation = new kiwi.Constraint(attr1, kiwi.Operator.Ge, attr2, strength);
+        break;
+      case Relation.LEQ:
+        relation = new kiwi.Constraint(attr1, kiwi.Operator.Le, attr2, strength);
+        break;
+      default:
+        throw 'Invalid relation specified: ' + constraint.relation;
+    }
   }
   this._solver.addConstraint(relation);
 }
@@ -5753,7 +4090,7 @@ var View = (function () {
   function View(options) {
     _classCallCheck(this, View);
 
-    this._solver = View__USE_CASSOWARYJS ? new c.SimplexSolver() : new kiwi.Solver();
+    this._solver = true ? new c.SimplexSolver() : new kiwi.Solver();
     this._subViews = {};
     //this._variables = {};
     this._spacing = {};
@@ -5909,7 +4246,7 @@ var View = (function () {
             this._solver.suggestValue(this._spacingVars[i], this._spacing[i]);
           }
         }
-        if (View__USE_CASSOWARYJS) {
+        if (true) {
           this._solver.resolve();
         } else {
           this._solver.updateVariables();
@@ -5941,10 +4278,8 @@ var View = (function () {
      * @return {View} this
      */
     value: function addConstraint(constraint) {
-      if (View__USE_CASSOWARYJS) {
-        _addConstraintCassowary.call(this, constraint);
-      } else {
-        _addConstraintKiwi.call(this, constraint);
+      _addConstraint.call(this, constraint);
+      if (!true) {
         this._solver.updateVariables();
       }
       return this;
@@ -5973,14 +4308,10 @@ var View = (function () {
      * @return {View} this
      */
     value: function addConstraints(constraints) {
-      if (View__USE_CASSOWARYJS) {
-        for (var j = 0; j < constraints.length; j++) {
-          _addConstraintCassowary.call(this, constraints[j]);
-        }
-      } else {
-        for (var i = 0; i < constraints.length; i++) {
-          _addConstraintKiwi.call(this, constraints[i]);
-        }
+      for (var j = 0; j < constraints.length; j++) {
+        _addConstraint.call(this, constraints[j]);
+      }
+      if (!true) {
         this._solver.updateVariables();
       }
       return this;
@@ -5996,14 +4327,15 @@ var View = (function () {
     get: function () {
       return this._subViews;
     }
-  }, {
-    key: 'hasAmbiguousLayout',
 
     /**
      * Checks whether the constraints incompletely specify the location
      * of the subViews.
+     * @private
      */
-    get: function () {}
+    //get hasAmbiguousLayout() {
+    // Todo
+    //}
 
     /**
      * Dictionary of `Variable` objects that have been created when adding constraints.
@@ -6031,7 +4363,5 @@ var AutoLayout = {
 
 module.exports = AutoLayout;
 
-// Todo
-
-},{"kiwi/ts/bin/kiwi":1}]},{},[2])(2)
+},{"cassowary/bin/c":1}]},{},[2])(2)
 });
