@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/IjzerenHein/autolayout.js.svg?branch=master)](https://travis-ci.org/IjzerenHein/autolayout.js)
 [![view on npm](http://img.shields.io/npm/v/autolayout.svg)](https://www.npmjs.org/package/autolayout)
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 
 AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/Introduction/Introduction.html) and [Visual Format Language](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html) in Javascript. Auto layout is a system which lets you perform lay out using mathematical relationships (constraints). It uses the awesome [Cassowary.js](https://github.com/slightlyoff/cassowary.js) library to do the actual constraint resolving and implements Apple's constraint system and Visual Format Language (vfl) on top of that.
 
@@ -28,14 +29,17 @@ AutoLayout.js is an abstract library for integrating Auto Layout and VFL into ot
 
 ### Installation
 
+Install using npm or bower:
+
     npm install autolayout
 
-AutoLayout.js has a dependency on [Cassowary.js](https://github.com/slightlyoff/cassowary.js). When you are using the `dist/autolayout{.min}.js` file, make sure Cassowary.js is loaded as well.
+    bower install autolayout
+
+Include the library in your project:
 
 ```html
 <head>
-  <script type="text/javascript" src="node_modules/autolayout/node_modules/cassowary/bin/c.js"></script>
-  <script type="text/javascript" src="node_modules/autolayout/dist/autolayout.js"></script>
+  <script type="text/javascript" src="<path-to-autolayout.js>/dist/autolayout.js"></script>
 </head>
 ```
 
@@ -43,12 +47,12 @@ AutoLayout.js has a dependency on [Cassowary.js](https://github.com/slightlyoff/
 var AutoLayout = window.AutoLayout;
 ```
 
-When using a bundler like webpack or browserify, use:
+Or when using a bundler like webpack or browserify, use:
 
 ```javascript
 var AutoLayout = require('autolayout.js');
 ```
-*(do make sure plugins for transpiling .es6 files are installed!)*
+*(when using the 'src/' directory, do make sure plugins for transpiling es6 files are installed!)*
 
 ### Using the API
 
