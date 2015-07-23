@@ -145,8 +145,8 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 - [Attributes](#attributes) (`V:|[view2(view1.width)]`)
 - [Z-ordering](#z-ordering) (`Z:|-[view1][view2]`)
 - [Equal size spacers/centering](#equal-size-spacers-centering)(`|~[center(100)]~|`)
+- [View stacks](#view-stacks) (`V:|[column:[header(50)][content][footer(50)]]|`)
 - [Disconnections](#disconnections) (`|[view1(200)]->[view2(100)]|`)
-- [View stacks](#view-stacks) (`TODO`)
 - [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
 
 ### Proportional size
@@ -217,6 +217,16 @@ You can also use more than 2 connectors to proportionally align views:
 
     |~[child1(10)]~[child2(20)]~[child3(30)]~|
 
+### View stacks
+
+View stacks make it possible to group views into a column or a row.
+The following example creates a view stack named `column` which contains three sub-views.
+The benefit of this is is revealed in the second line, in which the stack as whole is
+horizontally positioned.
+
+    V:|[column:[top(50)][content][bottom(50)]]|
+    H:|[column]|
+
 ### Disconnections (right/bottom alignment)
 
 By default, views are interconnected when defined after each other (e.g. `[view1][view2][view3]`). In some cases
@@ -231,10 +241,6 @@ example shows a disconnection causing the content after the disconnect to align 
  connected to               right1 are                connected to
   super-view               not connected               super-view
 ```
-
-### View stacks
-
-TODO
 
 ### Comments
 
@@ -297,8 +303,9 @@ and replaced by a roadmap.
 - [X] Single line comments (// bla)
 - [X] Z-ordering (z-index)
 - [X] Equal size spacers / centering (e.g. |~[centered(100)~])
-- [X] Disonnections
-- [ ] View stacks (inspsired by UIStackView) (this make stuff a lot easier)
+- [X] Disconnections (`|[view1(200)]->[view2(100)]|`)
+- [X] View stacks (inspired by UIStackView) (e.g. V:|[column:[top(50)][content][bottom(50)]]|)
+- [X] Strict mode parsing (trim spaces & ignore empty lines)
 - [ ] Multi line comments (/* bla */)
 
 **Parked Features:**
