@@ -409,10 +409,11 @@ class View {
     /**
      * Checks whether the constraints incompletely specify the location
      * of the subViews.
+     * @private
      */
-    get hasAmbiguousLayout() {
+    //get hasAmbiguousLayout() {
         // Todo
-    }
+    //}
 
     /**
      * Dictionary of `Variable` objects that have been created when adding constraints.
