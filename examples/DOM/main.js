@@ -35,17 +35,22 @@ function setAbsoluteSizeAndPosition(elm, left, top, width, height) {
  */
 function autoLayout(parentElm, visualFormat) {
     var view = new AutoLayout.View();
-    view.addConstraints(AutoLayout.VisualFormat.parse(visualFormat));
+    view.addConstraints(AutoLayout.VisualFormat.parse(visualFormat, {extended: true}));
     var elements = {};
     for (var key in view.subViews) {
-        elements[key] = document.getElementById(key);
-        elements[key].className += elements[key].className ? ' abs' : 'abs';
+        var elm = document.getElementById(key);
+        if (elm) {
+            elm.className += elm.className ? ' abs' : 'abs';
+            elements[key] = elm;
+        }
     }
     var updateLayout = function() {
         view.setSize(parentElm ? parentElm.clientWidth : window.innerWidth, parentElm ? parentElm.clientHeight : window.innerHeight);
         for (key in view.subViews) {
             var subView = view.subViews[key];
-            setAbsoluteSizeAndPosition(elements[key], subView.left, subView.top, subView.width, subView.height);
+            if (elements[key]) {
+                setAbsoluteSizeAndPosition(elements[key], subView.left, subView.top, subView.width, subView.height);
+            }
         }
     };
     window.addEventListener('resize', updateLayout);
@@ -59,11 +64,10 @@ autoLayout(undefined, [
     'V:|-[left]-|\nV:|-[right]-|'
 ]);
 
-// left layout
+// left layout (EVFL)
 autoLayout(document.getElementById('left'), [
-    '|-[text]-|',
-    '|-[vfl]-|',
-    'V:|-[text(20)]-[vfl]-|'
+    'V:|-[col:[text(20)]-[vfl(evfl)]-[text2(text)]-[evfl]]-|',
+    '|-[col]-|'
 ]);
 
 // right example layout
@@ -76,3 +80,10 @@ var exampleVFL = [
 ];
 autoLayout(document.getElementById('right'), exampleVFL);
 document.getElementById('vfl').innerHTML = exampleVFL.join('\n');
+
+var exampleEVFL = [
+    'V:|-[col1:[child1(child2)]-[child2]]-|',
+    'V:|-[col2:[child3(child4,child5)]-[child4]-[child5]]-|',
+    'H:|-[col1]-[col2]-|'
+];
+document.getElementById('evfl').innerHTML = exampleEVFL.join('\n');
