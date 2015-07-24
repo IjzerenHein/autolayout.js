@@ -81,9 +81,10 @@ var exampleVFL = [
 autoLayout(document.getElementById('right'), exampleVFL);
 document.getElementById('vfl').innerHTML = exampleVFL.join('\n');
 
+// same example expressed as EVFL
 var exampleEVFL = [
     'V:|-[col1:[child1(child2)]-[child2]]-|',
     'V:|-[col2:[child3(child4,child5)]-[child4]-[child5]]-|',
-    'H:|-[col1]-[col2]-|'
+    'H:|-[col1(col2)]-[col2]-|'
 ];
 document.getElementById('evfl').innerHTML = exampleEVFL.join('\n');
