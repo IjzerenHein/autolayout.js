@@ -287,6 +287,14 @@ function _processCascade(context, cascade, stackView) {
     }
 }
 
+const metaInfoCategories = [
+    'viewport',
+    'colors',
+    'shapes',
+    'widths',
+    'heights'
+];
+
 /**
  * VisualFormat
  *
@@ -399,6 +407,112 @@ class VisualFormat {
             throw err;
         }
         return constraints;
+    }
+
+    /**
+     * Parses meta information from the comments in the VFL.
+     *
+     * Additional meta information can be specified in the comments
+     * for previewing and rendering purposes. For instance, the view-port
+     * aspect-ratio, sub-view widths and colors, can be specified. The
+     * following example renders three colored circles in the visual-format editor:
+     *
+     * ```vfl
+     * //viewport aspect-ratio:3/1 max-height:300
+     * //colors red:#FF0000 green:#00FF00 blue:#0000FF
+     * //shapes red:circle green:circle blue:circle
+     * H:|-[row:[red(green,blue)]-[green]-[blue]]-|
+     * V:|[row]|
+     * ```
+     *
+     * Supported categories and properties:
+     *
+     * |Category|Property|
+     * |--------|--------|
+     * |`viewport`|`aspect-ratio:{width}/{height}`|
+     * ||`width:[{number}/intrinsic]`|
+     * ||`height:[{number}/intrinsic]`|
+     * ||`min-width:{number}`|
+     * ||`max-width:{number}`|
+     * ||`min-height:{number}`|
+     * ||`max-height:{number}`|
+     * |`widths`|`{view-name}:[{number}/intrinsic]`|
+     * |`heights`|`{view-name}:[{number}/intrinsic]`|
+     * |`colors`|`{view-name}:{color}`|
+     * |`shapes`|`{view-name}:[circle/square]`|
+     *
+     * @param {String|Array} visualFormat One or more visual format strings.
+     * @param {Object} [options] Configuration options.
+     * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
+     * @return {Object} meta-info
+     */
+    static parseMetaInfo(visualFormat, options) {
+        const lineSeperator = (options && options.lineSeperator) ? options.lineSeperator : '\n';
+        visualFormat = Array.isArray(visualFormat) ? visualFormat : [visualFormat];
+        const metaInfo = {};
+        var key;
+        for (var k = 0; k < visualFormat.length; k++) {
+            const lines = visualFormat[k].split(lineSeperator);
+            for (var i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                for (var c = 0; c < metaInfoCategories.length; c++) {
+                    const category = metaInfoCategories[c];
+                    if (line.indexOf('//' + category + ' ') === 0) {
+                        const items = line.substring(3 + category.length).split(' ');
+                        for (var j = 0; j < items.length; j++) {
+                            const item = items[j].split(':');
+                            metaInfo[category] = metaInfo[category] || {};
+                            metaInfo[category][item[0]] = (item.length > 1) ? item[1] : '';
+                        }
+                    }
+                }
+            }
+        }
+        if (metaInfo.viewport) {
+            const viewport = metaInfo.viewport;
+            var aspectRatio = viewport['aspect-ratio'];
+            if (aspectRatio) {
+                aspectRatio = aspectRatio.split('/');
+                viewport['aspect-ratio'] = parseInt(aspectRatio[0]) / parseInt(aspectRatio[1]);
+            }
+            if (viewport.height !== undefined) {
+                viewport.height = (viewport.height === 'intrinsic') ? true : parseInt(viewport.height);
+            }
+            if (viewport.width !== undefined) {
+                viewport.width = (viewport.width === 'intrinsic') ? true : parseInt(viewport.width);
+            }
+            if (viewport['max-height'] !== undefined) {
+                viewport['max-height'] = parseInt(viewport['max-height']);
+            }
+            if (viewport['max-width'] !== undefined) {
+                viewport['max-width'] = parseInt(viewport['max-width']);
+            }
+            if (viewport['min-height'] !== undefined) {
+                viewport['min-height'] = parseInt(viewport['min-height']);
+            }
+            if (viewport['min-width'] !== undefined) {
+                viewport['min-width'] = parseInt(viewport['min-width']);
+            }
+        }
+        if (metaInfo.widths) {
+            for (key in metaInfo.widths) {
+                const width = (metaInfo.widths[key] === 'intrinsic') ? true : parseInt(metaInfo.widths[key]);
+                metaInfo.widths[key] = width;
+                if ((width === undefined) || isNaN(width)) {
+                    delete metaInfo.widths[key];
+                }
+            }
+        }
+        if (metaInfo.heights) {
+            for (key in metaInfo.heights) {
+                const height = (metaInfo.heights[key] === 'intrinsic') ? true : parseInt(metaInfo.heights[key]);
+                metaInfo.heights[key] = height;
+                if ((height === undefined) || isNaN(height)) {
+                    delete metaInfo.heights[key];
+                }
+            }
+        }
+        return metaInfo;
     }
 }
 
