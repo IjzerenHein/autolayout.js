@@ -4,7 +4,8 @@
     "node": true
   },
   "globals": {
-    "kiwi"
+    "kiwi",
+    "c"
   },
   "ecmaFeatures": {
     "classes": true,
