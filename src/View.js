@@ -14,7 +14,7 @@ function _getConst(name, value) {
     }
     else {
         const vr = new kiwi.Variable();
-        this._solver.addConstraint(new kiwi.Constraint(vr, kiwi.Operator.Eq, 0));
+        this._solver.addConstraint(new kiwi.Constraint(vr, kiwi.Operator.Eq, value));
         return vr;
     }
 }
