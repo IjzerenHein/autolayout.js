@@ -67,8 +67,8 @@
   },
   "browserify": {
     "transform": [
-      ["babelify", {"compact": false}],
-      ["envify", {"CASSOWARYJS": true}]
+      ["envify", {"CASSOWARYJS": false}],
+      ["babelify", {"compact": false}]
     ]
   },
   "scripts": {

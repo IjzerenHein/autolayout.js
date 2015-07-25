@@ -60,7 +60,7 @@ class SubView {
      * @type {Number}
      */
     get left() {
-        return this._getAttr(Attribute.LEFT).value;
+        return this._getAttrValue(Attribute.LEFT);
     }
 
     /**
@@ -69,7 +69,7 @@ class SubView {
      * @type {Number}
      */
     get right() {
-        return this._getAttr(Attribute.RIGHT).value;
+        return this._getAttrValue(Attribute.RIGHT);
     }
 
     /**
@@ -77,7 +77,7 @@ class SubView {
      * @type {Number}
      */
     get width() {
-        return this._getAttr(Attribute.WIDTH).value;
+        return this._getAttrValue(Attribute.WIDTH);
     }
 
     /**
@@ -86,7 +86,7 @@ class SubView {
      * @type {Number}
      */
     get height() {
-        return this._getAttr(Attribute.HEIGHT).value;
+        return this._getAttrValue(Attribute.HEIGHT);
     }
 
     /**
@@ -166,7 +166,7 @@ class SubView {
      * @type {Number}
      */
     get top() {
-        return this._getAttr(Attribute.TOP).value;
+        return this._getAttrValue(Attribute.TOP);
     }
 
     /**
@@ -175,7 +175,7 @@ class SubView {
      * @type {Number}
      */
     get bottom() {
-        return this._getAttr(Attribute.BOTTOM).value;
+        return this._getAttrValue(Attribute.BOTTOM);
     }
 
     /**
@@ -184,7 +184,7 @@ class SubView {
      * @type {Number}
      */
     get centerX() {
-        return this._getAttr(Attribute.CENTERX).value;
+        return this._getAttrValue(Attribute.CENTERX);
     }
 
     /**
@@ -193,7 +193,7 @@ class SubView {
      * @type {Number}
      */
     get centerY() {
-        return this._getAttr(Attribute.CENTERY).value;
+        return this._getAttrValue(Attribute.CENTERY);
     }
 
     /**
@@ -202,7 +202,7 @@ class SubView {
      * @type {Number}
      */
     get zIndex() {
-        return this._getAttr(Attribute.ZINDEX).value;
+        return this._getAttrValue(Attribute.ZINDEX);
     }
 
     /**
@@ -221,7 +221,7 @@ class SubView {
      * @return {Number} value or `undefined`
      */
     getValue(attr) {
-        return this._attr[attr] ? this._attr[attr].value : undefined;
+        return this._attr[attr] ? this._attr[attr].value() : undefined;
     }
 
     /**
@@ -278,6 +278,18 @@ class SubView {
             this._solver.updateVariables();
         }
         return this._attr[attr];
+    }
+
+    /**
+     * @private
+     */
+    _getAttrValue(attr) {
+        if (process.env.CASSOWARYJS) {
+            return this._getAttr(attr).value;
+        }
+        else {
+            return this._getAttr(attr).value();
+        }
     }
 }
 
