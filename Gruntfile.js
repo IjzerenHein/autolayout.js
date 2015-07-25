@@ -1,7 +1,8 @@
 /*global module:false*/
 module.exports = function(grunt) {
   var path = require('path');
-  var cassowaryJS = true;
+  var packageJSON = grunt.file.readJSON('package.json');
+  var cassowaryJS = packageJSON.browserify.transform[0][1]['CASSOWARYJS'];
 
   var banner = '' +
     '/**\n' +
@@ -14,9 +15,18 @@ module.exports = function(grunt) {
     '* @copyright Gloey Apps, 2015\n' +
     '*\n' +
     '* @library autolayout.js\n' +
-    '* @version ' + grunt.file.readJSON('package.json').version + '\n' +
+    '* @version ' + packageJSON.version + '\n' +
     '* @generated <%= grunt.template.today("dd-mm-yyyy") %>\n' +
     '*/\n' +
+    (cassowaryJS ?
+    '/**\n' +
+    '* Parts Copyright (C) 2011-2012, Alex Russell (slightlyoff@chromium.org)\n' +
+    '* Parts Copyright (C) Copyright (C) 1998-2000 Greg J. Badros\n' +
+    '*\n' +
+    '* Use of this source code is governed by the LGPL, which can be found in the\n' +
+    '* COPYING.LGPL file.\n' +
+    '*/\n'
+    : //(kiwi)
     '/*-----------------------------------------------------------------------------\n' +
     '| Kiwi (TypeScript version)\n' +
     '|\n' +
@@ -25,7 +35,8 @@ module.exports = function(grunt) {
     '| Distributed under the terms of the Modified BSD License.\n' +
     '|\n' +
     '| The full license is in the file COPYING.txt, distributed with this software.\n' +
-    '|----------------------------------------------------------------------------*/\n';
+    '|----------------------------------------------------------------------------*/\n'
+    )
 
   // Project configuration.
   grunt.initConfig({
