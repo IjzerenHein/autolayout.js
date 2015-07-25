@@ -67,7 +67,7 @@
   },
   "browserify": {
     "transform": [
-      ["envify", {"CASSOWARYJS": false}],
+      ["envify", {"CASSOWARYJS": true}],
       ["babelify", {"compact": false}]
     ]
   },
