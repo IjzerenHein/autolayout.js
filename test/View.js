@@ -133,7 +133,7 @@ describe('View', function() {
     });
 
     describe('intrinsic & fitting size', function() {
-        it('|-[view1]-[view2]-| subViews.view1.intrinsWidth = 100', function() {
+        it('|-[view1]-[view2]-| subViews.view1.intrinsicWidth = 100', function() {
             var view = new AutoLayout.View({
                 constraints: AutoLayout.VisualFormat.parse('|-[view1]-[view2]-|'),
                 spacing: 20,
@@ -151,5 +151,36 @@ describe('View', function() {
             view.subViews.view2.intrinsicWidth = 100;
             assert.equal(view.fittingWidth, 260);
         });
+    });
+
+    describe('layouts', function() {
+        describe('V:|[header(100)][content]| (height: 500)', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('V:|[header(100)][content]|'),
+                height: 500
+            });
+            it('header.top should be 0', function() {
+                assert.equal(view.subViews.header.top, 0);
+            });
+            it('header.height should be 100', function() {
+                assert.equal(view.subViews.header.height, 100);
+            });
+            it('content.top should be 100', function() {
+                assert.equal(view.subViews.content.top, 100);
+            });
+            it('content.height should be 400', function() {
+                assert.equal(view.subViews.content.height, 400);
+            });
+        });
+        /*describe('|[child(200)]\n[child(700)]\nV:|[child]|', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('|[child(200)]\n[child(700)]\nV:|[child]|'),
+                width: 500,
+                height: 500
+            });
+            it('child.width should be 200', function() {
+                assert.equal(view.subViews.child.width, 200);
+            });
+        });*/
     });
 });
