@@ -8,18 +8,16 @@
 * @copyright Gloey Apps, 2015
 *
 * @library autolayout.js
-* @version 0.3.0
-* @generated 23-07-2015
+* @version 0.4.0
+* @generated 27-07-2015
 */
-/*-----------------------------------------------------------------------------
-| Kiwi (TypeScript version)
-|
-| Copyright (c) 2015, Nucleic Development Team.
-|
-| Distributed under the terms of the Modified BSD License.
-|
-| The full license is in the file COPYING.txt, distributed with this software.
-|----------------------------------------------------------------------------*/
+/**
+* Parts Copyright (C) 2011-2012, Alex Russell (slightlyoff@chromium.org)
+* Parts Copyright (C) Copyright (C) 1998-2000 Greg J. Badros
+*
+* Use of this source code is governed by the LGPL, which can be found in the
+* COPYING.LGPL file.
+*/
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.AutoLayout = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
@@ -3483,6 +3481,8 @@ function _processCascade(context, cascade, stackView) {
   }
 }
 
+var metaInfoCategories = ['viewport', 'spacing', 'colors', 'shapes', 'widths', 'heights'];
+
 /**
  * VisualFormat
  *
@@ -3602,6 +3602,124 @@ var VisualFormat = (function () {
       }
       return constraints;
     }
+  }, {
+    key: 'parseMetaInfo',
+
+    /**
+     * Parses meta information from the comments in the VFL.
+     *
+     * Additional meta information can be specified in the comments
+     * for previewing and rendering purposes. For instance, the view-port
+     * aspect-ratio, sub-view widths and colors, can be specified. The
+     * following example renders three colored circles in the visual-format editor:
+     *
+     * ```vfl
+     * //viewport aspect-ratio:3/1 max-height:300
+     * //colors red:#FF0000 green:#00FF00 blue:#0000FF
+     * //shapes red:circle green:circle blue:circle
+     * H:|-[row:[red(green,blue)]-[green]-[blue]]-|
+     * V:|[row]|
+     * ```
+     *
+     * Supported categories and properties:
+     *
+     * |Category|Property|Example|
+     * |--------|--------|-------|
+     * |`viewport`|`aspect-ratio:{width}/{height}`|`//viewport aspect-ratio:16/9`|
+     * ||`width:[{number}/intrinsic]`|`//viewport width:10`|
+     * ||`height:[{number}/intrinsic]`|`//viewport height:intrinsic`|
+     * ||`min-width:{number}`|
+     * ||`max-width:{number}`|
+     * ||`min-height:{number}`|
+     * ||`max-height:{number}`|
+     * |`spacing`|`[{number}/array]`|`//spacing:8` or `//spacing:[10, 20, 5]`|
+     * |`widths`|`{view-name}:[{number}/intrinsic]`|`//widths subview1:100`|
+     * |`heights`|`{view-name}:[{number}/intrinsic]`|`//heights subview1:intrinsic`|
+     * |`colors`|`{view-name}:{color}`|`//colors redview:#FF0000 blueview:#00FF00`|
+     * |`shapes`|`{view-name}:[circle/square]`|`//shapes avatar:circle`|
+     *
+     * @param {String|Array} visualFormat One or more visual format strings.
+     * @param {Object} [options] Configuration options.
+     * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
+     * @return {Object} meta-info
+     */
+    value: function parseMetaInfo(visualFormat, options) {
+      var lineSeperator = options && options.lineSeperator ? options.lineSeperator : '\n';
+      visualFormat = Array.isArray(visualFormat) ? visualFormat : [visualFormat];
+      var metaInfo = {};
+      var key;
+      for (var k = 0; k < visualFormat.length; k++) {
+        var lines = visualFormat[k].split(lineSeperator);
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          for (var c = 0; c < metaInfoCategories.length; c++) {
+            var category = metaInfoCategories[c];
+            if (line.indexOf('//' + category + ' ') === 0) {
+              var items = line.substring(3 + category.length).split(' ');
+              for (var j = 0; j < items.length; j++) {
+                var item = items[j].split(':');
+                metaInfo[category] = metaInfo[category] || {};
+                metaInfo[category][item[0]] = item.length > 1 ? item[1] : '';
+              }
+            } else if (line.indexOf('//' + category + ':') === 0) {
+              metaInfo[category] = line.substring(3 + category.length);
+            }
+          }
+        }
+      }
+      if (metaInfo.viewport) {
+        var viewport = metaInfo.viewport;
+        var aspectRatio = viewport['aspect-ratio'];
+        if (aspectRatio) {
+          aspectRatio = aspectRatio.split('/');
+          viewport['aspect-ratio'] = parseInt(aspectRatio[0]) / parseInt(aspectRatio[1]);
+        }
+        if (viewport.height !== undefined) {
+          viewport.height = viewport.height === 'intrinsic' ? true : parseInt(viewport.height);
+        }
+        if (viewport.width !== undefined) {
+          viewport.width = viewport.width === 'intrinsic' ? true : parseInt(viewport.width);
+        }
+        if (viewport['max-height'] !== undefined) {
+          viewport['max-height'] = parseInt(viewport['max-height']);
+        }
+        if (viewport['max-width'] !== undefined) {
+          viewport['max-width'] = parseInt(viewport['max-width']);
+        }
+        if (viewport['min-height'] !== undefined) {
+          viewport['min-height'] = parseInt(viewport['min-height']);
+        }
+        if (viewport['min-width'] !== undefined) {
+          viewport['min-width'] = parseInt(viewport['min-width']);
+        }
+      }
+      if (metaInfo.widths) {
+        for (key in metaInfo.widths) {
+          var width = metaInfo.widths[key] === 'intrinsic' ? true : parseInt(metaInfo.widths[key]);
+          metaInfo.widths[key] = width;
+          if (width === undefined || isNaN(width)) {
+            delete metaInfo.widths[key];
+          }
+        }
+      }
+      if (metaInfo.heights) {
+        for (key in metaInfo.heights) {
+          var height = metaInfo.heights[key] === 'intrinsic' ? true : parseInt(metaInfo.heights[key]);
+          metaInfo.heights[key] = height;
+          if (height === undefined || isNaN(height)) {
+            delete metaInfo.heights[key];
+          }
+        }
+      }
+      if (metaInfo.spacing) {
+        var value = JSON.parse(metaInfo.spacing);
+        metaInfo.spacing = value;
+        if (value === undefined || isNaN(value)) {
+          delete metaInfo.spacing;
+        }
+      }
+      return metaInfo;
+    }
   }]);
 
   return VisualFormat;
@@ -3670,7 +3788,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.LEFT).value;
+      return this._getAttrValue(Attribute.LEFT);
     }
   }, {
     key: 'right',
@@ -3681,7 +3799,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.RIGHT).value;
+      return this._getAttrValue(Attribute.RIGHT);
     }
   }, {
     key: 'width',
@@ -3691,7 +3809,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.WIDTH).value;
+      return this._getAttrValue(Attribute.WIDTH);
     }
   }, {
     key: 'height',
@@ -3702,7 +3820,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.HEIGHT).value;
+      return this._getAttrValue(Attribute.HEIGHT);
     }
   }, {
     key: 'intrinsicWidth',
@@ -3784,7 +3902,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.TOP).value;
+      return this._getAttrValue(Attribute.TOP);
     }
   }, {
     key: 'bottom',
@@ -3795,7 +3913,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.BOTTOM).value;
+      return this._getAttrValue(Attribute.BOTTOM);
     }
   }, {
     key: 'centerX',
@@ -3806,7 +3924,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.CENTERX).value;
+      return this._getAttrValue(Attribute.CENTERX);
     }
   }, {
     key: 'centerY',
@@ -3817,7 +3935,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.CENTERY).value;
+      return this._getAttrValue(Attribute.CENTERY);
     }
   }, {
     key: 'zIndex',
@@ -3828,7 +3946,7 @@ var SubView = (function () {
      * @type {Number}
      */
     get: function () {
-      return this._getAttr(Attribute.ZINDEX).value;
+      return this._getAttrValue(Attribute.ZINDEX);
     }
   }, {
     key: 'type',
@@ -3851,7 +3969,7 @@ var SubView = (function () {
      * @return {Number} value or `undefined`
      */
     value: function getValue(attr) {
-      return this._attr[attr] ? this._attr[attr].value : undefined;
+      return this._attr[attr] ? this._attr[attr].value() : undefined;
     }
   }, {
     key: '_getAttr',
@@ -3907,6 +4025,19 @@ var SubView = (function () {
       }
       return this._attr[attr];
     }
+  }, {
+    key: '_getAttrValue',
+
+    /**
+     * @private
+     */
+    value: function _getAttrValue(attr) {
+      if (true) {
+        return this._getAttr(attr).value;
+      } else {
+        return this._getAttr(attr).value();
+      }
+    }
   }]);
 
   return SubView;
@@ -3921,7 +4052,7 @@ function _getConst(name, value) {
     return vr;
   } else {
     var vr = new kiwi.Variable();
-    this._solver.addConstraint(new kiwi.Constraint(vr, kiwi.Operator.Eq, 0));
+    this._solver.addConstraint(new kiwi.Constraint(vr, kiwi.Operator.Eq, value));
     return vr;
   }
 }
@@ -4056,6 +4187,21 @@ function _addConstraint(constraint) {
   this._solver.addConstraint(relation);
 }
 
+function _compareSpacing(old, newz) {
+  if (old === newz) {
+    return true;
+  }
+  if (!old || !newz) {
+    return false;
+  }
+  for (var i = 0; i < 7; i++) {
+    if (old[i] !== newz[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 /**
  * AutoLayoutJS API reference.
  *
@@ -4092,8 +4238,7 @@ var View = (function () {
 
     this._solver = true ? new c.SimplexSolver() : new kiwi.Solver();
     this._subViews = {};
-    //this._variables = {};
-    this._spacing = {};
+    //this._spacing = undefined;
     this._parentSubView = new SubView({
       solver: this._solver
     });
@@ -4238,18 +4383,20 @@ var View = (function () {
         default:
           throw 'Invalid spacing syntax';
       }
-      this._spacing = spacing;
-      // update spacing variables
-      if (this._spacingVars) {
-        for (var i = 0; i < this._spacingVars.length; i++) {
-          if (this._spacingVars[i]) {
-            this._solver.suggestValue(this._spacingVars[i], this._spacing[i]);
+      if (!_compareSpacing(this._spacing, spacing)) {
+        this._spacing = spacing;
+        // update spacing variables
+        if (this._spacingVars) {
+          for (var i = 0; i < this._spacingVars.length; i++) {
+            if (this._spacingVars[i]) {
+              this._solver.suggestValue(this._spacingVars[i], this._spacing[i]);
+            }
           }
-        }
-        if (true) {
-          this._solver.resolve();
-        } else {
-          this._solver.updateVariables();
+          if (true) {
+            this._solver.resolve();
+          } else {
+            this._solver.updateVariables();
+          }
         }
       }
       return this;
@@ -4336,15 +4483,6 @@ var View = (function () {
     //get hasAmbiguousLayout() {
     // Todo
     //}
-
-    /**
-     * Dictionary of `Variable` objects that have been created when adding constraints.
-     * @type {Object.SubView}
-     */
-    /*
-    get variables() {
-        return this._variables;
-    }*/
 
   }]);
 
