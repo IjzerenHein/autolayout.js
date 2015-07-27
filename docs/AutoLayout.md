@@ -50,6 +50,7 @@ AutoLayoutJS API reference.
   * [~VisualFormat](#module_AutoLayout..VisualFormat) : <code>object</code>
     * [.parseLine(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseLine) ⇒ <code>Array</code>
     * [.parse(visualFormat, [options])](#module_AutoLayout..VisualFormat.parse) ⇒ <code>Array</code>
+    * [.parseMetaInfo(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseMetaInfo) ⇒ <code>Object</code>
 
 <a name="module_AutoLayout..View"></a>
 ### AutoLayout~View
@@ -400,6 +401,7 @@ VisualFormat
 * [~VisualFormat](#module_AutoLayout..VisualFormat) : <code>object</code>
   * [.parseLine(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseLine) ⇒ <code>Array</code>
   * [.parse(visualFormat, [options])](#module_AutoLayout..VisualFormat.parse) ⇒ <code>Array</code>
+  * [.parseMetaInfo(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseMetaInfo) ⇒ <code>Object</code>
 
 <a name="module_AutoLayout..VisualFormat.parseLine"></a>
 #### VisualFormat.parseLine(visualFormat, [options]) ⇒ <code>Array</code>
@@ -437,4 +439,47 @@ additional info about the parse error and column position.
 | [options.strict] | <code>Boolean</code> | When set to false trims any leading/trailing spaces and ignores empty lines (default: true). |
 | [options.lineSeperator] | <code>String</code> | String that defines the end of a line (default `\n`). |
 | [options.outFormat] | <code>String</code> | Output format (`constraints` or `raw`) (default: `constraints`). |
+
+<a name="module_AutoLayout..VisualFormat.parseMetaInfo"></a>
+#### VisualFormat.parseMetaInfo(visualFormat, [options]) ⇒ <code>Object</code>
+Parses meta information from the comments in the VFL.
+
+Additional meta information can be specified in the comments
+for previewing and rendering purposes. For instance, the view-port
+aspect-ratio, sub-view widths and colors, can be specified. The
+following example renders three colored circles in the visual-format editor:
+
+```vfl
+//viewport aspect-ratio:3/1 max-height:300
+//colors red:#FF0000 green:#00FF00 blue:#0000FF
+//shapes red:circle green:circle blue:circle
+H:|-[row:[red(green,blue)]-[green]-[blue]]-|
+V:|[row]|
+```
+
+Supported categories and properties:
+
+|Category|Property|Example|
+|--------|--------|-------|
+|`viewport`|`aspect-ratio:{width}/{height}`|`//viewport aspect-ratio:16/9`|
+||`width:[{number}/intrinsic]`|`//viewport width:10`|
+||`height:[{number}/intrinsic]`|`//viewport height:intrinsic`|
+||`min-width:{number}`|
+||`max-width:{number}`|
+||`min-height:{number}`|
+||`max-height:{number}`|
+|`spacing`|`[{number}/array]`|`//spacing:8` or `//spacing:[10, 20, 5]`|
+|`widths`|`{view-name}:[{number}/intrinsic]`|`//widths subview1:100`|
+|`heights`|`{view-name}:[{number}/intrinsic]`|`//heights subview1:intrinsic`|
+|`colors`|`{view-name}:{color}`|`//colors redview:#FF0000 blueview:#00FF00`|
+|`shapes`|`{view-name}:[circle/square]`|`//shapes avatar:circle`|
+
+**Kind**: static method of <code>[VisualFormat](#module_AutoLayout..VisualFormat)</code>  
+**Returns**: <code>Object</code> - meta-info  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| visualFormat | <code>String</code> &#124; <code>Array</code> | One or more visual format strings. |
+| [options] | <code>Object</code> | Configuration options. |
+| [options.lineSeperator] | <code>String</code> | String that defines the end of a line (default `\n`). |
 
