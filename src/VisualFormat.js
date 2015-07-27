@@ -289,6 +289,7 @@ function _processCascade(context, cascade, stackView) {
 
 const metaInfoCategories = [
     'viewport',
+    'spacing',
     'colors',
     'shapes',
     'widths',
@@ -427,19 +428,20 @@ class VisualFormat {
      *
      * Supported categories and properties:
      *
-     * |Category|Property|
-     * |--------|--------|
-     * |`viewport`|`aspect-ratio:{width}/{height}`|
-     * ||`width:[{number}/intrinsic]`|
-     * ||`height:[{number}/intrinsic]`|
+     * |Category|Property|Example|
+     * |--------|--------|-------|
+     * |`viewport`|`aspect-ratio:{width}/{height}`|`//viewport aspect-ratio:16/9`|
+     * ||`width:[{number}/intrinsic]`|`//viewport width:10`|
+     * ||`height:[{number}/intrinsic]`|`//viewport height:intrinsic`|
      * ||`min-width:{number}`|
      * ||`max-width:{number}`|
      * ||`min-height:{number}`|
      * ||`max-height:{number}`|
-     * |`widths`|`{view-name}:[{number}/intrinsic]`|
-     * |`heights`|`{view-name}:[{number}/intrinsic]`|
-     * |`colors`|`{view-name}:{color}`|
-     * |`shapes`|`{view-name}:[circle/square]`|
+     * |`spacing`|`[{number}/array]`|`//spacing:8` or `//spacing:[10, 20, 5]`|
+     * |`widths`|`{view-name}:[{number}/intrinsic]`|`//widths subview1:100`|
+     * |`heights`|`{view-name}:[{number}/intrinsic]`|`//heights subview1:intrinsic`|
+     * |`colors`|`{view-name}:{color}`|`//colors redview:#FF0000 blueview:#00FF00`|
+     * |`shapes`|`{view-name}:[circle/square]`|`//shapes avatar:circle`|
      *
      * @param {String|Array} visualFormat One or more visual format strings.
      * @param {Object} [options] Configuration options.
@@ -464,6 +466,9 @@ class VisualFormat {
                             metaInfo[category] = metaInfo[category] || {};
                             metaInfo[category][item[0]] = (item.length > 1) ? item[1] : '';
                         }
+                    }
+                    else if (line.indexOf('//' + category + ':') === 0) {
+                        metaInfo[category] = line.substring(3 + category.length);
                     }
                 }
             }
@@ -510,6 +515,13 @@ class VisualFormat {
                 if ((height === undefined) || isNaN(height)) {
                     delete metaInfo.heights[key];
                 }
+            }
+        }
+        if (metaInfo.spacing) {
+            const value = JSON.parse(metaInfo.spacing);
+            metaInfo.spacing = value;
+            if ((value === undefined) || isNaN(value)) {
+                delete metaInfo.spacing;
             }
         }
         return metaInfo;
