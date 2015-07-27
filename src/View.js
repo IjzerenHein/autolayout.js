@@ -163,6 +163,21 @@ function _addConstraint(constraint) {
     this._solver.addConstraint(relation);
 }
 
+function _compareSpacing(old, newz) {
+    if (old === newz) {
+        return true;
+    }
+    if (!old || !newz) {
+        return false;
+    }
+    for (var i = 0; i < 7; i++) {
+        if (old[i] !== newz[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 /**
  * AutoLayoutJS API reference.
  *
@@ -195,8 +210,7 @@ class View {
     constructor(options) {
         this._solver = process.env.CASSOWARYJS ? new c.SimplexSolver() : new kiwi.Solver();
         this._subViews = {};
-        //this._variables = {};
-        this._spacing = {};
+        //this._spacing = undefined;
         this._parentSubView = new SubView({
             solver: this._solver
         });
@@ -321,19 +335,21 @@ class View {
             case 7: break;
             default: throw 'Invalid spacing syntax';
         }
-        this._spacing = spacing;
-        // update spacing variables
-        if (this._spacingVars) {
-            for (var i = 0; i < this._spacingVars.length; i++) {
-                if (this._spacingVars[i]) {
-                    this._solver.suggestValue(this._spacingVars[i], this._spacing[i]);
+        if (!_compareSpacing(this._spacing, spacing)) {
+            this._spacing = spacing;
+            // update spacing variables
+            if (this._spacingVars) {
+                for (var i = 0; i < this._spacingVars.length; i++) {
+                    if (this._spacingVars[i]) {
+                        this._solver.suggestValue(this._spacingVars[i], this._spacing[i]);
+                    }
                 }
-            }
-            if (process.env.CASSOWARYJS) {
-                this._solver.resolve();
-            }
-            else {
-                this._solver.updateVariables();
+                if (process.env.CASSOWARYJS) {
+                    this._solver.resolve();
+                }
+                else {
+                    this._solver.updateVariables();
+                }
             }
         }
         return this;
@@ -414,15 +430,6 @@ class View {
     //get hasAmbiguousLayout() {
         // Todo
     //}
-
-    /**
-     * Dictionary of `Variable` objects that have been created when adding constraints.
-     * @type {Object.SubView}
-     */
-    /*
-    get variables() {
-        return this._variables;
-    }*/
 }
 
 export default View;
