@@ -97,7 +97,7 @@ function _processProportionalSpacer(context, stackView) {
         view1: name,
         attr1: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
         relation: context.relation.relation || Relation.EQU,
-        view2: null, // or relative to the stackView... food for thought
+        view2: context.relation.view, // or relative to the stackView... food for thought
         attr2: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
         priority: context.relation.priority,
         multiplier: context.relation.multiplier
