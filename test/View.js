@@ -172,6 +172,25 @@ describe('View', function() {
                 assert.equal(view.subViews.content.height, 400);
             });
         });
+        describe('HV:|[background]| (width: 800, height: 500)', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('HV:|[background]|', {extended: true}),
+                width: 800,
+                height: 500
+            });
+            it('background.top should be 0', function() {
+                assert.equal(view.subViews.background.top, 0);
+            });
+            it('background.left should be 0', function() {
+                assert.equal(view.subViews.background.left, 0);
+            });
+            it('background.width should be 800', function() {
+                assert.equal(view.subViews.background.width, 800);
+            });
+            it('background.height should be 500', function() {
+                assert.equal(view.subViews.background.height, 500);
+            });
+        });
         /*describe('|[child(200)]\n[child(700)]\nV:|[child]|', function() {
             var view = new AutoLayout.View({
                 constraints: AutoLayout.VisualFormat.parse('|[child(200)]\n[child(700)]\nV:|[child]|'),
