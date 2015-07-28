@@ -334,15 +334,29 @@ class VisualFormat {
             case 'horizontal':
                 context.orientation = Orientation.HORIZONTAL;
                 context.horizontal = true;
+                _processCascade(context, res.cascade, null);
                 break;
             case 'vertical':
                 context.orientation = Orientation.VERTICAL;
+                _processCascade(context, res.cascade, null);
+                break;
+            case 'horzvert':
+                context.orientation = Orientation.HORIZONTAL;
+                context.horizontal = true;
+                _processCascade(context, res.cascade, null);
+                context = {
+                    constraints: context.constraints,
+                    lineIndex: context.lineIndex,
+                    subViews: context.subViews,
+                    orientation: Orientation.VERTICAL
+                };
+                _processCascade(context, res.cascade, null);
                 break;
             case 'zIndex':
                 context.orientation = Orientation.ZINDEX;
+                _processCascade(context, res.cascade, null);
                 break;
         }
-        _processCascade(context, res.cascade, null);
         return context.constraints;
     }
 
@@ -446,10 +460,12 @@ class VisualFormat {
      * @param {String|Array} visualFormat One or more visual format strings.
      * @param {Object} [options] Configuration options.
      * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
+     * @param {String} [options.prefix] When specified, also processes the categories using that prefix (e.g. "-dev-viewport max-height:10").
      * @return {Object} meta-info
      */
     static parseMetaInfo(visualFormat, options) {
         const lineSeperator = (options && options.lineSeperator) ? options.lineSeperator : '\n';
+        const prefix = options ? options.prefix : undefined;
         visualFormat = Array.isArray(visualFormat) ? visualFormat : [visualFormat];
         const metaInfo = {};
         var key;
@@ -458,17 +474,20 @@ class VisualFormat {
             for (var i = 0; i < lines.length; i++) {
                 const line = lines[i];
                 for (var c = 0; c < metaInfoCategories.length; c++) {
-                    const category = metaInfoCategories[c];
-                    if (line.indexOf('//' + category + ' ') === 0) {
-                        const items = line.substring(3 + category.length).split(' ');
-                        for (var j = 0; j < items.length; j++) {
-                            const item = items[j].split(':');
-                            metaInfo[category] = metaInfo[category] || {};
-                            metaInfo[category][item[0]] = (item.length > 1) ? item[1] : '';
+                    for (var s = 0; s < (prefix ? 2 : 1); s++) {
+                        const category = metaInfoCategories[c];
+                        const prefixedCategory = ((s === 0) ? '' : prefix) + category;
+                        if (line.indexOf('//' + prefixedCategory + ' ') === 0) {
+                            const items = line.substring(3 + prefixedCategory.length).split(' ');
+                            for (var j = 0; j < items.length; j++) {
+                                const item = items[j].split(':');
+                                metaInfo[category] = metaInfo[category] || {};
+                                metaInfo[category][item[0]] = (item.length > 1) ? item[1] : '';
+                            }
                         }
-                    }
-                    else if (line.indexOf('//' + category + ':') === 0) {
-                        metaInfo[category] = line.substring(3 + category.length);
+                        else if (line.indexOf('//' + prefixedCategory + ':') === 0) {
+                            metaInfo[category] = line.substring(3 + prefixedCategory.length);
+                        }
                     }
                 }
             }
