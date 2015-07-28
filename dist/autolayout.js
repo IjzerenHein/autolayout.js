@@ -8,7 +8,7 @@
 * @copyright Gloey Apps, 2015
 *
 * @library autolayout.js
-* @version 0.4.1
+* @version 0.4.2
 * @generated 28-07-2015
 */
 /**
@@ -3273,13 +3273,13 @@ function _processEqualSpacer(context, stackView) {
   }
   context.equalSpacerIndex++;
 
-  // Enforce proportional width/height
-  if (context.relation.multiplier && context.relation.multiplier !== 1) {
+  // Enforce view/proportional width/height
+  if (context.relation.view || context.relation.multiplier && context.relation.multiplier !== 1) {
     context.constraints.push({
       view1: name,
       attr1: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
       relation: context.relation.relation || Relation.EQU,
-      view2: null,
+      view2: context.relation.view,
       attr2: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
       priority: context.relation.priority,
       multiplier: context.relation.multiplier
@@ -3337,7 +3337,7 @@ function _processProportionalSpacer(context, stackView) {
     view1: name,
     attr1: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
     relation: context.relation.relation || Relation.EQU,
-    view2: null, // or relative to the stackView... food for thought
+    view2: context.relation.view, // or relative to the stackView... food for thought
     attr2: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
     priority: context.relation.priority,
     multiplier: context.relation.multiplier
@@ -3509,7 +3509,10 @@ function _processCascade(context, cascade, stackView) {
 
   if (stackView) {
     subView = context.subViews[stackView];
-    if (subView.stack) {
+    if (!subView) {
+      subView = { orientations: context.orientation };
+      context.subViews[stackView] = subView;
+    } else if (subView.stack) {
       throw new Error('A stack with name "' + stackView + '"" already exists');
     }
     subView.stack = {
