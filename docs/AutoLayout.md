@@ -482,4 +482,5 @@ Supported categories and properties:
 | visualFormat | <code>String</code> &#124; <code>Array</code> | One or more visual format strings. |
 | [options] | <code>Object</code> | Configuration options. |
 | [options.lineSeperator] | <code>String</code> | String that defines the end of a line (default `\n`). |
+| [options.prefix] | <code>String</code> | When specified, also processes the categories using that prefix (e.g. "-dev-viewport max-height:10"). |
 
