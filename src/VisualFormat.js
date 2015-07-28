@@ -275,7 +275,11 @@ function _processCascade(context, cascade, stackView) {
 
     if (stackView) {
         subView = context.subViews[stackView];
-        if (subView.stack) {
+        if (!subView) {
+            subView = {orientations: context.orientation};
+            context.subViews[stackView] = subView;
+        }
+        else if (subView.stack) {
             throw new Error('A stack with name "' + stackView + '"" already exists');
         }
         subView.stack = {
