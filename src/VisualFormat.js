@@ -32,13 +32,13 @@ function _processEqualSpacer(context, stackView) {
     }
     context.equalSpacerIndex++;
 
-    // Enforce proportional width/height
-    if (context.relation.multiplier && (context.relation.multiplier !== 1)) {
+    // Enforce view/proportional width/height
+    if (context.relation.view || (context.relation.multiplier && (context.relation.multiplier !== 1))) {
         context.constraints.push({
             view1: name,
             attr1: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
             relation: context.relation.relation || Relation.EQU,
-            view2: null,
+            view2: context.relation.view,
             attr2: context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT,
             priority: context.relation.priority,
             multiplier: context.relation.multiplier
