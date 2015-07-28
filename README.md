@@ -150,6 +150,7 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 - [Z-ordering](#z-ordering) (`Z:|-[view1][view2]`)
 - [Equal size spacers/centering](#equal-size-spacers-centering)(`|~[center(100)]~|`)
 - [View stacks](#view-stacks) (`V:|[column:[header(50)][content][footer(50)]]|`)
+- [Multiple orientations](#multiple-orientations) (`HV:|[background]|`)
 - [Disconnections](#disconnections) (`|[view1(200)]->[view2(100)]|`)
 - [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
 
@@ -230,6 +231,23 @@ horizontally positioned.
 
     V:|[column:[top(50)][content][bottom(50)]]|
     H:|[column]|
+
+### Multiple orientations (fill content)
+
+Sometimes you just want to fill a view to its container. With standard VFL you have to write
+two lines, one for the horizontal orientation and one for vertical:
+
+    H:|[background]|
+    V:|[background]|
+
+With Extended VFL, these can be combined into one line:
+
+    HV:|[background]|
+
+When using spacers, you can even use different spacings for horizontal & vertical orientations:
+
+    //spacing: [10, 20]
+    HV:|-[background]-|
 
 ### Disconnections (right/bottom alignment)
 
