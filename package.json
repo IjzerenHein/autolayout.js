@@ -37,16 +37,15 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "babelify": "^6.1.2",
+    "babel-eslint": "^4.0.5",
+    "babelify": "^6.1.3",
     "benchmark": "^1.0.0",
     "browserify": "^10.2.3",
-    "cassowary": "0.0.2",
     "chai": "^3.0.0",
+    "combined-stream": "^1.0.5",
     "envify": "^3.4.0",
     "esperanto": "^0.7.3",
     "grunt": "^0.4.5",
-    "grunt-banner": "^0.4.0",
-    "grunt-browserify": "^3.8.0",
     "grunt-contrib-concat": "^0.5.1",
     "grunt-eslint": "^14.0.0",
     "grunt-exec": "^0.4.6",
@@ -58,11 +57,8 @@
     "mocha": "^2.2.5",
     "platform": "^1.3.0"
   },
-  "browserify": {
-    "transform": [
-      ["envify", {"CASSOWARYJS": true}],
-      ["babelify", {"compact": false}]
-    ]
+  "dependencies": {
+    "cassowary": "0.0.2"
   },
   "scripts": {
     "test": "mocha"
