@@ -181,7 +181,8 @@ function _processStackView(context, name, subView) {
  * Recursive helper function that processes the cascaded data.
  * @private
  */
-function _processCascade(context, cascade, stackView) {
+function _processCascade(context, cascade, parentItem) {
+    const stackView = parentItem ? parentItem.view : null;
     const subViews = [];
     let subView;
     if (stackView) {
@@ -265,7 +266,7 @@ function _processCascade(context, cascade, stackView) {
 
             // Process cascaded data (child stack-views)
             if (context.item.cascade) {
-                _processCascade(context, context.item.cascade, context.item.view);
+                _processCascade(context, context.item.cascade, context.item);
             }
         }
         else {
@@ -280,7 +281,9 @@ function _processCascade(context, cascade, stackView) {
             context.subViews[stackView] = subView;
         }
         else if (subView.stack) {
-            throw new Error('A stack with name "' + stackView + '"" already exists');
+            const err = new Error('A stack named "' + stackView + '" has already been created');
+            err.column = parentItem.$parserOffset + 1;
+            throw err;
         }
         subView.stack = {
             orientation: context.orientation,

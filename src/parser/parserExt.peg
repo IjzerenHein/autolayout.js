@@ -48,20 +48,20 @@ cascadedViews
   = ":" views:(connection view)+ connection:connection { return [].concat([].concat.apply([], views),[connection]); }
 
 connection
-  = "->" { return [{ relation: 'none', $parserOffset: offset() }] }
+  = "->" { return [{ relation: 'none' }] }
   / "-" predicateList:predicateList "-" { return predicateList }
-  / "-" { return [{ relation: 'equ', constant: 'default', $parserOffset: offset() }] }
+  / "-" { return [{ relation: 'equ', constant: 'default' }] }
   / "~" predicateList:equalSpacingPredicateList "~" { return predicateList }
-  / "~" { return [{ relation: 'equ', equalSpacing: true, $parserOffset: offset() }] }
-  / "" { return [{ relation: 'equ', constant: 0, $parserOffset: offset() }] }
+  / "~" { return [{ relation: 'equ', equalSpacing: true }] }
+  / "" { return [{ relation: 'equ', constant: 0 }] }
 
 predicateList
   = simplePredicate
   / predicateListWithParens
 
 simplePredicate
-  = p:percentage { return [{ relation: 'equ', multiplier: p.multiplier, $parserOffset: offset() }] }
-  / n:number { return [{ relation: 'equ', constant: n, $parserOffset: offset() }] }
+  = p:percentage { return [{ relation: 'equ', multiplier: p.multiplier }] }
+  / n:number { return [{ relation: 'equ', constant: n }] }
 
 predicateListWithParens
   = "(" p:predicate ps:("," predicate)* ")"
@@ -79,9 +79,9 @@ equalSpacingPredicate
   { return extend({ relation: 'equ', equalSpacing: true }, (r || {}), o, (p ? p[1]: {})) }
 
 relation
-  = "==" { return { relation: 'equ', $parserOffset: offset() } }
-  / "<=" { return { relation: 'leq', $parserOffset: offset() } }
-  / ">=" { return { relation: 'geq', $parserOffset: offset() } }
+  = "==" { return { relation: 'equ' } }
+  / "<=" { return { relation: 'leq' } }
+  / ">=" { return { relation: 'geq' } }
 
 objectOfPredicate
   = percentage
@@ -120,7 +120,7 @@ constantExpr
   / "+" n:number { return n; }
 
 viewName
-  = f:$[a-zA-Z_]+ v:$[a-zA-Z0-9_]* { return { view: f + v } }
+  = f:$[a-zA-Z_]+ v:$[a-zA-Z0-9_]* { return { view: f + v, $parserOffset: offset() } }
 
 /*variable
   = "{" v:$[a-zA-Z0-9\-_]+ "}" { return { variable: v } }
