@@ -191,21 +191,21 @@ function _processCascade(context, cascade, parentItem) {
     for (var i = 0; i < cascade.length; i++) {
         context.item = cascade[i];
         if (!Array.isArray(context.item) && context.item.hasOwnProperty('view')) {
+            if (context.item.view !== stackView) {
+                subViews.push(context.item.view);
+                subView = context.subViews[context.item.view];
+                if (!subView) {
+                    subView = {orientations: 0};
+                    context.subViews[context.item.view] = subView;
+                }
+                subView.orientations = subView.orientations | context.orientation;
+                if (subView.stack) {
+                    _processStackView(context, context.item.view, subView);
+                }
+            }
             context.view1 = context.view2;
             context.view2 = context.item.view;
             if ((context.view1 !== undefined) && (context.view2 !== undefined) && context.relation) {
-                if (context.item.view !== stackView) {
-                    subViews.push(context.item.view);
-                    subView = context.subViews[context.item.view];
-                    if (!subView) {
-                        subView = {orientations: 0};
-                        context.subViews[context.item.view] = subView;
-                    }
-                    subView.orientations = subView.orientations | context.orientation;
-                    if (subView.stack) {
-                        _processStackView(context, context.item.view, subView);
-                    }
-                }
                 if (context.relation.equalSpacing) {
                     _processEqualSpacer(context, stackView);
                 }
