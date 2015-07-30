@@ -150,6 +150,8 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 - [Z-ordering](#z-ordering) (`Z:|-[view1][view2]`)
 - [Equal size spacers/centering](#equal-size-spacers-centering)(`|~[center(100)]~|`)
 - [View stacks](#view-stacks) (`V:|[column:[header(50)][content][footer(50)]]|`)
+- [View ranges](#view-ranges) (`H:[view1..8(10)]|`)
+- [Multiple views](#multiple-views) (`Z:|[background][text1,text2,text3]|`)
 - [Multiple orientations](#multiple-orientations) (`HV:|[background]|`)
 - [Disconnections](#disconnections) (`|[view1(200)]->[view2(100)]|`)
 - [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
@@ -225,17 +227,32 @@ You can also use more than 2 connectors to proportionally align views:
 ### View stacks
 
 View stacks make it possible to group views into a column or a row.
-The following example creates a view stack named `column` which contains three sub-views.
-The benefit of this is is revealed in the second line, in which the stack as whole is
-horizontally positioned.
+The following example creates a view stack named `column` which contains three sub-views. The benefit of this is is revealed in the second line, in which the stack as whole is horizontally positioned.
 
     V:|[column:[top(50)][content][bottom(50)]]|
     H:|[column]|
 
+### View ranges
+
+View ranges make it possible to select multiple views at once and apply rules for them:
+
+    //shapes circle1..5:circle
+    H:[circle1(circle1.height)] // set aspect-ratio for circle1
+    HV:[circle2..5(circle1)]    // use same width/height for other circles
+    H:|[circle1]-[circle2]-[circle3]-[circle4]-[circle5]|
+    V:|~[circle1..5]~|          // center all circles vertically
+
+### Multiple views
+
+Similar to 'View ranges', multiple views can be seperated using the `,` character:
+
+    H:|[left(top,right)]-[top,bottom]-[right]|
+    V:|[left,right]|
+    V:|[top(bottom)]-[bottom]|
+
 ### Multiple orientations (fill content)
 
-Sometimes you just want to fill a view to its container. With standard VFL you have to write
-two lines, one for the horizontal orientation and one for vertical:
+Sometimes you just want to fill a view to its container. With standard VFL you have to write two lines, one for the horizontal orientation and one for vertical:
 
     H:|[background]|
     V:|[background]|
