@@ -54,6 +54,7 @@
     "grunt-peg": "^1.5.0",
     "lodash": "^3.9.3",
     "minifyify": "^7.0.2",
+    "minimist": "^1.1.2",
     "mocha": "^2.2.5",
     "platform": "^1.3.0"
   },

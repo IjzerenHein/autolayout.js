@@ -54,6 +54,7 @@ module.exports = function(grunt) {
     exec: {
       'bundle-es6': 'node ./build/bundle-es6',
       'dist': 'node ./build/dist',
+      'dist-fast': 'node ./build/dist --fast',
       test: 'mocha',
       bench: 'node bench/main.js'
     }
@@ -75,4 +76,5 @@ module.exports = function(grunt) {
   grunt.registerTask('bench', ['exec:bench']);
   grunt.registerTask('dist', ['parser', 'exec:bundle-es6', 'exec:dist']);
   grunt.registerTask('default', ['lint', 'doc', 'dist', 'test']);
+  grunt.registerTask('fast', ['lint', 'parser', 'exec:bundle-es6', 'exec:dist-fast', 'test']);
 };

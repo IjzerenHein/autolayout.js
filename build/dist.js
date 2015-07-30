@@ -4,6 +4,7 @@ var browserify = require('browserify');
 var babelify = require('babelify');
 var envify = require('envify/custom');
 var CombinedStream = require('combined-stream');
+var argv = require('minimist')(process.argv.slice(2));
 
 var packageJSON = JSON.parse(fs.readFileSync('./package.json'));
 
@@ -76,6 +77,8 @@ function dist(kiwi, minify) {
     }).pipe(output);
 }
 dist(false, false);
-dist(false, true);
-dist(true, false);
+if (!argv.fast) {
+    dist(false, true);
+    dist(true, false);
+}
 //dist(true, true);
