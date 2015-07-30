@@ -14,7 +14,7 @@
       <img src="logo.png" style="max-width: 100%;">
       <h2 class="project-tagline">Apple&#39;s Auto Layout and Visual Format Language for Javascript.</h2>
       <a href="https://github.com/IjzerenHein/autolayout.js" class="btn">View on GitHub</a>
-      <a href="https://github.com/IjzerenHein/autolayout.js/zipball/master" class="btn">Download v0.2.0</a>
+      <a href="https://github.com/IjzerenHein/autolayout.js/zipball/master" class="btn">Download v0.4.3</a>
       <a href="https://rawgit.com/IjzerenHein/visualformat-editor/master/dist/index.html?vfl=example" class="btn">Visual Format Editor</a>
       <a href="https://github.com/IjzerenHein/autolayout.js/blob/master/docs/AutoLayout.md" class="btn">API Documentation</a>
     </section>
@@ -80,6 +80,44 @@ V:|-[view1(view1<span class="evfl">.width)</span>]</code></pre>
 <h4>Z-ordering: <code>Z:</code></h4>
 <p>When sub-views overlap it can be useful to specify the z-ordering for the sub-views:</p>
 <pre><code><span class="evfl">Z:|[child1][child2]</span>  // child2 is placed in front of child1</code></pre>
+
+<h4>Equal size spacers / centering: <code>~</code></h4>
+<p>Sometimes you just want to center a view. To do this use the `~` connector:</p>
+<pre><code>|<span class="evfl">~</span>[view1(100)]<span class="evfl">~</span>|        // view1 has width of 100 and is centered
+V:|<span class="evfl">~(10%)~</span>[view2]<span class="evfl">~</span>|     // top & bottom spacers have height of 10%</code></pre>
+<p>All `~` connectors inside a single line of EVFL are constrained to have the same size.
+You can also use more than 2 connectors to proportionally align views:</p>
+<pre><code>|<span class="evfl">~</span>[child1(10)]<span class="evfl">~</span>[child2(20)]<span class="evfl">~</span>[child3(30)]<span class="evfl">~</span>|</code></pre>
+
+<h4>View stacks: <code>[col:[header][content[footer]]</code></h4>
+<p>View stacks make it possible to group views into a column or a row.
+The following example creates a view stack named `column` which contains three sub-views.
+The benefit of this is is revealed in the second line, in which the stack as whole is
+horizontally positioned.</p>
+<pre><code>V:|<span class="evfl">[column:[top(50)][content][bottom(50)]]</span>|
+H:|[column]|</code></pre>
+
+<h4>Multiple orientations: <code>HV:</code></h4>
+<p>Sometimes you just want to fill a view to its container. With standard VFL you have to write
+two lines, one for the horizontal orientation and one for vertical:</p>
+<pre><code>H:|[background]|
+V:|[background]|</code></pre>
+<p>With Extended VFL, these can be combined into one line:</p>
+<pre><code><span class="evfl">HV:</span>|[background]|</code></pre>
+<p>When using spacers, you can even use different spacings for horizontal & vertical orientations:</p>
+<pre><code>//spacing: [10, 20]
+<span class="evfl">HV:</span>|-[background]-|</code></pre>
+
+<h4>Disconnections (right/bottom alignment): <code>-></code></h4>
+<p>By default, views are interconnected when defined after each other (e.g. <code>[view1][view2][view3]</code>). In some cases
+it is useful to not interconnect the views, in order to align content to the right or bottom. The following
+example shows a disconnection causing the content after the disconnect to align to the right-edge:</p>
+<pre><code>      // left1..2 are left-aligned, right1..2 are right aligned
+      |[left1(100)][left2(300)]<span class="evfl">-></span>[right1(100)][right2(100)]|
+      ^^                       ^^                         ^^
+   left1 is                 left2 and                  right2 is
+ connected to               right1 are                connected to
+  super-view               not connected               super-view</code></pre>
 
 <h4>Comments: <code>// comments here</code></h4>
 <p>Single line comments can be used to explain the VFL or to prevent its execution:</p>
