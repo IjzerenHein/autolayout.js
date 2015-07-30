@@ -191,6 +191,85 @@ describe('View', function() {
                 assert.equal(view.subViews.background.height, 500);
             });
         });
+        describe('|[view1,view2]| (width: 800)', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('|[view1,view2]|', {extended: true}),
+                width: 800
+            });
+            it('view1.left should be 0', function() {
+                assert.equal(view.subViews.view1.left, 0);
+            });
+            it('view1.width should be 800', function() {
+                assert.equal(view.subViews.view1.width, 800);
+            });
+            it('view2.left should be 0', function() {
+                assert.equal(view.subViews.view2.left, 0);
+            });
+            it('view2.width should be 800', function() {
+                assert.equal(view.subViews.view2.width, 800);
+            });
+        });
+        describe('|[view1..2]| (width: 800)', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('|[view1..2]|', {extended: true}),
+                width: 800
+            });
+            it('number of subViews should be 2', function() {
+                assert.equal(Object.keys(view.subViews).length, 2);
+            });
+            it('view1.left should be 0', function() {
+                assert.equal(view.subViews.view1.left, 0);
+            });
+            it('view1.width should be 800', function() {
+                assert.equal(view.subViews.view1.width, 800);
+            });
+            it('view2.left should be 0', function() {
+                assert.equal(view.subViews.view2.left, 0);
+            });
+            it('view2.width should be 800', function() {
+                assert.equal(view.subViews.view2.width, 800);
+            });
+        });
+        describe('V:|[banner(100)]-[content]-| (height: 500)', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('V:|[banner(100)]-[content]-|', {extended: true}),
+                height: 500
+            });
+            it('number of subViews should be 2', function() {
+                assert.equal(Object.keys(view.subViews).length, 2);
+            });
+            it('banner.top should be 0', function() {
+                assert.equal(view.subViews.banner.top, 0);
+            });
+            it('banner.height should be 100', function() {
+                assert.equal(view.subViews.banner.height, 100);
+            });
+            it('content.top should be 108', function() {
+                assert.equal(view.subViews.content.top, 108);
+            });
+            it('content.bottom should be 492', function() {
+                assert.equal(view.subViews.content.bottom, 492);
+            });
+        });
+        describe('|[view1]-(view2)-[view2(100)]| (width: 500)', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('|[view1]-(view2)-[view2(100)]|', {extended: true}),
+                width: 500
+            });
+            it('view1.left should be 0', function() {
+                assert.equal(view.subViews.view1.left, 0);
+            });
+            it('view1.width should be 300', function() {
+                assert.equal(view.subViews.view1.width, 300);
+            });
+            it('view2.left should be 400', function() {
+                assert.equal(view.subViews.view2.left, 400);
+            });
+            it('view2.right should be 500', function() {
+                assert.equal(view.subViews.view2.right, 500);
+            });
+        });
+
         /*describe('|[child(200)]\n[child(700)]\nV:|[child]|', function() {
             var view = new AutoLayout.View({
                 constraints: AutoLayout.VisualFormat.parse('|[child(200)]\n[child(700)]\nV:|[child]|'),
