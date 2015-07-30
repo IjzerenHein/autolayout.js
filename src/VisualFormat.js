@@ -59,30 +59,33 @@ function _processEqualSpacer(context, stackView) {
     }
 
     // Add constraint
-    switch (context.orientation) {
-        case Orientation.HORIZONTAL:
-            context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
-            context.attr2 = Attribute.LEFT;
-            break;
-        case Orientation.VERTICAL:
-            context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
-            context.attr2 = Attribute.TOP;
-            break;
-        case Orientation.ZINDEX:
-            context.attr1 = Attribute.ZINDEX;
-            context.attr2 = Attribute.ZINDEX;
-            context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
-            break;
+    for (var i = 0; i < context.prevViews.length; i++) {
+        const prevView = context.prevViews[i];
+        switch (context.orientation) {
+            case Orientation.HORIZONTAL:
+                context.prevAttr = (prevView !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
+                context.curAttr = Attribute.LEFT;
+                break;
+            case Orientation.VERTICAL:
+                context.prevAttr = (prevView !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
+                context.curAttr = Attribute.TOP;
+                break;
+            case Orientation.ZINDEX:
+                context.prevAttr = Attribute.ZINDEX;
+                context.curAttr = Attribute.ZINDEX;
+                context.relation.constant = (prevView !== stackView) ? 'default' : 0;
+                break;
+        }
+        context.constraints.push({
+            view1: prevView,
+            attr1: context.prevAttr,
+            relation: context.relation.relation,
+            view2: name,
+            attr2: context.curAttr,
+            priority: context.relation.priority
+        });
     }
-    context.constraints.push({
-        view1: context.view1,
-        attr1: context.attr1,
-        relation: context.relation.relation,
-        view2: name,
-        attr2: context.attr2,
-        priority: context.relation.priority
-    });
-    context.view1 = name;
+    context.prevViews = [name];
 }
 
 /**
@@ -105,30 +108,33 @@ function _processProportionalSpacer(context, stackView) {
     context.relation.multiplier = undefined;
 
     // Add constraint
-    switch (context.orientation) {
-        case Orientation.HORIZONTAL:
-            context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
-            context.attr2 = Attribute.LEFT;
-            break;
-        case Orientation.VERTICAL:
-            context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
-            context.attr2 = Attribute.TOP;
-            break;
-        case Orientation.ZINDEX:
-            context.attr1 = Attribute.ZINDEX;
-            context.attr2 = Attribute.ZINDEX;
-            context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
-            break;
+    for (var i = 0; i < context.prevViews.length; i++) {
+        const prevView = context.prevViews[i];
+        switch (context.orientation) {
+            case Orientation.HORIZONTAL:
+                context.prevAttr = (prevView !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
+                context.curAttr = Attribute.LEFT;
+                break;
+            case Orientation.VERTICAL:
+                context.prevAttr = (prevView !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
+                context.curAttr = Attribute.TOP;
+                break;
+            case Orientation.ZINDEX:
+                context.prevAttr = Attribute.ZINDEX;
+                context.curAttr = Attribute.ZINDEX;
+                context.relation.constant = (prevView !== stackView) ? 'default' : 0;
+                break;
+        }
+        context.constraints.push({
+            view1: prevView,
+            attr1: context.prevAttr,
+            relation: context.relation.relation,
+            view2: name,
+            attr2: context.curAttr,
+            priority: context.relation.priority
+        });
     }
-    context.constraints.push({
-        view1: context.view1,
-        attr1: context.attr1,
-        relation: context.relation.relation,
-        view2: name,
-        attr2: context.attr2,
-        priority: context.relation.priority
-    });
-    context.view1 = name;
+    context.prevViews = [name];
 }
 
 /**
@@ -178,99 +184,159 @@ function _processStackView(context, name, subView) {
 }
 
 /**
+ * Recursive helper function converts a view-name and a range to a series
+ * of view-names (e.g. [child1, child2, child3, ...]).
+ * @private
+ */
+function _getRange(name, range) {
+    if (range === true) {
+        range = name.match(/\.\.\d+$/);
+        if (range) {
+            name = name.substring(0, name.length - range[0].length);
+            range = parseInt(range[0].substring(2));
+        }
+    }
+    if (!range) {
+        return [name];
+    }
+    var start = name.match(/\d+$/);
+    var res = [];
+    var i;
+    if (start) {
+        name = name.substring(0, name.length - start[0].length);
+        for (i = parseInt(start); i <= range; i++) {
+            res.push(name + i);
+        }
+    }
+    else {
+        res.push(name);
+        for (i = 2; i <= range; i++) {
+            res.push(name + i);
+        }
+    }
+    return res;
+}
+
+/**
  * Recursive helper function that processes the cascaded data.
  * @private
  */
 function _processCascade(context, cascade, parentItem) {
     const stackView = parentItem ? parentItem.view : null;
     const subViews = [];
+    let curViews = [];
     let subView;
     if (stackView) {
         cascade.push({view: stackView});
     }
     for (var i = 0; i < cascade.length; i++) {
-        context.item = cascade[i];
-        if (!Array.isArray(context.item) && context.item.hasOwnProperty('view')) {
-            if (context.item.view !== stackView) {
-                subViews.push(context.item.view);
-                subView = context.subViews[context.item.view];
-                if (!subView) {
-                    subView = {orientations: 0};
-                    context.subViews[context.item.view] = subView;
-                }
-                subView.orientations = subView.orientations | context.orientation;
-                if (subView.stack) {
-                    _processStackView(context, context.item.view, subView);
+        let item = cascade[i];
+        if ((!Array.isArray(item) && item.hasOwnProperty('view')) ||
+            (Array.isArray(item) && item[0].view && !item[0].relation)) {
+            const items = Array.isArray(item) ? item : [item];
+            for (var z = 0; z < items.length; z++) {
+                item = items[z];
+                const viewRange = (item === ',') ? [] : item.view ? _getRange(item.view, item.range) : [null];
+                for (var r = 0; r < viewRange.length; r++) {
+                    const curView = viewRange[r];
+                    curViews.push(curView);
+
+                    //
+                    // Add this view to the collection of subViews
+                    //
+                    if (curView !== stackView) {
+                        subViews.push(curView);
+                        subView = context.subViews[curView];
+                        if (!subView) {
+                            subView = {orientations: 0};
+                            context.subViews[curView] = subView;
+                        }
+                        subView.orientations = subView.orientations | context.orientation;
+                        if (subView.stack) {
+                            _processStackView(context, curView, subView);
+                        }
+                    }
+
+                    //
+                    // Process the relationship between this and the previous views
+                    //
+                    if ((context.prevViews !== undefined) && (curView !== undefined) && context.relation) {
+                        if (context.relation.relation !== 'none') {
+                            for (var p = 0; p < context.prevViews.length; p++) {
+                                const prevView = context.prevViews[p];
+                                switch (context.orientation) {
+                                    case Orientation.HORIZONTAL:
+                                        context.prevAttr = (prevView !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
+                                        context.curAttr = (curView !== stackView) ? Attribute.LEFT : Attribute.RIGHT;
+                                        break;
+                                    case Orientation.VERTICAL:
+                                        context.prevAttr = (prevView !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
+                                        context.curAttr = (curView !== stackView) ? Attribute.TOP : Attribute.BOTTOM;
+                                        break;
+                                    case Orientation.ZINDEX:
+                                        context.prevAttr = Attribute.ZINDEX;
+                                        context.curAttr = Attribute.ZINDEX;
+                                        context.relation.constant = (prevView !== stackView) ? 'default' : 0;
+                                        break;
+                                }
+                                context.constraints.push({
+                                    view1: prevView,
+                                    attr1: context.prevAttr,
+                                    relation: context.relation.relation,
+                                    view2: curView,
+                                    attr2: context.curAttr,
+                                    multiplier: context.relation.multiplier,
+                                    constant: ((context.relation.constant === 'default') || !context.relation.constant) ? context.relation.constant : -context.relation.constant,
+                                    priority: context.relation.priority
+                                });
+                            }
+                        }
+                    }
+
+                    //
+                    // Process view size constraints
+                    //
+                    const constraints = item.constraints;
+                    if (constraints) {
+                        for (var n = 0; n < constraints.length; n++) {
+                            context.prevAttr = context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT;
+                            context.curAttr = (constraints[n].view || constraints[n].multiplier) ?
+                                    (constraints[n].attribute || context.prevAttr) :
+                                    (constraints[n].variable ? Attribute.VARIABLE : Attribute.CONST);
+                            context.constraints.push({
+                                view1: curView,
+                                attr1: context.prevAttr,
+                                relation: constraints[n].relation,
+                                view2: constraints[n].view,
+                                attr2: context.curAttr,
+                                multiplier: constraints[n].multiplier,
+                                constant: constraints[n].constant,
+                                priority: constraints[n].priority
+                            });
+                        }
+                    }
+
+                    //
+                    // Process cascaded data (child stack-views)
+                    //
+                    if (item.cascade) {
+                        _processCascade(context, item.cascade, item);
+                    }
                 }
             }
-            context.view1 = context.view2;
-            context.view2 = context.item.view;
-            if ((context.view1 !== undefined) && (context.view2 !== undefined) && context.relation) {
+        }
+        else if (item !== ',') {
+            context.prevViews = curViews;
+            curViews = [];
+            context.relation = item[0];
+            if (context.prevViews !== undefined) {
                 if (context.relation.equalSpacing) {
                     _processEqualSpacer(context, stackView);
                 }
                 if (context.relation.multiplier) {
                     _processProportionalSpacer(context, stackView);
                 }
-                if (context.relation.relation !== 'none') {
-                    switch (context.orientation) {
-                        case Orientation.HORIZONTAL:
-                            context.attr1 = (context.view1 !== stackView) ? Attribute.RIGHT : Attribute.LEFT;
-                            context.attr2 = (context.view2 !== stackView) ? Attribute.LEFT : Attribute.RIGHT;
-                            break;
-                        case Orientation.VERTICAL:
-                            context.attr1 = (context.view1 !== stackView) ? Attribute.BOTTOM : Attribute.TOP;
-                            context.attr2 = (context.view2 !== stackView) ? Attribute.TOP : Attribute.BOTTOM;
-                            break;
-                        case Orientation.ZINDEX:
-                            context.attr1 = Attribute.ZINDEX;
-                            context.attr2 = Attribute.ZINDEX;
-                            context.relation.constant = (context.view1 !== stackView) ? 'default' : 0;
-                            break;
-                    }
-                    context.constraints.push({
-                        view1: context.view1,
-                        attr1: context.attr1,
-                        relation: context.relation.relation,
-                        view2: context.view2,
-                        attr2: context.attr2,
-                        multiplier: context.relation.multiplier,
-                        constant: ((context.relation.constant === 'default') || !context.relation.constant) ? context.relation.constant : -context.relation.constant,
-                        priority: context.relation.priority
-                        //,variable: context.relation.variable
-                    });
-                }
             }
-            context.relation = undefined;
-
-            // process view size constraints
-            if (context.item.constraints) {
-                for (var n = 0; n < context.item.constraints.length; n++) {
-                    context.attr1 = context.horizontal ? Attribute.WIDTH : Attribute.HEIGHT;
-                    context.attr2 = (context.item.constraints[n].view || context.item.constraints[n].multiplier) ?
-                            (context.item.constraints[n].attribute || context.attr1) :
-                            (context.item.constraints[n].variable ? Attribute.VARIABLE : Attribute.CONST);
-                    context.constraints.push({
-                        view1: context.item.view,
-                        attr1: context.attr1,
-                        relation: context.item.constraints[n].relation,
-                        view2: context.item.constraints[n].view,
-                        attr2: context.attr2,
-                        multiplier: context.item.constraints[n].multiplier,
-                        constant: context.item.constraints[n].constant,
-                        priority: context.item.constraints[n].priority
-                        //,variable: context.item.constraints[n].variable
-                    });
-                }
-            }
-
-            // Process cascaded data (child stack-views)
-            if (context.item.cascade) {
-                _processCascade(context, context.item.cascade, context.item);
-            }
-        }
-        else {
-            context.relation = context.item[0];
         }
     }
 
@@ -487,9 +553,12 @@ class VisualFormat {
                         if (line.indexOf('//' + prefixedCategory + ' ') === 0) {
                             const items = line.substring(3 + prefixedCategory.length).split(' ');
                             for (var j = 0; j < items.length; j++) {
-                                const item = items[j].split(':');
                                 metaInfo[category] = metaInfo[category] || {};
-                                metaInfo[category][item[0]] = (item.length > 1) ? item[1] : '';
+                                const item = items[j].split(':');
+                                const names = _getRange(item[0], true);
+                                for (var r = 0; r < names.length; r++) {
+                                    metaInfo[category][names[r]] = (item.length > 1) ? item[1] : '';
+                                }
                             }
                         }
                         else if (line.indexOf('//' + prefixedCategory + ':') === 0) {
