@@ -8,7 +8,7 @@
 * @copyright Gloey Apps, 2015
 *
 * @library autolayout.js
-* @version 0.5.0
+* @version 0.5.1
 */
 /*-----------------------------------------------------------------------------
 | Kiwi (TypeScript version)
@@ -3738,6 +3738,7 @@ function _processCascade(context, cascade, parentItem) {
   var subView = undefined;
   if (stackView) {
     cascade.push({ view: stackView });
+    curViews.push(stackView);
   }
   for (var i = 0; i < cascade.length; i++) {
     var item = cascade[i];
