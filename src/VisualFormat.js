@@ -228,6 +228,7 @@ function _processCascade(context, cascade, parentItem) {
     let subView;
     if (stackView) {
         cascade.push({view: stackView});
+        curViews.push(stackView);
     }
     for (var i = 0; i < cascade.length; i++) {
         let item = cascade[i];
