@@ -269,6 +269,24 @@ describe('View', function() {
                 assert.equal(view.subViews.view2.right, 500);
             });
         });
+        describe('|[row:[view1][view2(100)]]| (width: 500)', function() {
+            var view = new AutoLayout.View({
+                constraints: AutoLayout.VisualFormat.parse('|[row:[view1][view2(100)]]|', {extended: true}),
+                width: 500
+            });
+            it('view1.left should be 0', function() {
+                assert.equal(view.subViews.view1.left, 0);
+            });
+            it('view1.width should be 400', function() {
+                assert.equal(view.subViews.view1.width, 400);
+            });
+            it('view2.left should be 400', function() {
+                assert.equal(view.subViews.view2.left, 400);
+            });
+            it('view2.right should be 500', function() {
+                assert.equal(view.subViews.view2.right, 500);
+            });
+        });
 
         /*describe('|[child(200)]\n[child(700)]\nV:|[child]|', function() {
             var view = new AutoLayout.View({
