@@ -616,8 +616,15 @@ class VisualFormat {
         if (metaInfo.spacing) {
             const value = JSON.parse(metaInfo.spacing);
             metaInfo.spacing = value;
-            if ((value === undefined) || isNaN(value)) {
-                delete metaInfo.spacing;
+            if(Array.isArray(value)){
+              for (var s = 0, len = value.length; s < len; s++) {
+                if(isNaN(value[s])){
+                  delete metaInfo.spacing;
+                  break;
+                }
+              };
+            } else if (value === undefined || isNaN(value)){
+              delete metaInfo.spacing;
             }
         }
         return metaInfo;
