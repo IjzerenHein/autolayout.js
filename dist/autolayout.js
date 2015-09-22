@@ -8,7 +8,7 @@
 * @copyright Gloey Apps, 2015
 *
 * @library autolayout.js
-* @version 0.5.1
+* @version 0.5.2
 */
 /**
 * Parts Copyright (C) 2011-2012, Alex Russell (slightlyoff@chromium.org)
@@ -3784,7 +3784,7 @@ function _processCascade(context, cascade, parentItem) {
                   case Orientation.ZINDEX:
                     context.prevAttr = Attribute.ZINDEX;
                     context.curAttr = Attribute.ZINDEX;
-                    context.relation.constant = prevView !== stackView ? 'default' : 0;
+                    context.relation.constant = !prevView ? 0 : context.relation.constant || 'default';
                     break;
                 }
                 context.constraints.push({
@@ -4119,7 +4119,14 @@ var VisualFormat = (function () {
       if (metaInfo.spacing) {
         var value = JSON.parse(metaInfo.spacing);
         metaInfo.spacing = value;
-        if (value === undefined || isNaN(value)) {
+        if (Array.isArray(value)) {
+          for (var sIdx = 0, len = value.length; sIdx < len; sIdx++) {
+            if (isNaN(value[sIdx])) {
+              delete metaInfo.spacing;
+              break;
+            }
+          }
+        } else if (value === undefined || isNaN(value)) {
           delete metaInfo.spacing;
         }
       }
