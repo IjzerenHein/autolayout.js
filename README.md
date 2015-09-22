@@ -205,6 +205,7 @@ Supported attributes:
 When sub-views overlap it can be useful to specify the z-ordering for the sub-views:
 
     Z:|[child1][child2]  // child2 is placed in front of child1
+    Z:|[background]-10-[child1..2]  // child1 and child2 are placed 10 units in-front of background
 
 By default, all sub-views have a z-index of `0`. When placed in front of each other, the z-index
 will be `1` higher than the sub-view it was placed in front of. The z-index of the sub-view can
@@ -295,60 +296,24 @@ Single line comments can be used to explain the VFL or to prevent its execution:
 - [Cassowary.js](https://github.com/slightlyoff/cassowary.js)
 - [Overconstrained](http://overconstrained.io)
 - [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor)
+- [famous-autolayout](https://github.com/IjzerenHein/famous-autolayout)
 - [famous-flex](https://github.com/IjzerenHein/famous-flex)
 
 
-## ToDo list
+## Roadmap
 
-AutoLayout.js is currently a work in progress. Once feature complete, this todo list will be removed
-and replaced by a roadmap.
+AutoLayout.js is pretty close to feature complete. The existing features have
+been battle tested in several production environments and can be considered safe for production use.
 
-**Overal:**
-- [X] Toolchain (ES6, external cassowary.js, distributable output, testing, doc generation, travis CI)
-- [X] Instructions
-- [X] Documentation
-- [X] Some examples
-- [ ] DOM layouting primitives
+The following features are still on the todo-list. Any help on making this
+feature complete is very welcome:
 
-**Features:**
-- [X] Namespace & classes (AutoLayout, VisualFormat, View, Relation, Attribute)
-- [X] Visual format
-  - [X] Vfl Parser (thanks to the awesome angular-autolayout team!)
-  - [X] Size constraints
-  - [X] Greater than, less than relationships.
-- [X] Equality relationships
-  - [X] Base functionality
-  - [X] Multiplier support
-- [X] In-equality relationships
-- [X] Spacing.
-- [X] Priorities.
-- [X] Fitting size.
-- [X] Intrinsic content size.
 - [ ] Checking for ambigous layout.
-- [ ] Content hugging?
-- [ ] Compression resistance?
+- [ ] DOM layouting primitives
 - [ ] Remove constraints?
-- [ ] Generate visual sub-view output from `View` (ASCII-art'ish)
 - [ ] Get constraint definitions from `View`
 - [ ] LTR (left to right reading) (Attribute.LEADING & Attribute.TRAILING)
 - [ ] Baseline support?
-- [ ] Margins? (View & Attributes)
-
-**Extended format features:**
-- [X] Percentage support (e.g. |-[child(50%)]-[child2]-])
-- [X] Multiplier/divider support (e.g. [child(child2/2)])
-- [X] Sub-properties access (e.g. [child(==child.height)])
-- [X] Addition/substraction support (e.g. [child(child2-100)])
-- [X] Single line comments (// bla)
-- [X] Z-ordering (z-index)
-- [X] Equal size spacers / centering (e.g. |~[centered(100)~])
-- [X] Disconnections (`|[view1(200)]->[view2(100)]|`)
-- [X] View stacks (inspired by UIStackView) (e.g. V:|[column:[top(50)][content][bottom(50)]]|)
-- [X] Strict mode parsing (trim spaces & ignore empty lines)
-- [ ] Multi line comments (/* bla */)
-
-**Parked Features:**
-- [ ] Variables support (e.g. |-(leftMargin)-[child]]).
 
 
 ## Contribute
