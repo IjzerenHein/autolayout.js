@@ -14,7 +14,7 @@
       <img src="logo.png" style="max-width: 100%;">
       <h2 class="project-tagline">Apple&#39;s Auto Layout and Visual Format Language for Javascript.</h2>
       <a href="https://github.com/IjzerenHein/autolayout.js" class="btn">View on GitHub</a>
-      <a href="https://github.com/IjzerenHein/autolayout.js/zipball/master" class="btn">Download v0.4.3</a>
+      <a href="https://github.com/IjzerenHein/autolayout.js/zipball/master" class="btn">Download v0.5.2</a>
       <a href="https://rawgit.com/IjzerenHein/visualformat-editor/master/dist/index.html?vfl=example" class="btn">Visual Format Editor</a>
       <a href="https://github.com/IjzerenHein/autolayout.js/blob/master/docs/AutoLayout.md" class="btn">API Documentation</a>
     </section>
@@ -32,20 +32,16 @@
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Show us the code!</h3>
 
 <pre><code>var view = new AutoLayout.View(AutoLayout.VisualFormat.parse([
-  '|[view1(==view2)][view2]|'
-  'V:|[view1]|'
-  'V:|[view2]|'
-]));
+  'H:|[view1(==view2)]-10-[view2]|'
+  'V:|[view1,view2]|'
+], {extended: true}));
 view.setSize(400, 500);
-console.log('view1.width = ' + view.subViews.view1.width); // 200
-console.log('view1.height = ' + view.subViews.view1.height); // 500
+console.log(view.subViews.view1); // {left: 0, top: 0, width: 195, height: 500}
+console.log(view.subViews.view2); // {left: 205, top: 0, width: 195, height: 500}
 </code></pre>
 
 The example above creates an auto layout View and populates it with constraints
-from the VFL parser. The View automatically creates sub-views based on the names used in
-the constraints/vfl. Next, the size of the view set, which causes the sub-views
-to resize and re-position. The position and size of the sub-views can then be accessed
-through the <code>.subViews</code> property.
+from the VFL parser. The View automatically creates sub-views based on the names used in the constraints/vfl. Next, the size of the view is set, which causes the sub-views to resize and re-position. The position and size of the sub-views can then be accessed through the <code>.subViews</code> property.
 
 <h3>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting started</h3>
@@ -79,7 +75,8 @@ V:|-[view1(view1<span class="evfl">.width)</span>]</code></pre>
 
 <h4>Z-ordering: <code>Z:</code></h4>
 <p>When sub-views overlap it can be useful to specify the z-ordering for the sub-views:</p>
-<pre><code><span class="evfl">Z:|[child1][child2]</span>  // child2 is placed in front of child1</code></pre>
+<pre><code><span class="evfl">Z:|[child1][child2]</span>  // child2 is placed in front of child1
+<span class="evfl">Z:|[background]-10-[child1..2]</span>  // child1 and child2 are placed 10 units in-front of background</code></pre>
 
 <h4>Equal size spacers / centering: <code>~</code></h4>
 <p>Sometimes you just want to center a view. To do this use the `~` connector:</p>
@@ -91,15 +88,26 @@ You can also use more than 2 connectors to proportionally align views:</p>
 
 <h4>View stacks: <code>[col:[header][content[footer]]</code></h4>
 <p>View stacks make it possible to group views into a column or a row.
-The following example creates a view stack named `column` which contains three sub-views.
-The benefit of this is is revealed in the second line, in which the stack as whole is
-horizontally positioned.</p>
+The following example creates a view stack named `column` which contains three sub-views. The benefit of this is is revealed in the second line, in which the stack as whole is horizontally positioned.</p>
 <pre><code>V:|<span class="evfl">[column:[top(50)][content][bottom(50)]]</span>|
 H:|[column]|</code></pre>
 
+<h4>View ranges: <code>[circle1..5]</code></h4>
+<p>View ranges make it possible to select multiple views at once and apply rules for them:</p>
+<pre><code>//shapes <span class="evfl">circle1..5</span>:circle
+H:[circle1(circle1.height)] // set aspect-ratio for circle1
+HV:[<span class="evfl">circle2..5</span>(circle1)]    // use same width/height for other circles
+H:|[circle1]-[circle2]-[circle3]-[circle4]-[circle5]|
+V:|~[<span class="evfl">circle1..5</span>]~|          // center all circles vertically</code></pre>
+
+<h4>Multiple views: <code>[view1,view2,..]</code></h4>
+<p>Similar to 'View ranges', multiple views can be seperated using the <code>,</code> character:</p>
+<pre><code>H:|[left(top,right)]-<span class="evfl">[top,bottom]</span>-[right]|
+V:|<span class="evfl">[left,right]</span>|
+V:|[top(bottom)]-[bottom]|</code></pre>
+
 <h4>Multiple orientations: <code>HV:</code></h4>
-<p>Sometimes you just want to fill a view to its container. With standard VFL you have to write
-two lines, one for the horizontal orientation and one for vertical:</p>
+<p>Sometimes you just want to fill a view to its container. With standard VFL you have to write two lines, one for the horizontal orientation and one for vertical:</p>
 <pre><code>H:|[background]|
 V:|[background]|</code></pre>
 <p>With Extended VFL, these can be combined into one line:</p>
