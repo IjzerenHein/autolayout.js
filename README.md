@@ -4,10 +4,22 @@
 [![view on npm](http://img.shields.io/npm/v/autolayout.svg)](https://www.npmjs.org/package/autolayout)
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 
-AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/Introduction/Introduction.html) and [Visual Format Language](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html) in Javascript. Auto layout is a system which lets you perform lay out using mathematical relationships (constraints). It uses the awesome [Cassowary.js](https://github.com/slightlyoff/cassowary.js) library to do the actual constraint resolving and implements Apple's constraint system and Visual Format Language (vfl) on top of that.
+AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/Introduction/Introduction.html) and [Visual Format Language](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html) in Javascript. Auto layout is a system which lets you perform lay out using mathematical relationships (constraints). It uses the awesome [Cassowary.js](https://github.com/slightlyoff/cassowary.js) library to do the actual constraint resolving and implements Apple's constraint system and Visual Format Language (vfl) on top of that. It supports the [Extended VFL syntax](#extended-visual-format-language-evfl), including view-stacks and z-indexing.
+
+```javascript
+var view = new AutoLayout.View(AutoLayout.VisualFormat.parse([
+  'H:|[view1(==view2)]-10-[view2]|'
+  'V:|[view1,view2]|'
+], {extended: true}));
+view.setSize(400, 500);
+console.log(view.subViews.view1); // {left: 0, top: 0, width: 195, height: 500}
+console.log(view.subViews.view2); // {left: 205, top: 0, width: 195, height: 500}
+```
+
+Layouts can be previewed and debugged using the [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor):
 
 [![Example - click me](example.png)](https://rawgit.com/IjzerenHein/visualformat-editor/master/dist/index.html?vfl=example)
-*Visual Format Language Example (click image to edit)*
+*(click image to open the editor)*
 
 
 ## Index
@@ -25,7 +37,7 @@ AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/libra
 
 ## Getting started
 
-AutoLayout.js is an abstract library for integrating Auto Layout and VFL into other javascript technologies. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. A simple example of this is, is using `position: absolute;` to [lay out DOM elements](https://rawgit.com/IjzerenHein/autolayout.js/master/examples/DOM/index.html). A more elobarate example of is the [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled distribution files.
+AutoLayout.js is an abstract library for integrating Auto Layout and VFL into other javascript technologies. It provides a simple API and programming model that you can use to build your own auto layout and VFL solution. A simple example of this is, is using `position: absolute;` to [lay out DOM elements](https://rawgit.com/IjzerenHein/autolayout.js/master/examples/DOM/index.html). A more elobarate example of this is the [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor), which is built using [famo.us](http://famous.org) and [famous-flex](https://github.com/IjzerenHein/famous-flex). AutoLayout.js is written in ES6 and contains transpiled distribution files.
 
 ### Installation
 
