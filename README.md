@@ -143,6 +143,8 @@ view.addConstraint({
 
 - [DOM Example](https://rawgit.com/IjzerenHein/autolayout.js/master/examples/DOM/index.html) [(source)](examples/DOM)
 - [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor)
+- [react-autolayout](https://github.com/fattenap/react-autolayout)
+- [famous-autolayout](https://github.com/IjzerenHein/famous-autolayout)
 
 
 ## Extended Visual Format Language (EVFL)
