@@ -18,7 +18,45 @@ AutoLayoutJS API reference.
 
 
 * [AutoLayout](#module_AutoLayout)
-  * [~View](#module_AutoLayout..View)
+    * [~View](#module_AutoLayout..View)
+        * [new View([options])](#new_module_AutoLayout..View_new)
+        * [.width](#module_AutoLayout..View+width) : <code>Number</code>
+        * [.height](#module_AutoLayout..View+height) : <code>Number</code>
+        * [.fittingWidth](#module_AutoLayout..View+fittingWidth) : <code>Number</code>
+        * [.fittingHeight](#module_AutoLayout..View+fittingHeight) : <code>Number</code>
+        * [.subViews](#module_AutoLayout..View+subViews) : <code>Object.SubView</code>
+        * [.setSize(width, height)](#module_AutoLayout..View+setSize) ⇒ <code>View</code>
+        * [.setSpacing(spacing)](#module_AutoLayout..View+setSpacing) ⇒ <code>View</code>
+        * [.addConstraint(constraint)](#module_AutoLayout..View+addConstraint) ⇒ <code>View</code>
+        * [.addConstraints(constraints)](#module_AutoLayout..View+addConstraints) ⇒ <code>View</code>
+    * [~Attribute](#module_AutoLayout..Attribute) : <code>enum</code>
+    * [~Relation](#module_AutoLayout..Relation) : <code>enum</code>
+    * [~Priority](#module_AutoLayout..Priority) : <code>enum</code>
+    * [~SubView](#module_AutoLayout..SubView) : <code>object</code>
+        * [.name](#module_AutoLayout..SubView+name) : <code>String</code>
+        * [.left](#module_AutoLayout..SubView+left) : <code>Number</code>
+        * [.right](#module_AutoLayout..SubView+right) : <code>Number</code>
+        * [.width](#module_AutoLayout..SubView+width) : <code>Number</code>
+        * [.height](#module_AutoLayout..SubView+height) : <code>Number</code>
+        * [.intrinsicWidth](#module_AutoLayout..SubView+intrinsicWidth) : <code>Number</code>
+        * [.intrinsicHeight](#module_AutoLayout..SubView+intrinsicHeight) : <code>Number</code>
+        * [.top](#module_AutoLayout..SubView+top) : <code>Number</code>
+        * [.bottom](#module_AutoLayout..SubView+bottom) : <code>Number</code>
+        * [.centerX](#module_AutoLayout..SubView+centerX) : <code>Number</code>
+        * [.centerY](#module_AutoLayout..SubView+centerY) : <code>Number</code>
+        * [.zIndex](#module_AutoLayout..SubView+zIndex) : <code>Number</code>
+        * [.type](#module_AutoLayout..SubView+type) : <code>String</code>
+        * [.getValue(attr)](#module_AutoLayout..SubView+getValue) ⇒ <code>Number</code>
+    * [~VisualFormat](#module_AutoLayout..VisualFormat) : <code>object</code>
+        * [.parseLine(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseLine) ⇒ <code>Array</code>
+        * [.parse(visualFormat, [options])](#module_AutoLayout..VisualFormat.parse) ⇒ <code>Array</code>
+        * [.parseMetaInfo(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseMetaInfo) ⇒ <code>Object</code>
+
+<a name="module_AutoLayout..View"></a>
+### AutoLayout~View
+**Kind**: inner class of <code>[AutoLayout](#module_AutoLayout)</code>  
+
+* [~View](#module_AutoLayout..View)
     * [new View([options])](#new_module_AutoLayout..View_new)
     * [.width](#module_AutoLayout..View+width) : <code>Number</code>
     * [.height](#module_AutoLayout..View+height) : <code>Number</code>
@@ -29,44 +67,6 @@ AutoLayoutJS API reference.
     * [.setSpacing(spacing)](#module_AutoLayout..View+setSpacing) ⇒ <code>View</code>
     * [.addConstraint(constraint)](#module_AutoLayout..View+addConstraint) ⇒ <code>View</code>
     * [.addConstraints(constraints)](#module_AutoLayout..View+addConstraints) ⇒ <code>View</code>
-  * [~Attribute](#module_AutoLayout..Attribute) : <code>enum</code>
-  * [~Relation](#module_AutoLayout..Relation) : <code>enum</code>
-  * [~Priority](#module_AutoLayout..Priority) : <code>enum</code>
-  * [~SubView](#module_AutoLayout..SubView) : <code>object</code>
-    * [.name](#module_AutoLayout..SubView+name) : <code>String</code>
-    * [.left](#module_AutoLayout..SubView+left) : <code>Number</code>
-    * [.right](#module_AutoLayout..SubView+right) : <code>Number</code>
-    * [.width](#module_AutoLayout..SubView+width) : <code>Number</code>
-    * [.height](#module_AutoLayout..SubView+height) : <code>Number</code>
-    * [.intrinsicWidth](#module_AutoLayout..SubView+intrinsicWidth) : <code>Number</code>
-    * [.intrinsicHeight](#module_AutoLayout..SubView+intrinsicHeight) : <code>Number</code>
-    * [.top](#module_AutoLayout..SubView+top) : <code>Number</code>
-    * [.bottom](#module_AutoLayout..SubView+bottom) : <code>Number</code>
-    * [.centerX](#module_AutoLayout..SubView+centerX) : <code>Number</code>
-    * [.centerY](#module_AutoLayout..SubView+centerY) : <code>Number</code>
-    * [.zIndex](#module_AutoLayout..SubView+zIndex) : <code>Number</code>
-    * [.type](#module_AutoLayout..SubView+type) : <code>String</code>
-    * [.getValue(attr)](#module_AutoLayout..SubView+getValue) ⇒ <code>Number</code>
-  * [~VisualFormat](#module_AutoLayout..VisualFormat) : <code>object</code>
-    * [.parseLine(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseLine) ⇒ <code>Array</code>
-    * [.parse(visualFormat, [options])](#module_AutoLayout..VisualFormat.parse) ⇒ <code>Array</code>
-    * [.parseMetaInfo(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseMetaInfo) ⇒ <code>Object</code>
-
-<a name="module_AutoLayout..View"></a>
-### AutoLayout~View
-**Kind**: inner class of <code>[AutoLayout](#module_AutoLayout)</code>  
-
-* [~View](#module_AutoLayout..View)
-  * [new View([options])](#new_module_AutoLayout..View_new)
-  * [.width](#module_AutoLayout..View+width) : <code>Number</code>
-  * [.height](#module_AutoLayout..View+height) : <code>Number</code>
-  * [.fittingWidth](#module_AutoLayout..View+fittingWidth) : <code>Number</code>
-  * [.fittingHeight](#module_AutoLayout..View+fittingHeight) : <code>Number</code>
-  * [.subViews](#module_AutoLayout..View+subViews) : <code>Object.SubView</code>
-  * [.setSize(width, height)](#module_AutoLayout..View+setSize) ⇒ <code>View</code>
-  * [.setSpacing(spacing)](#module_AutoLayout..View+setSpacing) ⇒ <code>View</code>
-  * [.addConstraint(constraint)](#module_AutoLayout..View+addConstraint) ⇒ <code>View</code>
-  * [.addConstraints(constraints)](#module_AutoLayout..View+addConstraints) ⇒ <code>View</code>
 
 <a name="new_module_AutoLayout..View_new"></a>
 #### new View([options])
@@ -280,20 +280,20 @@ A SubView is automatically generated when constraints are added to a View.
 **Kind**: inner namespace of <code>[AutoLayout](#module_AutoLayout)</code>  
 
 * [~SubView](#module_AutoLayout..SubView) : <code>object</code>
-  * [.name](#module_AutoLayout..SubView+name) : <code>String</code>
-  * [.left](#module_AutoLayout..SubView+left) : <code>Number</code>
-  * [.right](#module_AutoLayout..SubView+right) : <code>Number</code>
-  * [.width](#module_AutoLayout..SubView+width) : <code>Number</code>
-  * [.height](#module_AutoLayout..SubView+height) : <code>Number</code>
-  * [.intrinsicWidth](#module_AutoLayout..SubView+intrinsicWidth) : <code>Number</code>
-  * [.intrinsicHeight](#module_AutoLayout..SubView+intrinsicHeight) : <code>Number</code>
-  * [.top](#module_AutoLayout..SubView+top) : <code>Number</code>
-  * [.bottom](#module_AutoLayout..SubView+bottom) : <code>Number</code>
-  * [.centerX](#module_AutoLayout..SubView+centerX) : <code>Number</code>
-  * [.centerY](#module_AutoLayout..SubView+centerY) : <code>Number</code>
-  * [.zIndex](#module_AutoLayout..SubView+zIndex) : <code>Number</code>
-  * [.type](#module_AutoLayout..SubView+type) : <code>String</code>
-  * [.getValue(attr)](#module_AutoLayout..SubView+getValue) ⇒ <code>Number</code>
+    * [.name](#module_AutoLayout..SubView+name) : <code>String</code>
+    * [.left](#module_AutoLayout..SubView+left) : <code>Number</code>
+    * [.right](#module_AutoLayout..SubView+right) : <code>Number</code>
+    * [.width](#module_AutoLayout..SubView+width) : <code>Number</code>
+    * [.height](#module_AutoLayout..SubView+height) : <code>Number</code>
+    * [.intrinsicWidth](#module_AutoLayout..SubView+intrinsicWidth) : <code>Number</code>
+    * [.intrinsicHeight](#module_AutoLayout..SubView+intrinsicHeight) : <code>Number</code>
+    * [.top](#module_AutoLayout..SubView+top) : <code>Number</code>
+    * [.bottom](#module_AutoLayout..SubView+bottom) : <code>Number</code>
+    * [.centerX](#module_AutoLayout..SubView+centerX) : <code>Number</code>
+    * [.centerY](#module_AutoLayout..SubView+centerY) : <code>Number</code>
+    * [.zIndex](#module_AutoLayout..SubView+zIndex) : <code>Number</code>
+    * [.type](#module_AutoLayout..SubView+type) : <code>String</code>
+    * [.getValue(attr)](#module_AutoLayout..SubView+getValue) ⇒ <code>Number</code>
 
 <a name="module_AutoLayout..SubView+name"></a>
 #### subView.name : <code>String</code>
@@ -399,9 +399,9 @@ VisualFormat
 **Kind**: inner namespace of <code>[AutoLayout](#module_AutoLayout)</code>  
 
 * [~VisualFormat](#module_AutoLayout..VisualFormat) : <code>object</code>
-  * [.parseLine(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseLine) ⇒ <code>Array</code>
-  * [.parse(visualFormat, [options])](#module_AutoLayout..VisualFormat.parse) ⇒ <code>Array</code>
-  * [.parseMetaInfo(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseMetaInfo) ⇒ <code>Object</code>
+    * [.parseLine(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseLine) ⇒ <code>Array</code>
+    * [.parse(visualFormat, [options])](#module_AutoLayout..VisualFormat.parse) ⇒ <code>Array</code>
+    * [.parseMetaInfo(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseMetaInfo) ⇒ <code>Object</code>
 
 <a name="module_AutoLayout..VisualFormat.parseLine"></a>
 #### VisualFormat.parseLine(visualFormat, [options]) ⇒ <code>Array</code>
