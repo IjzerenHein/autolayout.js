@@ -16,7 +16,7 @@ var banner = '' +
 '*\n' +
 '* @author: Hein Rutjes (IjzerenHein)\n' +
 '* @license MIT\n' +
-'* @copyright Gloey Apps, 2015\n' +
+'* @copyright Gloey Apps, 2016\n' +
 '*\n' +
 '* @library autolayout.js\n' +
 '* @version ' + packageJSON.version + '\n' +
@@ -53,7 +53,8 @@ function dist(kiwi, minify) {
         banner: banner
     });
     b.transform(babelify.configure({
-        compact: false
+        compact: false,
+        ignore: /\/kiwi\//
     }));
     b.transform(envify({
         CASSOWARYJS: !kiwi
