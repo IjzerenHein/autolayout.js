@@ -14,7 +14,7 @@
       <img src="logo.png" style="max-width: 100%;">
       <h2 class="project-tagline">Apple&#39;s Auto Layout and Visual Format Language for Javascript.</h2>
       <a href="https://github.com/IjzerenHein/autolayout.js" class="btn">View on GitHub</a>
-      <a href="https://github.com/IjzerenHein/autolayout.js/zipball/master" class="btn">Download v0.5.2</a>
+      <a href="https://github.com/IjzerenHein/autolayout.js/zipball/master" class="btn">Download v0.5.3</a>
       <a href="https://rawgit.com/IjzerenHein/visualformat-editor/master/dist/index.html?vfl=example" class="btn">Visual Format Editor</a>
       <a href="https://github.com/IjzerenHein/autolayout.js/blob/master/docs/AutoLayout.md" class="btn">API Documentation</a>
     </section>
@@ -23,7 +23,7 @@
       <h3>
 <a id="auto-whut-layout" class="anchor" href="#auto-whut-layout" aria-hidden="true"><span class="octicon octicon-link"></span></a>Auto-whut-layout?</h3>
 
-<p>AutoLayout.js implements <a href="https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/Introduction/Introduction.html">Apple's Auto Layout</a> constraint system and <a href="https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html">Visual Format Language</a> in Javascript. Auto layout is a system which lets you perform lay out using mathematical relationships. It is based on the <a href="https://en.wikipedia.org/wiki/Cassowary_(software)">incremental cassowary constraint solving toolkit</a> and uses the awesome <a href="https://github.com/slightlyoff/cassowary.js">Cassowary.js</a> library. AutoLayout.js provides a simple API and programming model for integrating auto layout and VFL into other Javascript technologies, as well as an <a href="https://github.com/IjzerenHein/visualformat-editor">editor</a> for creating layouts using (E)VFL.</p>
+<p>AutoLayout.js implements <a href="https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/index.html">Apple's Auto Layout</a> constraint system and <a href="https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage.html">Visual Format Language</a> in Javascript. Auto layout is a system which lets you perform lay out using mathematical relationships. It is based on the <a href="https://en.wikipedia.org/wiki/Cassowary_(software)">incremental cassowary constraint solving toolkit</a> and uses the awesome <a href="https://github.com/slightlyoff/cassowary.js">Cassowary.js</a> library. AutoLayout.js provides a simple API and programming model for integrating auto layout and VFL into other Javascript technologies, as well as an <a href="https://github.com/IjzerenHein/visualformat-editor">editor</a> for creating layouts using (E)VFL.</p>
 
 <iframe src="https://rawgit.com/IjzerenHein/visualformat-editor/master/dist/index.html?vfl=example&mode=compact"></iframe>
 <a href="https://rawgit.com/IjzerenHein/visualformat-editor/master/dist/index.html?vfl=example" target="_blank">Click here to open the editor full-screen.</a>
@@ -126,6 +126,12 @@ example shows a disconnection causing the content after the disconnect to align 
    left1 is                 left2 and                  right2 is
  connected to               right1 are                connected to
   super-view               not connected               super-view</code></pre>
+
+<h4>Negative values (overlapping views):</h4>
+<p>Numbers and percentages can also be negative, which can be useful for overlapping views:</p>
+<pre><code>H:|[top,middle,bottom]|
+V:|[top(100)]-(<span class="evfl">-10</span>)-[middle(top)]-(middle/<span class="evfl">-2</span>)-[bottom]|
+Z:|[top][middle][bottom]</code></pre>
 
 <h4>Comments: <code>// comments here</code></h4>
 <p>Single line comments can be used to explain the VFL or to prevent its execution:</p>
