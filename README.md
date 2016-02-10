@@ -168,6 +168,7 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 - [Multiple views](#multiple-views) (`Z:|[background][text1,text2,text3]|`)
 - [Multiple orientations](#multiple-orientations) (`HV:|[background]|`)
 - [Disconnections](#disconnections) (`|[view1(200)]->[view2(100)]|`)
+- [Negative values](#negative-values) (`|[view1]-(-10)-[view2]|`)
 - [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
 
 ### Proportional size
@@ -295,6 +296,14 @@ example shows a disconnection causing the content after the disconnect to align 
  connected to               right1 are                connected to
   super-view               not connected               super-view
 ```
+
+### Negative values (overlapping views)
+
+Numbers and percentages can also be negative, which can be useful for overlapping views:
+
+    H:|[top,middle,bottom]|
+    V:|[top(100)]-(-10)-[middle(top)]-(middle/-2)-[bottom]|
+    Z:|[top][middle][bottom]
 
 ### Comments
 

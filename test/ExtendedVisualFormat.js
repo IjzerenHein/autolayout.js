@@ -31,4 +31,111 @@ describe('ExtendedVisualFormat', function() {
             assert.equal(constraints[0].constant, 60.6666);
         });
     });
+
+    describe('connections', function() {
+        it('should position child2 right of child: ' + '[child][child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child][child2]', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'child');
+            assert.equal(c.attr1, 'right');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'child2');
+            assert.equal(c.attr2, 'left');
+            assert.equal(c.constant, 0);
+        });
+        it('should position child2 right of child: ' + '[child]-10-[child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child]-10-[child2]', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'child');
+            assert.equal(c.attr1, 'right');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'child2');
+            assert.equal(c.attr2, 'left');
+            assert.equal(c.constant, -10);
+        });
+        it('should position child2 right of child: ' + '[child]-(50)-[child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child]-(50)-[child2]', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'child');
+            assert.equal(c.attr1, 'right');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'child2');
+            assert.equal(c.attr2, 'left');
+            assert.equal(c.constant, -50);
+        });
+        it('should position child2 right of child: ' + '[child]-(-22)-[child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child]-(-22)-[child2]', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'child');
+            assert.equal(c.attr1, 'right');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'child2');
+            assert.equal(c.attr2, 'left');
+            assert.equal(c.constant, 22);
+        });
+        it('should position child2 right of child: ' + '[child]-10%-[child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child]-10%-[child2]', opts);
+            assert.equal(3, constraints.length);
+        });
+        it('should position child2 right of child: ' + '[child]-(15%)-[child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child]-(15%)-[child2]', opts);
+            assert.equal(3, constraints.length);
+        });
+        it('should position child2 right of child: ' + '[child]-(-10%)-[child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child]-(-10%)-[child2]', opts);
+            assert.equal(3, constraints.length);
+        });
+        it('should position child2 right of child: ' + '[child(60)]-(child/10)-[child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child(60)]-(child/10)-[child2]', opts);
+            assert.equal(4, constraints.length);
+        });
+        it('should position child2 right of child: ' + '[child(60)]-(child/-10)-[child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child(60)]-(child/-10)-[child2]', opts);
+            assert.equal(4, constraints.length);
+        });
+        it('should position child2 right of child: ' + '[child(60)]-(child/+10)-[child2]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child(60)]-(child/+10)-[child2]', opts);
+            assert.equal(4, constraints.length);
+        });
+    });
+
+    describe('proportional size', function() {
+        it('width should be 50%: ' + '[child(50%)]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child(50%)]', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'child');
+            assert.equal(c.attr1, 'width');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, null);
+            assert.equal(c.attr2, 'width');
+            assert.equal(c.multiplier, 0.5);
+        });
+        it('width should be >= 50%: ' + '[child(>=50%)]', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child(>=50%)]', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'child');
+            assert.equal(c.attr1, 'width');
+            assert.equal(c.relation, 'geq');
+            assert.equal(c.view2, null);
+            assert.equal(c.attr2, 'width');
+            assert.equal(c.multiplier, 0.5);
+        });
+        it('width should be -10%: ' + '[child(-10%)] (fictional scenario)', function() {
+            var constraints = AutoLayout.VisualFormat.parse('[child(-10%)]', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'child');
+            assert.equal(c.attr1, 'width');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, null);
+            assert.equal(c.attr2, 'width');
+            assert.equal(c.multiplier, -0.1);
+        });
+    });
 });

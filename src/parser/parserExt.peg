@@ -97,9 +97,13 @@ priority
 
 constant
   = n:number { return { constant: n } }
+  / "-" n:number { return { constant: -n } }
+  / "+" n:number { return { constant: n } }
 
 percentage
   = n:number '%' { return { view: null, multiplier: n / 100 } }
+  / "-" n:number '%' { return { view: null, multiplier: n / -100 } }
+  / "+" n:number '%' { return { view: null, multiplier: n / 100 } }
 
 viewPredicate
   = vn:viewName a:attribute? m:multiplier? c:constantExpr? { return { view: vn.view, attribute: a ? a : undefined, multiplier: m ? m : 1, constant: c ? c : undefined } }
@@ -116,7 +120,11 @@ attribute
 
 multiplier
   = "/" n:number { return 1 / n; }
+  / "/+" n:number { return 1 / n; }
+  / "/-" n:number { return -1 / n; }
   / "*" n:number { return n; }
+  / "*+" n:number { return n; }
+  / "*-" n:number { return -n; }
 
 constantExpr
   = "-" n:number { return -n; }
