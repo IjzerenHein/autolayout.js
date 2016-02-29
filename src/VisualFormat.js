@@ -404,32 +404,47 @@ class VisualFormat {
             lineIndex: (options ? options.lineIndex : undefined) || 1,
             subViews: (options ? options.subViews : undefined) || {}
         };
-        switch (res.orientation) {
+        if (res.type === 'attribute') {
+          for (var n = 0; n < res.predicates.length; n++) {
+            context.constraints.push({
+              view1: res.view,
+              attr1: res.attr,
+              relation: res.predicates[n].relation,
+              view2: res.predicates[n].view,
+              attr2: res.predicates[n].attribute,
+              multiplier: res.predicates[n].multiplier,
+              constant: res.predicates[n].constant,
+              priority: res.predicates[n].priority
+            });
+          }
+        } else {
+          switch (res.orientation) {
             case 'horizontal':
-                context.orientation = Orientation.HORIZONTAL;
-                context.horizontal = true;
-                _processCascade(context, res.cascade, null);
-                break;
+              context.orientation = Orientation.HORIZONTAL;
+              context.horizontal = true;
+              _processCascade(context, res.cascade, null);
+              break;
             case 'vertical':
-                context.orientation = Orientation.VERTICAL;
-                _processCascade(context, res.cascade, null);
-                break;
+              context.orientation = Orientation.VERTICAL;
+              _processCascade(context, res.cascade, null);
+              break;
             case 'horzvert':
-                context.orientation = Orientation.HORIZONTAL;
-                context.horizontal = true;
-                _processCascade(context, res.cascade, null);
-                context = {
-                    constraints: context.constraints,
-                    lineIndex: context.lineIndex,
-                    subViews: context.subViews,
-                    orientation: Orientation.VERTICAL
-                };
-                _processCascade(context, res.cascade, null);
-                break;
+              context.orientation = Orientation.HORIZONTAL;
+              context.horizontal = true;
+              _processCascade(context, res.cascade, null);
+              context = {
+                constraints: context.constraints,
+                lineIndex: context.lineIndex,
+                subViews: context.subViews,
+                orientation: Orientation.VERTICAL
+              };
+              _processCascade(context, res.cascade, null);
+              break;
             case 'zIndex':
-                context.orientation = Orientation.ZINDEX;
-                _processCascade(context, res.cascade, null);
-                break;
+              context.orientation = Orientation.ZINDEX;
+              _processCascade(context, res.cascade, null);
+              break;
+          }
         }
         return context.constraints;
     }
