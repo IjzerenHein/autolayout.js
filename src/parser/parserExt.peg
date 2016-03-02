@@ -9,6 +9,28 @@
   }
 }
 
+visualFormatStringExt 
+  = (visualFormatString / visualFormatStringAttributeExpression)
+
+visualFormatStringAttributeExpression 
+  = attributeMark
+    viewAttrLeft:attributeSignifier
+    predicates: predicateList
+    comments:comments?
+  { return {
+      type: 'attribute',
+      view: viewAttrLeft.view,
+      attr: viewAttrLeft.attr,
+      predicates: predicates
+    }
+  }
+
+attributeMark 
+  = "A:" { return 'attribute' }
+
+attributeSignifier
+  = view:viewName attr:attribute { return { view: view.view, attr:attr } }
+
 visualFormatString
   = o:(orientation ":")?
     superto:(superview connection)?
@@ -17,6 +39,7 @@ visualFormatString
     tosuper:(connection superview)?
     comments:comments?
   { return {
+      type: 'vfl',
       orientation: o ? o[0] : 'horizontal',
       cascade: (superto || []).concat(
         view,
