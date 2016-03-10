@@ -31,10 +31,11 @@
 <h3>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Show us the code!</h3>
 
-<pre><code>var view = new AutoLayout.View(AutoLayout.VisualFormat.parse([
+<pre><code>var constraints = AutoLayout.VisualFormat.parse([
   'H:|[view1(==view2)]-10-[view2]|'
   'V:|[view1,view2]|'
-], {extended: true}));
+], {extended: true});
+var view = new AutoLayout.View({constraints: constraints});
 view.setSize(400, 500);
 console.log(view.subViews.view1); // {left: 0, top: 0, width: 195, height: 500}
 console.log(view.subViews.view2); // {left: 205, top: 0, width: 195, height: 500}
