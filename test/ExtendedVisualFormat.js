@@ -138,4 +138,70 @@ describe('ExtendedVisualFormat', function() {
             assert.equal(c.multiplier, -0.1);
         });
     });
+
+    describe('explicit constraint syntax', function() {
+        it('centerX should be equal to centerX: ' + 'C:view1.centerX(view2.centerX)', function() {
+            var constraints = AutoLayout.VisualFormat.parse('C:view1.centerX(view2.centerX)', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerX');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view2');
+            assert.equal(c.attr2, 'centerX');
+        });
+        it('centerY should be equal to centerY (implicit attribute): ' + 'C:view1.centerY(view2)', function() {
+            var constraints = AutoLayout.VisualFormat.parse('C:view1.centerY(view2)', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerY');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view2');
+            assert.equal(c.attr2, 'centerY');
+        });
+        it('left should be >= to top: ' + 'C:view1.left(>=view2.top*2)', function() {
+            var constraints = AutoLayout.VisualFormat.parse('C:view1.left(>=view2.top*2)', opts);
+            assert.equal(1, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'left');
+            assert.equal(c.relation, 'geq');
+            assert.equal(c.view2, 'view2');
+            assert.equal(c.attr2, 'top');
+            assert.equal(c.multiplier, 2);
+        });
+        it('centerX should be equal to centerX and centerX: ' + 'C:view1.centerX(view2.centerX,view3.centerX)', function() {
+            var constraints = AutoLayout.VisualFormat.parse('C:view1.centerX(view2.centerX,view3.centerX)', opts);
+            assert.equal(2, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerX');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view2');
+            assert.equal(c.attr2, 'centerX');
+            c = constraints[1];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerX');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view3');
+            assert.equal(c.attr2, 'centerX');
+        });
+        /*it('centerX/Y should be equal to centerX/Y: ' + 'A:view1.centerX(view2.centerX),view1.centerY(view2.centerY)', function() {
+            var constraints = AutoLayout.VisualFormat.parse('A:view1.centerX(view2.centerX),view1.centerY(view2.centerY)', opts);
+            assert.equal(2, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerX');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view2');
+            assert.equal(c.attr2, 'centerX');
+            c = constraints[1];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerY');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view2');
+            assert.equal(c.attr2, 'centerY');
+        });*/
+    });
 });
