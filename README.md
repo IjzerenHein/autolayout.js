@@ -7,10 +7,11 @@
 AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/index.html) and [Visual Format Language](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage.html) in Javascript. Auto layout is a system which lets you perform lay out using mathematical relationships (constraints). It uses the awesome [Cassowary.js](https://github.com/slightlyoff/cassowary.js) library to do the actual constraint resolving and implements Apple's constraint system and Visual Format Language (vfl) on top of that. It supports the [Extended VFL syntax](#extended-visual-format-language-evfl), including view-stacks and z-indexing.
 
 ```javascript
-var view = new AutoLayout.View(AutoLayout.VisualFormat.parse([
+var constraints = AutoLayout.VisualFormat.parse([
   'H:|[view1(==view2)]-10-[view2]|'
   'V:|[view1,view2]|'
-], {extended: true}));
+], {extended: true});
+var view = new AutoLayout.View({constraints: constraints});
 view.setSize(400, 500);
 console.log(view.subViews.view1); // {left: 0, top: 0, width: 195, height: 500}
 console.log(view.subViews.view2); // {left: 205, top: 0, width: 195, height: 500}
@@ -164,11 +165,12 @@ var constraints = AutoLayout.VisualFormat.parse(evfl, {extended: true});
 - [Z-ordering](#z-ordering) (`Z:|-[view1][view2]`)
 - [Equal size spacers/centering](#equal-size-spacers-centering)(`|~[center(100)]~|`)
 - [View stacks](#view-stacks) (`V:|[column:[header(50)][content][footer(50)]]|`)
-- [View ranges](#view-ranges) (`H:[view1..8(10)]|`)
+- [View ranges (spread operator)](#view-ranges-spread-operator) (`H:[view1..8(10)]|`)
 - [Multiple views](#multiple-views) (`Z:|[background][text1,text2,text3]|`)
-- [Multiple orientations](#multiple-orientations) (`HV:|[background]|`)
-- [Disconnections](#disconnections) (`|[view1(200)]->[view2(100)]|`)
-- [Negative values](#negative-values) (`|[view1]-(-10)-[view2]|`)
+- [Multiple orientations](#multiple-orientations-fill-content) (`HV:|[background]|`)
+- [Disconnections (right/bottom alignment)](#disconnections-right-bottom-alignment) (`|[view1(200)]->[view2(100)]|`)
+- [Negative values (overlapping views)](#negative-values-overlapping-views) (`|[view1]-(-10)-[view2]|`)
+- [Explicit constraint syntax](#explicit-constraint-syntax) (`C:view1.centerX(view2.centerX)`)
 - [Comments](#comments) (`[view1(view1.height/3)] // enfore aspect ratio 1/3`)
 
 ### Proportional size
@@ -248,7 +250,7 @@ The following example creates a view stack named `column` which contains three s
     V:|[column:[top(50)][content][bottom(50)]]|
     H:|[column]|
 
-### View ranges
+### View ranges (spread operator)
 
 View ranges make it possible to select multiple views at once and apply rules for them:
 
@@ -305,6 +307,15 @@ Numbers and percentages can also be negative, which can be useful for overlappin
     V:|[top(100)]-(-10)-[middle(top)]-(middle/-2)-[bottom]|
     Z:|[top][middle][bottom]
 
+### Explicit constraint syntax
+
+EVFL also supports the ability to define constraints explicitly. This can be particular useful
+when it is otherwise not possible to express a layout or rule:
+
+    C:view1.centerX(view2.centerX)   // view1 is horizontally centered to view2
+    C:view1.centerY(view2)           // view1 is vertically centered to view2 (centerY is derived for view2)
+    C:view1.centerX(view2).bottom(view2.bottom) // view1 is horizontally centered and bottom aligned toview2 (chaining syntax)
+
 ### Comments
 
 Single line comments can be used to explain the VFL or to prevent its execution:
@@ -350,6 +361,6 @@ Also have a look at [CONTRIBUTING](./CONTRIBUTING.md).
 
 ## Contact
 -   @IjzerenHein
--   hrutjes@gmail.com
+-   hrutjes@gmail.com (for hire)
 
-© 2015 Hein Rutjes
+© 2015-2016 Hein Rutjes

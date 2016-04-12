@@ -399,24 +399,28 @@ class VisualFormat {
         if (options && options.outFormat === 'raw') {
             return [res];
         }
-        var context = {
+        let context = {
             constraints: [],
             lineIndex: (options ? options.lineIndex : undefined) || 1,
             subViews: (options ? options.subViews : undefined) || {}
         };
         if (res.type === 'attribute') {
-          for (var n = 0; n < res.predicates.length; n++) {
-            context.constraints.push({
-              view1: res.view,
-              attr1: res.attr,
-              relation: res.predicates[n].relation,
-              view2: res.predicates[n].view,
-              attr2: res.predicates[n].attribute || res.attr,
-              multiplier: res.predicates[n].multiplier,
-              constant: res.predicates[n].constant,
-              priority: res.predicates[n].priority
-            });
-          }
+            for (let n = 0; n < res.attributes.length; n++) {
+                const attr = res.attributes[n];
+                for (let m = 0; m < attr.predicates.length; m++) {
+                    const predicate = attr.predicates[m];
+                    context.constraints.push({
+                      view1: res.view,
+                      attr1: attr.attr,
+                      relation: predicate.relation,
+                      view2: predicate.view,
+                      attr2: predicate.attribute || attr.attr,
+                      multiplier: predicate.multiplier,
+                      constant: predicate.constant,
+                      priority: predicate.priority
+                    });
+                }
+            }
         } else {
           switch (res.orientation) {
             case 'horizontal':

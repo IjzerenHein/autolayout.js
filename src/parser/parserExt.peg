@@ -10,26 +10,23 @@
 }
 
 visualFormatStringExt
-  = (visualFormatString / visualFormatStringAttributeExpression)
+  = (visualFormatString / visualFormatStringConstraintExpression)
 
-visualFormatStringAttributeExpression
-  = attributeMark
-    viewAttrLeft:attributeSignifier
-    predicates: predicateList
+visualFormatStringConstraintExpression
+  = "C:"
+    view:viewName
+    attribute:attributePredicate
+    attributes:(attributePredicate)*
     comments:comments?
   { return {
       type: 'attribute',
-      view: viewAttrLeft.view,
-      attr: viewAttrLeft.attr,
-      predicates: predicates
+      view: view.view,
+      attributes: [attribute].concat(attributes)
     }
   }
 
-attributeMark
-  = "C:" { return 'attribute' }
-
-attributeSignifier
-  = view:viewName attr:attribute { return { view: view.view, attr:attr } }
+attributePredicate
+  = attr:attribute predicates:predicateListWithParens { return { attr: attr, predicates:predicates } }
 
 visualFormatString
   = o:(orientation ":")?

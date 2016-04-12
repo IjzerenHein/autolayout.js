@@ -187,8 +187,24 @@ describe('ExtendedVisualFormat', function() {
             assert.equal(c.view2, 'view3');
             assert.equal(c.attr2, 'centerX');
         });
-        /*it('centerX/Y should be equal to centerX/Y: ' + 'A:view1.centerX(view2.centerX),view1.centerY(view2.centerY)', function() {
-            var constraints = AutoLayout.VisualFormat.parse('A:view1.centerX(view2.centerX),view1.centerY(view2.centerY)', opts);
+        it('centerX should be equal to centerX and centerX (implicit attributes): ' + 'C:view1.centerX(view2,view3)', function() {
+            var constraints = AutoLayout.VisualFormat.parse('C:view1.centerX(view2,view3)', opts);
+            assert.equal(2, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerX');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view2');
+            assert.equal(c.attr2, 'centerX');
+            c = constraints[1];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerX');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view3');
+            assert.equal(c.attr2, 'centerX');
+        });
+        it('chaining syntax: ' + 'C:view1.centerX(view2.centerX).centerY(view2.centerY)', function() {
+            var constraints = AutoLayout.VisualFormat.parse('C:view1.centerX(view2.centerX).centerY(view2.centerY)', opts);
             assert.equal(2, constraints.length);
             var c = constraints[0];
             assert.equal(c.view1, 'view1');
@@ -202,6 +218,22 @@ describe('ExtendedVisualFormat', function() {
             assert.equal(c.relation, 'equ');
             assert.equal(c.view2, 'view2');
             assert.equal(c.attr2, 'centerY');
-        });*/
+        });
+        it('chaining syntax (implicit attributes): ' + 'C:view1.centerX(view2).centerY(view2)', function() {
+            var constraints = AutoLayout.VisualFormat.parse('C:view1.centerX(view2).centerY(view2)', opts);
+            assert.equal(2, constraints.length);
+            var c = constraints[0];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerX');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view2');
+            assert.equal(c.attr2, 'centerX');
+            c = constraints[1];
+            assert.equal(c.view1, 'view1');
+            assert.equal(c.attr1, 'centerY');
+            assert.equal(c.relation, 'equ');
+            assert.equal(c.view2, 'view2');
+            assert.equal(c.attr2, 'centerY');
+        });
     });
 });
