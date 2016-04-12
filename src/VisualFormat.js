@@ -411,7 +411,7 @@ class VisualFormat {
               attr1: res.attr,
               relation: res.predicates[n].relation,
               view2: res.predicates[n].view,
-              attr2: res.predicates[n].attribute,
+              attr2: res.predicates[n].attribute || res.attr,
               multiplier: res.predicates[n].multiplier,
               constant: res.predicates[n].constant,
               priority: res.predicates[n].priority
