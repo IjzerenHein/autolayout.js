@@ -9,10 +9,10 @@
   }
 }
 
-visualFormatStringExt 
+visualFormatStringExt
   = (visualFormatString / visualFormatStringAttributeExpression)
 
-visualFormatStringAttributeExpression 
+visualFormatStringAttributeExpression
   = attributeMark
     viewAttrLeft:attributeSignifier
     predicates: predicateList
@@ -25,8 +25,8 @@ visualFormatStringAttributeExpression
     }
   }
 
-attributeMark 
-  = "A:" { return 'attribute' }
+attributeMark
+  = "C:" { return 'attribute' }
 
 attributeSignifier
   = view:viewName attr:attribute { return { view: view.view, attr:attr } }
