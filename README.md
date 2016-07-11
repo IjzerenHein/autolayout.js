@@ -189,7 +189,7 @@ Syntax:
 
     (view[.{attribute}]['*'|'/'{value}]['+'|'-'{value}])
 
-To for instance, make the width or height proportional to **another view**, use:
+To, for instance, make the width or height proportional to **another view**, use:
 
     |-[view1(==view2/2)]-[view2]-|  // view1 is half the width of view2
     |-[view1(==view2*4-100)]-[view2]-|  // view1 is four times the width minus 100 of view2
@@ -245,7 +245,7 @@ You can also use more than 2 connectors to proportionally align views:
 ### View stacks
 
 View stacks make it possible to group views into a column or a row.
-The following example creates a view stack named `column` which contains three sub-views. The benefit of this is is revealed in the second line, in which the stack as whole is horizontally positioned.
+The following example creates a view stack named `column` which contains three sub-views. The benefit of this is revealed in the second line, in which the stack as a whole is horizontally positioned.
 
     V:|[column:[top(50)][content][bottom(50)]]|
     H:|[column]|
@@ -309,7 +309,7 @@ Numbers and percentages can also be negative, which can be useful for overlappin
 
 ### Explicit constraint syntax
 
-Constraints can also be expressed explicitly. This can be particular useful
+Constraints can also be expressed explicitly. This can be particularly useful
 when it is otherwise not possible to express a layout or rule:
 
     C:view1.centerX(view2.centerX)     // view1 is horizontally centered to view2
