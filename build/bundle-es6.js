@@ -4,7 +4,7 @@ var esperanto = require('esperanto');
 esperanto.bundle({
   entry: 'src/AutoLayout.js', // the '.js' is optional
   skip: [
-    'kiwi/ts/bin/kiwi',
+    'kiwi.js',
     'cassowary/bin/c'
   ]
 }).then(function(bundle) {

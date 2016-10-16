@@ -1,5 +1,5 @@
 import c from 'cassowary/bin/c';
-//import kiwi from 'kiwi/ts/bin/kiwi';
+//import kiwi from 'kiwi.js';
 import Attribute from './Attribute';
 
 /**

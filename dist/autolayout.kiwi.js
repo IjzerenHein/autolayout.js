@@ -13,7 +13,7 @@
 /*-----------------------------------------------------------------------------
 | Kiwi (TypeScript version)
 |
-| Copyright (c) 2014, Nucleic Development Team.
+| Copyright (c) 2014, Nucleic Development Team & H. Rutjes.
 |
 | Distributed under the terms of the Modified BSD License.
 |
@@ -26,7 +26,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var kiwi = require('kiwi/ts/bin/kiwi');
+var kiwi = require('kiwi.js');
 'use strict';
 
 /**
@@ -5310,7 +5310,7 @@ var AutoLayout = {
 
 module.exports = AutoLayout;
 
-},{"kiwi/ts/bin/kiwi":2}],2:[function(require,module,exports){
+},{"kiwi.js":2}],2:[function(require,module,exports){
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module unless amdModuleId is set
@@ -6007,6 +6007,9 @@ var kiwi;
         Constraint.prototype.strength = function () {
             return this._strength;
         };
+        Constraint.prototype.toString = function () {
+            return this._expression.toString() + " " + ["<=", ">=", "="][this._operator] + " 0 (" + this._strength.toString() + ")";
+        };
         return Constraint;
     })();
     kiwi.Constraint = Constraint;
@@ -6161,6 +6164,9 @@ var kiwi;
                 value: this._value
             };
         };
+        Variable.prototype.toString = function () {
+            return this._context + "[" + this._name + ":" + this._value + "]";
+        };
         return Variable;
     })();
     kiwi.Variable = Variable;
@@ -6270,6 +6276,19 @@ var kiwi;
          */
         Expression.prototype.divide = function (coefficient) {
             return new Expression([1 / coefficient, this]);
+        };
+        Expression.prototype.isConstant = function () {
+            return this._terms.size() == 0;
+        };
+        Expression.prototype.toString = function () {
+            var result = this._terms._array.map(function (pair, idx) {
+                return (pair.second + "*" + pair.first.toString());
+            }).join(" + ");
+            if (!this.isConstant() && this._constant !== 0) {
+                result += " + ";
+            }
+            result += this._constant;
+            return result;
         };
         return Expression;
     })();
@@ -6461,7 +6480,7 @@ var kiwi;
             // this represents redundant constraints and the new dummy
             // marker can enter the basis. If the constant is non-zero,
             // then it represents an unsatisfiable constraint.
-            if (subject.type() === 0 /* Invalid */ && row.allDummies()) {
+            if (subject.type() === SymbolType.Invalid && row.allDummies()) {
                 if (!nearZero(row.constant())) {
                     throw new Error("unsatisfiable constraint");
                 }
@@ -6472,7 +6491,7 @@ var kiwi;
             // If an entering symbol still isn't found, then the row must
             // be added using an artificial variable. If that fails, then
             // the row represents an unsatisfiable constraint.
-            if (subject.type() === 0 /* Invalid */) {
+            if (subject.type() === SymbolType.Invalid) {
                 if (!this._addWithArtificialVariable(row)) {
                     throw new Error("unsatisfiable constraint");
                 }
@@ -6508,7 +6527,7 @@ var kiwi;
             var rowPair = this._rowMap.erase(marker);
             if (rowPair === undefined) {
                 var leaving = this._getMarkerLeavingSymbol(marker);
-                if (leaving.type() === 0 /* Invalid */) {
+                if (leaving.type() === SymbolType.Invalid) {
                     throw new Error("failed to find leaving row");
                 }
                 rowPair = this._rowMap.erase(leaving);
@@ -6545,7 +6564,7 @@ var kiwi;
                 throw new Error("bad required strength");
             }
             var expr = new kiwi.Expression(variable);
-            var cn = new kiwi.Constraint(expr, 2 /* Eq */, undefined, strength);
+            var cn = new kiwi.Constraint(expr, kiwi.Operator.Eq, undefined, strength);
             this.addConstraint(cn);
             var tag = this._cnMap.find(cn).second;
             var info = { tag: tag, constraint: cn, constant: 0.0 };
@@ -6607,11 +6626,13 @@ var kiwi;
                 this._dualOptimize();
                 return;
             }
+            // Otherwise update each row where the error variables exist.
             for (var i = 0, n = rows.size(); i < n; ++i) {
                 var rowPair = rows.itemAt(i);
                 var row = rowPair.second;
                 var coeff = row.coefficientFor(marker);
-                if (coeff !== 0.0 && row.add(delta * coeff) < 0.0 && rowPair.first.type() !== 1 /* External */) {
+                if (coeff !== 0.0 && row.add(delta * coeff) < 0.0 &&
+                    rowPair.first.type() !== SymbolType.External) {
                     this._infeasibleRows.push(rowPair.first);
                 }
             }
@@ -6642,7 +6663,7 @@ var kiwi;
          */
         Solver.prototype._getVarSymbol = function (variable) {
             var _this = this;
-            var factory = function () { return _this._makeSymbol(1 /* External */); };
+            var factory = function () { return _this._makeSymbol(SymbolType.External); };
             return this._varMap.setDefault(variable, factory).second;
         };
         /**
@@ -6685,26 +6706,26 @@ var kiwi;
             var strength = constraint.strength();
             var tag = { marker: INVALID_SYMBOL, other: INVALID_SYMBOL };
             switch (constraint.op()) {
-                case 0 /* Le */:
-                case 1 /* Ge */:
+                case kiwi.Operator.Le:
+                case kiwi.Operator.Ge:
                     {
-                        var coeff = constraint.op() === 0 /* Le */ ? 1.0 : -1.0;
-                        var slack = this._makeSymbol(2 /* Slack */);
+                        var coeff = constraint.op() === kiwi.Operator.Le ? 1.0 : -1.0;
+                        var slack = this._makeSymbol(SymbolType.Slack);
                         tag.marker = slack;
                         row.insertSymbol(slack, coeff);
                         if (strength < kiwi.Strength.required) {
-                            var error = this._makeSymbol(3 /* Error */);
+                            var error = this._makeSymbol(SymbolType.Error);
                             tag.other = error;
                             row.insertSymbol(error, -coeff);
                             objective.insertSymbol(error, strength);
                         }
                         break;
                     }
-                case 2 /* Eq */:
+                case kiwi.Operator.Eq:
                     {
                         if (strength < kiwi.Strength.required) {
-                            var errplus = this._makeSymbol(3 /* Error */);
-                            var errminus = this._makeSymbol(3 /* Error */);
+                            var errplus = this._makeSymbol(SymbolType.Error);
+                            var errminus = this._makeSymbol(SymbolType.Error);
                             tag.marker = errplus;
                             tag.other = errminus;
                             row.insertSymbol(errplus, -1.0); // v = eplus - eminus
@@ -6713,7 +6734,7 @@ var kiwi;
                             objective.insertSymbol(errminus, strength);
                         }
                         else {
-                            var dummy = this._makeSymbol(4 /* Dummy */);
+                            var dummy = this._makeSymbol(SymbolType.Dummy);
                             tag.marker = dummy;
                             row.insertSymbol(dummy);
                         }
@@ -6746,18 +6767,18 @@ var kiwi;
             var cells = row.cells();
             for (var i = 0, n = cells.size(); i < n; ++i) {
                 var pair = cells.itemAt(i);
-                if (pair.first.type() === 1 /* External */) {
+                if (pair.first.type() === SymbolType.External) {
                     return pair.first;
                 }
             }
             var type = tag.marker.type();
-            if (type === 2 /* Slack */ || type === 3 /* Error */) {
+            if (type === SymbolType.Slack || type === SymbolType.Error) {
                 if (row.coefficientFor(tag.marker) < 0.0) {
                     return tag.marker;
                 }
             }
             type = tag.other.type();
-            if (type === 2 /* Slack */ || type === 3 /* Error */) {
+            if (type === SymbolType.Slack || type === SymbolType.Error) {
                 if (row.coefficientFor(tag.other) < 0.0) {
                     return tag.other;
                 }
@@ -6773,7 +6794,7 @@ var kiwi;
          */
         Solver.prototype._addWithArtificialVariable = function (row) {
             // Create and add the artificial variable to the tableau.
-            var art = this._makeSymbol(2 /* Slack */);
+            var art = this._makeSymbol(SymbolType.Slack);
             this._rowMap.insert(art, row.copy());
             this._artificial = row.copy();
             // Optimize the artificial objective. This is successful
@@ -6790,7 +6811,7 @@ var kiwi;
                     return success;
                 }
                 var entering = this._anyPivotableSymbol(basicRow);
-                if (entering.type() === 0 /* Invalid */) {
+                if (entering.type() === SymbolType.Invalid) {
                     return false; // unsatisfiable (will this ever happen?)
                 }
                 basicRow.solveForEx(art, entering);
@@ -6818,7 +6839,8 @@ var kiwi;
             for (var i = 0, n = rows.size(); i < n; ++i) {
                 var pair = rows.itemAt(i);
                 pair.second.substitute(symbol, row);
-                if (pair.second.constant() < 0.0 && pair.first.type() !== 1 /* External */) {
+                if (pair.second.constant() < 0.0 &&
+                    pair.first.type() !== SymbolType.External) {
                     this._infeasibleRows.push(pair.first);
                 }
             }
@@ -6838,11 +6860,11 @@ var kiwi;
         Solver.prototype._optimize = function (objective) {
             while (true) {
                 var entering = this._getEnteringSymbol(objective);
-                if (entering.type() === 0 /* Invalid */) {
+                if (entering.type() === SymbolType.Invalid) {
                     return;
                 }
                 var leaving = this._getLeavingSymbol(entering);
-                if (leaving.type() === 0 /* Invalid */) {
+                if (leaving.type() === SymbolType.Invalid) {
                     throw new Error("the objective is unbounded");
                 }
                 // pivot the entering symbol into the basis
@@ -6870,7 +6892,7 @@ var kiwi;
                 var pair = rows.find(leaving);
                 if (pair !== undefined && pair.second.constant() < 0.0) {
                     var entering = this._getDualEnteringSymbol(pair.second);
-                    if (entering.type() === 0 /* Invalid */) {
+                    if (entering.type() === SymbolType.Invalid) {
                         throw new Error("dual optimize failed");
                     }
                     // pivot the entering symbol into the basis
@@ -6897,7 +6919,7 @@ var kiwi;
             for (var i = 0, n = cells.size(); i < n; ++i) {
                 var pair = cells.itemAt(i);
                 var symbol = pair.first;
-                if (pair.second < 0.0 && symbol.type() !== 4 /* Dummy */) {
+                if (pair.second < 0.0 && symbol.type() !== SymbolType.Dummy) {
                     return symbol;
                 }
             }
@@ -6922,7 +6944,7 @@ var kiwi;
                 var pair = cells.itemAt(i);
                 var symbol = pair.first;
                 var c = pair.second;
-                if (c > 0.0 && symbol.type() !== 4 /* Dummy */) {
+                if (c > 0.0 && symbol.type() !== SymbolType.Dummy) {
                     var coeff = this._objective.coefficientFor(symbol);
                     var r = coeff / c;
                     if (r < ratio) {
@@ -6950,7 +6972,7 @@ var kiwi;
             for (var i = 0, n = rows.size(); i < n; ++i) {
                 var pair = rows.itemAt(i);
                 var symbol = pair.first;
-                if (symbol.type() !== 1 /* External */) {
+                if (symbol.type() !== SymbolType.External) {
                     var row = pair.second;
                     var temp = row.coefficientFor(entering);
                     if (temp < 0.0) {
@@ -7002,7 +7024,7 @@ var kiwi;
                     continue;
                 }
                 var symbol = pair.first;
-                if (symbol.type() === 1 /* External */) {
+                if (symbol.type() === SymbolType.External) {
                     third = symbol;
                 }
                 else if (c < 0.0) {
@@ -7034,10 +7056,10 @@ var kiwi;
          * @private
          */
         Solver.prototype._removeConstraintEffects = function (cn, tag) {
-            if (tag.marker.type() === 3 /* Error */) {
+            if (tag.marker.type() === SymbolType.Error) {
                 this._removeMarkerEffects(tag.marker, cn.strength());
             }
-            if (tag.other.type() === 3 /* Error */) {
+            if (tag.other.type() === SymbolType.Error) {
                 this._removeMarkerEffects(tag.other, cn.strength());
             }
         };
@@ -7067,7 +7089,7 @@ var kiwi;
             for (var i = 0, n = cells.size(); i < n; ++i) {
                 var pair = cells.itemAt(i);
                 var type = pair.first.type();
-                if (type === 2 /* Slack */ || type === 3 /* Error */) {
+                if (type === SymbolType.Slack || type === SymbolType.Error) {
                     return pair.first;
                 }
             }
@@ -7171,7 +7193,7 @@ var kiwi;
      * A static invalid symbol
      * @private
      */
-    var INVALID_SYMBOL = new Symbol(0 /* Invalid */, -1);
+    var INVALID_SYMBOL = new Symbol(SymbolType.Invalid, -1);
     /**
      * An internal row class used by the solver.
      * @private
@@ -7210,7 +7232,7 @@ var kiwi;
             var cells = this._cellMap;
             for (var i = 0, n = cells.size(); i < n; ++i) {
                 var pair = cells.itemAt(i);
-                if (pair.first.type() !== 4 /* Dummy */) {
+                if (pair.first.type() !== SymbolType.Dummy) {
                     return false;
                 }
             }

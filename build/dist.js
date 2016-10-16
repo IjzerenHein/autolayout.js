@@ -33,7 +33,7 @@ var kiwiBanner = '' +
 '/*-----------------------------------------------------------------------------\n' +
 '| Kiwi (TypeScript version)\n' +
 '|\n' +
-'| Copyright (c) 2014, Nucleic Development Team.\n' +
+'| Copyright (c) 2014, Nucleic Development Team & H. Rutjes.\n' +
 '|\n' +
 '| Distributed under the terms of the Modified BSD License.\n' +
 '|\n' +
@@ -42,7 +42,7 @@ var kiwiBanner = '' +
 
 function dist(kiwi, minify) {
     var input = CombinedStream.create();
-    input.append(!kiwi ? 'var c = require(\'cassowary/bin/c\')\n' : 'var kiwi = require(\'kiwi/ts/bin/kiwi\')\n');
+    input.append(!kiwi ? 'var c = require(\'cassowary/bin/c\')\n' : 'var kiwi = require(\'kiwi.js\')\n');
     input.append(fs.createReadStream('./tmp/autolayout.es6'));
     var output = fs.createWriteStream('dist/autolayout' + (kiwi ? '.kiwi' : '') + (minify ? '.min' : '') + '.js');
     output.write(banner);
@@ -65,7 +65,7 @@ function dist(kiwi, minify) {
             output: 'dist/autolayout.min.map',
             compressPath: function(p) {
                 if (p.indexOf('kiwi') >= 0) {
-                    return path.relative('node_modules/kiwi/ts/bin', p);
+                    return path.relative('node_modules/kiwi.js/lib', p);
                 }
                 else {
                     return path.relative('tmp', p);
