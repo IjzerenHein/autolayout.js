@@ -437,7 +437,7 @@ additional info about the parse error and column position.
 | [options] | <code>Object</code> | Configuration options. |
 | [options.extended] | <code>Boolean</code> | When set to true uses the extended syntax (default: false). |
 | [options.strict] | <code>Boolean</code> | When set to false trims any leading/trailing spaces and ignores empty lines (default: true). |
-| [options.lineSeperator] | <code>String</code> | String that defines the end of a line (default `\n`). |
+| [options.lineSeparator] | <code>String</code> | String that defines the end of a line (default `\n`). |
 | [options.outFormat] | <code>String</code> | Output format (`constraints` or `raw`) (default: `constraints`). |
 
 <a name="module_AutoLayout..VisualFormat.parseMetaInfo"></a>
@@ -481,6 +481,6 @@ Supported categories and properties:
 | --- | --- | --- |
 | visualFormat | <code>String</code> &#124; <code>Array</code> | One or more visual format strings. |
 | [options] | <code>Object</code> | Configuration options. |
-| [options.lineSeperator] | <code>String</code> | String that defines the end of a line (default `\n`). |
+| [options.lineSeparator] | <code>String</code> | String that defines the end of a line (default `\n`). |
 | [options.prefix] | <code>String</code> | When specified, also processes the categories using that prefix (e.g. "-dev-viewport max-height:10"). |
 
