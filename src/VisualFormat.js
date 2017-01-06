@@ -463,13 +463,13 @@ class VisualFormat {
      * @param {Object} [options] Configuration options.
      * @param {Boolean} [options.extended] When set to true uses the extended syntax (default: false).
      * @param {Boolean} [options.strict] When set to false trims any leading/trailing spaces and ignores empty lines (default: true).
-     * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
+     * @param {String} [options.lineSeparator] String that defines the end of a line (default `\n`).
      * @param {String} [options.outFormat] Output format (`constraints` or `raw`) (default: `constraints`).
      * @return {Array} Array of constraint definitions.
      */
     static parse(visualFormat, options) {
-        const lineSeperator = (options && options.lineSeperator) ? options.lineSeperator : '\n';
-        if (!Array.isArray(visualFormat) && (visualFormat.indexOf(lineSeperator) < 0)) {
+        const lineSeparator = (options && options.lineSeparator) ? options.lineSeparator : '\n';
+        if (!Array.isArray(visualFormat) && (visualFormat.indexOf(lineSeparator) < 0)) {
             try {
                 return this.parseLine(visualFormat, options);
             }
@@ -495,7 +495,7 @@ class VisualFormat {
         };
         try {
             for (var i = 0; i < visualFormat.length; i++) {
-                lines = visualFormat[i].split(lineSeperator);
+                lines = visualFormat[i].split(lineSeparator);
                 for (var j = 0; j < lines.length; j++) {
                     line = lines[j];
                     lineIndex++;
@@ -552,18 +552,18 @@ class VisualFormat {
      *
      * @param {String|Array} visualFormat One or more visual format strings.
      * @param {Object} [options] Configuration options.
-     * @param {String} [options.lineSeperator] String that defines the end of a line (default `\n`).
+     * @param {String} [options.lineSeparator] String that defines the end of a line (default `\n`).
      * @param {String} [options.prefix] When specified, also processes the categories using that prefix (e.g. "-dev-viewport max-height:10").
      * @return {Object} meta-info
      */
     static parseMetaInfo(visualFormat, options) {
-        const lineSeperator = (options && options.lineSeperator) ? options.lineSeperator : '\n';
+        const lineSeparator = (options && options.lineSeparator) ? options.lineSeparator : '\n';
         const prefix = options ? options.prefix : undefined;
         visualFormat = Array.isArray(visualFormat) ? visualFormat : [visualFormat];
         const metaInfo = {};
         var key;
         for (var k = 0; k < visualFormat.length; k++) {
-            const lines = visualFormat[k].split(lineSeperator);
+            const lines = visualFormat[k].split(lineSeparator);
             for (var i = 0; i < lines.length; i++) {
                 const line = lines[i];
                 for (var c = 0; c < metaInfoCategories.length; c++) {
