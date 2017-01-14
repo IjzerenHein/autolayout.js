@@ -1,5 +1,4 @@
 {
-    "esnext": true,
     "requireCurlyBraces": ["do", "try", "catch"],
     "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch", "return", "try", "catch"],
     "disallowSpaceAfterPrefixUnaryOperators": ["++", "--", "+", "-", "~", "!"],
@@ -15,10 +14,6 @@
     },
     "disallowSpacesInFunctionExpression": {
         "beforeOpeningRoundBrace": true
-    },
-    "validateJSDoc": {
-        "checkParamNames": true,
-        "requireParamTypes": false
     },
     "validateQuoteMarks": "'",
     "disallowMultipleVarDecl": true,

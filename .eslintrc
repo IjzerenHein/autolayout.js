@@ -16,6 +16,6 @@
   },
   "rules": {
     "quotes": [2, "single"],
-    "no-underscore-dangle": false
+    "no-underscore-dangle": 0
   }
 }
