@@ -16,7 +16,7 @@ var banner = '' +
 '*\n' +
 '* @author: Hein Rutjes (IjzerenHein)\n' +
 '* @license MIT\n' +
-'* @copyright Gloey Apps, 2016\n' +
+'* @copyright Gloey Apps, 2017\n' +
 '*\n' +
 '* @library autolayout.js\n' +
 '* @version ' + packageJSON.version + '\n' +
