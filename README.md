@@ -329,6 +329,7 @@ Single line comments can be used to explain the VFL or to prevent its execution:
 - [Apple's Auto Layout](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/index.html)
 - [Visual Format Language](https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage.html)
 - [Cassowary.js](https://github.com/slightlyoff/cassowary.js)
+- [Kiwi.js](https://github.com/IjzerenHein/kiwi.js) (Fast TypeScript re-implementation of cassowary constraint solver)
 - [Overconstrained](http://overconstrained.io)
 - [Visual Format Editor](https://github.com/IjzerenHein/visualformat-editor)
 - [famous-autolayout](https://github.com/IjzerenHein/famous-autolayout)
