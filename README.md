@@ -262,7 +262,7 @@ View ranges make it possible to select multiple views at once and apply rules fo
 
 ### Multiple views
 
-Similar to 'View ranges', multiple views can be seperated using the `,` character:
+Similar to 'View ranges', multiple views can be separated using the `,` character:
 
     H:|[left(top,right)]-[top,bottom]-[right]|
     V:|[left,right]|
