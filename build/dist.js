@@ -52,11 +52,12 @@ function dist(kiwi, minify) {
         standalone: 'AutoLayout',
         banner: banner
     });
-    b.transform(babelify.configure({
+    b = b.transform(babelify.configure({
         compact: false,
+        presets: ['es2015'],
         ignore: /\/kiwi\//
     }));
-    b.transform(envify({
+    b = b.transform(envify({
         CASSOWARYJS: !kiwi
     }));
     if (minify) {
