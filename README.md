@@ -8,7 +8,7 @@ AutoLayout.js implements Apple's [Auto Layout](https://developer.apple.com/libra
 
 ```javascript
 var constraints = AutoLayout.VisualFormat.parse([
-  'H:|[view1(==view2)]-10-[view2]|'
+  'H:|[view1(==view2)]-10-[view2]|',
   'V:|[view1,view2]|'
 ], {extended: true});
 var view = new AutoLayout.View({constraints: constraints});
