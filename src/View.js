@@ -328,6 +328,7 @@ class View {
      */
     addConstraint(constraint) {
         _addConstraint.call(this, constraint);
+        this._solver.updateVariables();
         return this;
     }
 
@@ -355,6 +356,7 @@ class View {
         for (var j = 0; j < constraints.length; j++) {
             _addConstraint.call(this, constraints[j]);
         }
+        this._solver.updateVariables();
         return this;
     }
 
