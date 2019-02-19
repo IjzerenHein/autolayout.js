@@ -5,3 +5,4 @@ tmp
 /cassowary.js
 /.idea
 .DS_Store
+/dist
