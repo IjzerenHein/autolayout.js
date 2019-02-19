@@ -56,6 +56,7 @@
   },
   "scripts": {
     "test": "mocha",
-    "build-dev": "webpack --mode development"
+    "build-dev": "webpack --mode development",
+    "build-prod": "webpack --mode production"
   }
 }
