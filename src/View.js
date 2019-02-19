@@ -1,22 +1,14 @@
-import c from 'cassowary/bin/c';
-//import kiwi from 'kiwi.js';
+import kiwi from 'kiwi.js';
 import Attribute from './Attribute';
 import Relation from './Relation';
 import SubView from './SubView';
 
-const defaultPriorityStrength = process.env.CASSOWARYJS ? new c.Strength('defaultPriority', 0, 1000, 1000) : kiwi.Strength.create(0, 1000, 1000);
+const defaultPriorityStrength = kiwi.Strength.create(0, 1000, 1000);
 
 function _getConst(name, value) {
-    if (process.env.CASSOWARYJS) {
-        const vr = new c.Variable({value: value});
-        this._solver.addConstraint(new c.StayConstraint(vr, c.Strength.required, 0));
-        return vr;
-    }
-    else {
-        const vr = new kiwi.Variable();
-        this._solver.addConstraint(new kiwi.Constraint(vr, kiwi.Operator.Eq, value));
-        return vr;
-    }
+    const vr = new kiwi.Variable();
+    this._solver.addConstraint(new kiwi.Constraint(vr, kiwi.Operator.Eq, value));
+    return vr;
 }
 
 function _getSubView(viewName) {
@@ -73,16 +65,9 @@ function _getSpacing(constraint) {
     this._spacingVars = this._spacingVars || new Array(7);
     this._spacingExpr = this._spacingExpr || new Array(7);
     if (!this._spacingVars[index]) {
-        if (process.env.CASSOWARYJS) {
-            this._spacingVars[index] = new c.Variable();
-            this._solver.addEditVar(this._spacingVars[index]);
-            this._spacingExpr[index] = c.minus(0, this._spacingVars[index]);
-        }
-        else {
-            this._spacingVars[index] = new kiwi.Variable();
-            this._solver.addEditVariable(this._spacingVars[index], kiwi.Strength.create(999, 1000, 1000));
-            this._spacingExpr[index] = this._spacingVars[index].multiply(-1);
-        }
+        this._spacingVars[index] = new kiwi.Variable();
+        this._solver.addEditVariable(this._spacingVars[index], kiwi.Strength.create(999, 1000, 1000));
+        this._spacingExpr[index] = this._spacingVars[index].multiply(-1);
         this._solver.suggestValue(this._spacingVars[index], this._spacing[index]);
     }
     return this._spacingExpr[index];
@@ -98,38 +83,7 @@ function _addConstraint(constraint) {
     }
     const attr1 = _getSubView.call(this, constraint.view1)._getAttr(constraint.attr1);
     let attr2;
-    if (process.env.CASSOWARYJS) {
-        if (constraint.attr2 === Attribute.CONST) {
-            attr2 = _getConst.call(this, undefined, constraint.constant);
-        }
-        else {
-            attr2 = _getSubView.call(this, constraint.view2)._getAttr(constraint.attr2);
-            if ((multiplier !== 1) && constant) {
-                attr2 = c.plus(c.times(attr2, multiplier), constant);
-            }
-            else if (constant) {
-                attr2 = c.plus(attr2, constant);
-            }
-            else if (multiplier !== 1) {
-                attr2 = c.times(attr2, multiplier);
-            }
-        }
-        const strength = ((constraint.priority !== undefined) && (constraint.priority < 1000)) ? new c.Strength('priority', 0, constraint.priority, 1000) : defaultPriorityStrength;
-        switch (constraint.relation) {
-            case Relation.EQU:
-                relation = new c.Equation(attr1, attr2, strength);
-                break;
-            case Relation.GEQ:
-                relation = new c.Inequality(attr1, c.GEQ, attr2, strength);
-                break;
-            case Relation.LEQ:
-                relation = new c.Inequality(attr1, c.LEQ, attr2, strength);
-                break;
-            default:
-                throw 'Invalid relation specified: ' + constraint.relation;
-        }
-    }
-    else {
+    {
         if (constraint.attr2 === Attribute.CONST) {
             attr2 = _getConst.call(this, undefined, constraint.constant);
         }
@@ -208,7 +162,7 @@ class View {
      * @param {Array} [options.constraints] One or more constraint definitions (see `addConstraints`).
      */
     constructor(options) {
-        this._solver = process.env.CASSOWARYJS ? new c.SimplexSolver() : new kiwi.Solver();
+        this._solver = new kiwi.Solver();
         this._subViews = {};
         //this._spacing = undefined;
         this._parentSubView = new SubView({
@@ -344,10 +298,7 @@ class View {
                         this._solver.suggestValue(this._spacingVars[i], this._spacing[i]);
                     }
                 }
-                if (process.env.CASSOWARYJS) {
-                    this._solver.resolve();
-                }
-                else {
+                {
                     this._solver.updateVariables();
                 }
             }
@@ -377,9 +328,6 @@ class View {
      */
     addConstraint(constraint) {
         _addConstraint.call(this, constraint);
-        if (!process.env.CASSOWARYJS) {
-            this._solver.updateVariables();
-        }
         return this;
     }
 
@@ -406,9 +354,6 @@ class View {
     addConstraints(constraints) {
         for (var j = 0; j < constraints.length; j++) {
             _addConstraint.call(this, constraints[j]);
-        }
-        if (!process.env.CASSOWARYJS) {
-            this._solver.updateVariables();
         }
         return this;
     }
