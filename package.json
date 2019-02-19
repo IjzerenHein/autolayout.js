@@ -7,7 +7,6 @@
     "url": "git://github.com/IjzerenHein/autolayout.js.git"
   },
   "main": "dist/autolayout.js",
-  "module": "src/AutoLayout.js",
   "author": {
     "name": "Hein Rutjes <hrutjes@gmail.com>"
   },
@@ -49,7 +48,8 @@
     "mocha": "^6.0.0",
     "platform": "^1.3.1",
     "webpack": "^4.29.5",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^3.2.3",
+    "webpack-conditional-loader": "^1.0.12"
   },
   "dependencies": {
     "kiwi.js": "^1.1.0"

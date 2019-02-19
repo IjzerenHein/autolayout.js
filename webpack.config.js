@@ -8,7 +8,14 @@ const config = {
         libraryTarget:'umd',
         library: 'autolayout',
         globalObject: 'this'
-	}
+	},
+    module:{
+        rules: [{
+            test: /\.js$/,
+            use: ['webpack-conditional-loader']
+        }]
+    }
+
 };
 
 module.exports = config;

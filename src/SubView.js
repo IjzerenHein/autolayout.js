@@ -1,4 +1,10 @@
-import * as kiwi from 'kiwi.js';
+// #if process.env.CASSOWARYJS
+    import c from 'cassowary/bin/c';
+// #endif
+
+// #if !process.env.CASSOWARYJS
+    import * as kiwi from 'kiwi.js';
+// #endif
 import Attribute from './Attribute';
 
 /**
@@ -13,12 +19,23 @@ class SubView {
         this._solver = options.solver;
         this._attr = {};
         if (!options.name) {
-            this._attr[Attribute.LEFT] = new kiwi.Variable();
-            this._solver.addConstraint(new kiwi.Constraint(this._attr[Attribute.LEFT], kiwi.Operator.Eq, 0));
-            this._attr[Attribute.TOP] = new kiwi.Variable();
-            this._solver.addConstraint(new kiwi.Constraint(this._attr[Attribute.TOP], kiwi.Operator.Eq, 0));
-            this._attr[Attribute.ZINDEX] = new kiwi.Variable();
-            this._solver.addConstraint(new kiwi.Constraint(this._attr[Attribute.ZINDEX], kiwi.Operator.Eq, 0));
+            // #if process.env.CASSOWARYJS
+                this._attr[Attribute.LEFT] = new c.Variable();
+                this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.LEFT], c.Strength.required));
+                this._attr[Attribute.TOP] = new c.Variable();
+                this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.TOP], c.Strength.required));
+                this._attr[Attribute.ZINDEX] = new c.Variable();
+                this._solver.addConstraint(new c.StayConstraint(this._attr[Attribute.ZINDEX], c.Strength.required));
+            // #endif
+
+            // #if !process.env.CASSOWARYJS
+                this._attr[Attribute.LEFT] = new kiwi.Variable();
+                this._solver.addConstraint(new kiwi.Constraint(this._attr[Attribute.LEFT], kiwi.Operator.Eq, 0));
+                this._attr[Attribute.TOP] = new kiwi.Variable();
+                this._solver.addConstraint(new kiwi.Constraint(this._attr[Attribute.TOP], kiwi.Operator.Eq, 0));
+                this._attr[Attribute.ZINDEX] = new kiwi.Variable();
+                this._solver.addConstraint(new kiwi.Constraint(this._attr[Attribute.ZINDEX], kiwi.Operator.Eq, 0));
+            // #endif
         }
     }
     toJSON() {
@@ -99,11 +116,23 @@ class SubView {
         if ((value !== undefined) && (value !== this._intrinsicWidth)) {
             const attr = this._getAttr(Attribute.WIDTH);
             if (this._intrinsicWidth === undefined) {
-                this._solver.addEditVariable(attr, kiwi.Strength.create(this._name ? 998 : 999, 1000, 1000));
+                // #if process.env.CASSOWARYJS
+                    this._solver.addEditVar(attr, new c.Strength('required', this._name ? 998 : 999, 1000, 1000));
+                // #endif
+
+                // #if !process.env.CASSOWARYJS
+                    this._solver.addEditVariable(attr, kiwi.Strength.create(this._name ? 998 : 999, 1000, 1000));
+                // #endif
             }
             this._intrinsicWidth = value;
             this._solver.suggestValue(attr, value);
-            this._solver.updateVariables();
+            // #if process.env.CASSOWARYJS
+                this._solver.resolve();
+            // #endif
+
+            // #if !process.env.CASSOWARYJS
+                this._solver.updateVariables();
+            // #endif
         }
     }
 
@@ -121,11 +150,24 @@ class SubView {
         if ((value !== undefined) && (value !== this._intrinsicHeight)) {
             const attr = this._getAttr(Attribute.HEIGHT);
             if (this._intrinsicHeight === undefined) {
-                this._solver.addEditVariable(attr, kiwi.Strength.create(this._name ? 998 : 999, 1000, 1000));
+                // #if process.env.CASSOWARYJS
+                    this._solver.addEditVar(attr, new c.Strength('required', this._name ? 998 : 999, 1000, 1000));
+                // #endif
+
+                // #if !process.env.CASSOWARYJS
+                    this._solver.addEditVariable(attr, kiwi.Strength.create(this._name ? 998 : 999, 1000, 1000));
+                // #endif
             }
             this._intrinsicHeight = value;
             this._solver.suggestValue(attr, value);
-            this._solver.updateVariables();
+
+            // #if process.env.CASSOWARYJS
+                this._solver.resolve();
+            // #endif
+
+            // #if !process.env.CASSOWARYJS
+                this._solver.updateVariables();
+            // #endif
         }
     }
 
@@ -200,31 +242,64 @@ class SubView {
         if (this._attr[attr]) {
             return this._attr[attr];
         }
-        this._attr[attr] = new kiwi.Variable();
+        // #if process.env.CASSOWARYJS
+            this._attr[attr] = new c.Variable();
+        // #endif
+
+        // #if !process.env.CASSOWARYJS
+            this._attr[attr] = new kiwi.Variable();
+        // #endif
+
         switch (attr) {
             case Attribute.RIGHT:
                 this._getAttr(Attribute.LEFT);
                 this._getAttr(Attribute.WIDTH);
-                this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.LEFT].plus(this._attr[Attribute.WIDTH])));
+                // #if process.env.CASSOWARYJS
+                    this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.LEFT], this._attr[Attribute.WIDTH])));
+                // #endif
+
+                // #if !process.env.CASSOWARYJS
+                    this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.LEFT].plus(this._attr[Attribute.WIDTH])));
+                // #endif
                 break;
             case Attribute.BOTTOM:
                 this._getAttr(Attribute.TOP);
                 this._getAttr(Attribute.HEIGHT);
-                this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.TOP].plus(this._attr[Attribute.HEIGHT])));
+                // #if process.env.CASSOWARYJS
+                    this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.TOP], this._attr[Attribute.HEIGHT])));
+                // #endif
+
+                // #if !process.env.CASSOWARYJS
+                    this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.TOP].plus(this._attr[Attribute.HEIGHT])));
+                // #endif
                 break;
             case Attribute.CENTERX:
                 this._getAttr(Attribute.LEFT);
                 this._getAttr(Attribute.WIDTH);
-                this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.LEFT].plus(this._attr[Attribute.WIDTH].divide(2))));
+                // #if process.env.CASSOWARYJS
+                    this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.LEFT], c.divide(this._attr[Attribute.WIDTH], 2))));
+                // #endif
+
+                // #if !process.env.CASSOWARYJS
+                    this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.LEFT].plus(this._attr[Attribute.WIDTH].divide(2))));
+                // #endif
                 break;
             case Attribute.CENTERY:
                 this._getAttr(Attribute.TOP);
                 this._getAttr(Attribute.HEIGHT);
-                this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.TOP].plus(this._attr[Attribute.HEIGHT].divide(2))));
+                // #if process.env.CASSOWARYJS
+                    this._solver.addConstraint(new c.Equation(this._attr[attr], c.plus(this._attr[Attribute.TOP], c.divide(this._attr[Attribute.HEIGHT], 2))));
+                // #endif
+
+                // #if !process.env.CASSOWARYJS
+                    this._solver.addConstraint(new kiwi.Constraint(this._attr[attr], kiwi.Operator.Eq, this._attr[Attribute.TOP].plus(this._attr[Attribute.HEIGHT].divide(2))));
+                // #endif
                 break;
         }
+        // #if !process.env.CASSOWARYJS
+            this._solver.updateVariables();
+        // #endif
 
-        this._solver.updateVariables();
         return this._attr[attr];
     }
 
@@ -232,7 +307,16 @@ class SubView {
      * @private
      */
     _getAttrValue(attr) {
-        return this._getAttr(attr).value();
+        let value;
+        // #if process.env.CASSOWARYJS
+            value = this._getAttr(attr).value;
+        // #endif
+
+        // #if !process.env.CASSOWARYJS
+            value = this._getAttr(attr).value();
+        // #endif
+
+        return value;
     }
 }
 
