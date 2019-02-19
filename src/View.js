@@ -1,4 +1,4 @@
-import kiwi from 'kiwi.js';
+import * as kiwi from 'kiwi.js';
 import Attribute from './Attribute';
 import Relation from './Relation';
 import SubView from './SubView';
