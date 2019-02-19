@@ -55,6 +55,7 @@
     "kiwi.js": "^1.1.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build-dev": "webpack --mode development"
   }
 }

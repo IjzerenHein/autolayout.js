@@ -5,8 +5,7 @@ const config = {
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: 'autolayout.js',
-        library: 'autolayout',
-        libraryTarget: 'umd'
+        library: 'autolayout'
 	}
 };
 
