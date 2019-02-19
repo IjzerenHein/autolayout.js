@@ -1,21 +1,24 @@
 const path = require('path');
 
-const config = {
-	entry: './src/AutoLayout.js',
-	output: {
-		path: path.resolve(__dirname, 'dist'),
-		filename: 'autolayout.js',
-        libraryTarget:'umd',
-        library: 'autolayout',
-        globalObject: 'this'
-	},
-    module:{
-        rules: [{
-            test: /\.js$/,
-            use: ['webpack-conditional-loader']
-        }]
+module.exports = (env,{mode})=> {
+
+    process.env.CASSOWARYJS = env ? env.CASSOWARYJS : '';
+    const postfix = (env && env.CASSOWARYJS) ? '.cassowary' : '';
+
+    return {
+        entry: './src/AutoLayout.js',
+        output: {
+            path: path.resolve(__dirname, 'dist'),
+            filename: `autolayout${postfix}.js`,
+            libraryTarget:'umd',
+            library: 'autolayout',
+            globalObject: 'this'
+        },
+        module:{
+            rules: [{
+                test: /\.js$/,
+                use: ['webpack-conditional-loader']
+            }]
+        }
     }
-
 };
-
-module.exports = config;

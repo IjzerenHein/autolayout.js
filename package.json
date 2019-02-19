@@ -52,11 +52,15 @@
     "webpack-conditional-loader": "^1.0.12"
   },
   "dependencies": {
+    "cassowary": "0.0.2",
     "kiwi.js": "^1.1.0"
   },
   "scripts": {
     "test": "mocha",
-    "build-dev": "webpack --mode development",
-    "build-prod": "webpack --mode production"
+    "build-dev-kiwi": "npx webpack --mode development",
+    "build-prod-kiwi": "npx webpack --mode production",
+    "build-dev-cassowary": "npx webpack --mode development --env.CASSOWARYJS",
+    "build-prod-cassowary": "npx webpack --mode production --env.CASSOWARYJS",
+    "release": "npm run build-prod-kiwi && npm run build-prod-cassowary"
   }
 }
