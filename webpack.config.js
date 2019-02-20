@@ -14,6 +14,7 @@ module.exports = (env,{mode})=> {
             library: 'autolayout',
             globalObject: 'this'
         },
+        devtool:'source-map',
         module:{
             rules: [{
                 test: /\.js$/,
