@@ -1,4 +1,5 @@
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env,{mode})=> {
 
@@ -20,6 +21,10 @@ module.exports = (env,{mode})=> {
                 test: /\.js$/,
                 use: ['webpack-conditional-loader']
             }]
-        }
+        },
+        plugins: [
+            new CopyWebpackPlugin([
+                {from:'./src/autolayout.d.ts', to:'./'},
+            ])]
     }
 };
