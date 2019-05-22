@@ -1,4 +1,6 @@
 node_modules
 bower_components
 npm-debug.log
+/tmp
 /cassowary.js
+/dist
