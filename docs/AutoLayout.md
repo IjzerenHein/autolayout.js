@@ -56,7 +56,7 @@ AutoLayoutJS API reference.
 <a name="module_AutoLayout..View"></a>
 
 ### AutoLayout~View
-**Kind**: inner class of [<code>AutoLayout</code>](#module_AutoLayout)  
+**Kind**: inner class of <code>[AutoLayout](#module_AutoLayout)</code>  
 
 * [~View](#module_AutoLayout..View)
     * [new View([options])](#new_module_AutoLayout..View_new)
@@ -79,7 +79,7 @@ AutoLayoutJS API reference.
 | [options] | <code>Object</code> | Configuration options. |
 | [options.width] | <code>Number</code> | Initial width of the view. |
 | [options.height] | <code>Number</code> | Initial height of the view. |
-| [options.spacing] | <code>Number</code> \| <code>Object</code> | Spacing for the view (default: 8) (see `setSpacing`). |
+| [options.spacing] | <code>Number</code> &#124; <code>Object</code> | Spacing for the view (default: 8) (see `setSpacing`). |
 | [options.constraints] | <code>Array</code> | One or more constraint definitions (see `addConstraints`). |
 
 <a name="module_AutoLayout..View+width"></a>
@@ -87,14 +87,14 @@ AutoLayoutJS API reference.
 #### view.width : <code>Number</code>
 Width that was set using `setSize`.
 
-**Kind**: instance property of [<code>View</code>](#module_AutoLayout..View)  
+**Kind**: instance property of <code>[View](#module_AutoLayout..View)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..View+height"></a>
 
 #### view.height : <code>Number</code>
 Height that was set using `setSize`.
 
-**Kind**: instance property of [<code>View</code>](#module_AutoLayout..View)  
+**Kind**: instance property of <code>[View](#module_AutoLayout..View)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..View+fittingWidth"></a>
 
@@ -115,7 +115,7 @@ view.subViews.view2.intrinsicWidth = 100;
 console.log('fittingWidth: ' + view.fittingWidth); // 260
 ```
 
-**Kind**: instance property of [<code>View</code>](#module_AutoLayout..View)  
+**Kind**: instance property of <code>[View](#module_AutoLayout..View)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..View+fittingHeight"></a>
 
@@ -125,21 +125,21 @@ the sub-views.
 
 See `.fittingWidth`.
 
-**Kind**: instance property of [<code>View</code>](#module_AutoLayout..View)  
+**Kind**: instance property of <code>[View](#module_AutoLayout..View)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..View+subViews"></a>
 
 #### view.subViews : <code>Object.SubView</code>
 Dictionary of `SubView` objects that have been created when adding constraints.
 
-**Kind**: instance property of [<code>View</code>](#module_AutoLayout..View)  
+**Kind**: instance property of <code>[View](#module_AutoLayout..View)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..View+setSize"></a>
 
 #### view.setSize(width, height) ⇒ <code>View</code>
 Sets the width and height of the view.
 
-**Kind**: instance method of [<code>View</code>](#module_AutoLayout..View)  
+**Kind**: instance method of <code>[View](#module_AutoLayout..View)</code>  
 **Returns**: <code>View</code> - this  
 
 | Param | Type | Description |
@@ -176,12 +176,12 @@ view.setSpacing([10, 20, 10, 20, 5, 5]); // top, right, bottom, left, horizontal
 view.setSpacing([10, 20, 10, 20, 5, 5, 1]); // top, right, bottom, left, horizontal, vertical, z
 ```
 
-**Kind**: instance method of [<code>View</code>](#module_AutoLayout..View)  
+**Kind**: instance method of <code>[View](#module_AutoLayout..View)</code>  
 **Returns**: <code>View</code> - this  
 
 | Param | Type |
 | --- | --- |
-| spacing | <code>Number</code> \| <code>Array</code> | 
+| spacing | <code>Number</code> &#124; <code>Array</code> | 
 
 <a name="module_AutoLayout..View+addConstraint"></a>
 
@@ -203,7 +203,7 @@ constraint: {
 }
 ```
 
-**Kind**: instance method of [<code>View</code>](#module_AutoLayout..View)  
+**Kind**: instance method of <code>[View](#module_AutoLayout..View)</code>  
 **Returns**: <code>View</code> - this  
 
 | Param | Type | Description |
@@ -230,7 +230,7 @@ constraint: {
 }
 ```
 
-**Kind**: instance method of [<code>View</code>](#module_AutoLayout..View)  
+**Kind**: instance method of <code>[View](#module_AutoLayout..View)</code>  
 **Returns**: <code>View</code> - this  
 
 | Param | Type | Description |
@@ -242,7 +242,7 @@ constraint: {
 ### AutoLayout~SubView : <code>object</code>
 A SubView is automatically generated when constraints are added to a View.
 
-**Kind**: inner namespace of [<code>AutoLayout</code>](#module_AutoLayout)  
+**Kind**: inner namespace of <code>[AutoLayout](#module_AutoLayout)</code>  
 
 * [~SubView](#module_AutoLayout..SubView) : <code>object</code>
     * [.name](#module_AutoLayout..SubView+name) : <code>String</code>
@@ -265,34 +265,34 @@ A SubView is automatically generated when constraints are added to a View.
 #### subView.name : <code>String</code>
 Name of the sub-view.
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+left"></a>
 
 #### subView.left : <code>Number</code>
 Left value (`Attribute.LEFT`).
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+right"></a>
 
 #### subView.right : <code>Number</code>
 Right value (`Attribute.RIGHT`).
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+width"></a>
 
 #### subView.width : <code>Number</code>
 Width value (`Attribute.WIDTH`).
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 <a name="module_AutoLayout..SubView+height"></a>
 
 #### subView.height : <code>Number</code>
 Height value (`Attribute.HEIGHT`).
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+intrinsicWidth"></a>
 
@@ -308,7 +308,7 @@ view.subViews.child1.intrinsicWidth = 100;
 console.log('child2 width: ' + view.subViews.child2.width); // 400
 ```
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 <a name="module_AutoLayout..SubView+intrinsicHeight"></a>
 
 #### subView.intrinsicHeight : <code>Number</code>
@@ -316,67 +316,67 @@ Intrinsic height of the sub-view.
 
 See `intrinsicWidth`.
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 <a name="module_AutoLayout..SubView+top"></a>
 
 #### subView.top : <code>Number</code>
 Top value (`Attribute.TOP`).
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+bottom"></a>
 
 #### subView.bottom : <code>Number</code>
 Bottom value (`Attribute.BOTTOM`).
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+centerX"></a>
 
 #### subView.centerX : <code>Number</code>
 Horizontal center (`Attribute.CENTERX`).
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+centerY"></a>
 
 #### subView.centerY : <code>Number</code>
 Vertical center (`Attribute.CENTERY`).
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+zIndex"></a>
 
 #### subView.zIndex : <code>Number</code>
 Z-index (`Attribute.ZINDEX`).
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+type"></a>
 
 #### subView.type : <code>String</code>
 Returns the type of the sub-view.
 
-**Kind**: instance property of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance property of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Read only**: true  
 <a name="module_AutoLayout..SubView+getValue"></a>
 
 #### subView.getValue(attr) ⇒ <code>Number</code>
 Gets the value of one of the attributes.
 
-**Kind**: instance method of [<code>SubView</code>](#module_AutoLayout..SubView)  
+**Kind**: instance method of <code>[SubView](#module_AutoLayout..SubView)</code>  
 **Returns**: <code>Number</code> - value or `undefined`  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| attr | <code>String</code> \| <code>Attribute</code> | Attribute name (e.g. 'right', 'centerY', Attribute.TOP). |
+| attr | <code>String</code> &#124; <code>Attribute</code> | Attribute name (e.g. 'right', 'centerY', Attribute.TOP). |
 
 <a name="module_AutoLayout..VisualFormat"></a>
 
 ### AutoLayout~VisualFormat : <code>object</code>
 VisualFormat
 
-**Kind**: inner namespace of [<code>AutoLayout</code>](#module_AutoLayout)  
+**Kind**: inner namespace of <code>[AutoLayout](#module_AutoLayout)</code>  
 
 * [~VisualFormat](#module_AutoLayout..VisualFormat) : <code>object</code>
     * [.parseLine(visualFormat, [options])](#module_AutoLayout..VisualFormat.parseLine) ⇒ <code>Array</code>
@@ -391,7 +391,7 @@ Parses a single line of vfl into an array of constraint definitions.
 When the visual-format could not be succesfully parsed an exception is thrown containing
 additional info about the parse error and column position.
 
-**Kind**: static method of [<code>VisualFormat</code>](#module_AutoLayout..VisualFormat)  
+**Kind**: static method of <code>[VisualFormat](#module_AutoLayout..VisualFormat)</code>  
 **Returns**: <code>Array</code> - Array of constraint definitions.  
 
 | Param | Type | Description |
@@ -410,12 +410,12 @@ Parses one or more visual format strings into an array of constraint definitions
 When the visual-format could not be succesfully parsed an exception is thrown containing
 additional info about the parse error and column position.
 
-**Kind**: static method of [<code>VisualFormat</code>](#module_AutoLayout..VisualFormat)  
+**Kind**: static method of <code>[VisualFormat](#module_AutoLayout..VisualFormat)</code>  
 **Returns**: <code>Array</code> - Array of constraint definitions.  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| visualFormat | <code>String</code> \| <code>Array</code> | One or more visual format strings. |
+| visualFormat | <code>String</code> &#124; <code>Array</code> | One or more visual format strings. |
 | [options] | <code>Object</code> | Configuration options. |
 | [options.extended] | <code>Boolean</code> | When set to true uses the extended syntax (default: false). |
 | [options.strict] | <code>Boolean</code> | When set to false trims any leading/trailing spaces and ignores empty lines (default: true). |
@@ -457,12 +457,12 @@ Supported categories and properties:
 |`colors`|`{view-name}:{color}`|`//colors redview:#FF0000 blueview:#00FF00`|
 |`shapes`|`{view-name}:[circle/square]`|`//shapes avatar:circle`|
 
-**Kind**: static method of [<code>VisualFormat</code>](#module_AutoLayout..VisualFormat)  
+**Kind**: static method of <code>[VisualFormat](#module_AutoLayout..VisualFormat)</code>  
 **Returns**: <code>Object</code> - meta-info  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| visualFormat | <code>String</code> \| <code>Array</code> | One or more visual format strings. |
+| visualFormat | <code>String</code> &#124; <code>Array</code> | One or more visual format strings. |
 | [options] | <code>Object</code> | Configuration options. |
 | [options.lineSeparator] | <code>String</code> | String that defines the end of a line (default `\n`). |
 | [options.prefix] | <code>String</code> | When specified, also processes the categories using that prefix (e.g. "-dev-viewport max-height:10"). |
@@ -472,7 +472,7 @@ Supported categories and properties:
 ### AutoLayout~Attribute : <code>enum</code>
 Layout attributes.
 
-**Kind**: inner enum of [<code>AutoLayout</code>](#module_AutoLayout)  
+**Kind**: inner enum of <code>[AutoLayout](#module_AutoLayout)</code>  
 **Properties**
 
 | Name | Type | Default | Description |
@@ -495,7 +495,7 @@ Layout attributes.
 ### AutoLayout~Relation : <code>enum</code>
 Relation types.
 
-**Kind**: inner enum of [<code>AutoLayout</code>](#module_AutoLayout)  
+**Kind**: inner enum of <code>[AutoLayout](#module_AutoLayout)</code>  
 **Properties**
 
 | Name | Type | Default | Description |
@@ -509,7 +509,7 @@ Relation types.
 ### AutoLayout~Priority : <code>enum</code>
 Layout priorities.
 
-**Kind**: inner enum of [<code>AutoLayout</code>](#module_AutoLayout)  
+**Kind**: inner enum of <code>[AutoLayout](#module_AutoLayout)</code>  
 **Properties**
 
 | Name | Type | Default |
