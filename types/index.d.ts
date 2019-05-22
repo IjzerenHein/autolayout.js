@@ -1,9 +1,3 @@
-interface AutoLayout {
-    VisualFormat: VisualFormat;
-
-    View: ViewConstructor;
-}
-
 interface ViewOptions {
     /**
      * One or more constraint definitions.
@@ -26,24 +20,29 @@ interface ViewOptions {
     width?: number;
 }
 
-interface ViewConstructor {
+declare interface ViewConstructor {
     new <Names extends string = string>(options: ViewOptions): View<Names>;
 }
 
-interface View<Names extends string = string> {
+export declare const View: ViewConstructor;
+
+/**
+ * Main entity for adding & evaluating constraints.
+ */
+declare interface View<Names extends string = string> {
     /**
-     * Width that was set using setSize.
+     * Width that was set using [[setSize]].
      */
     readonly width: number;
 
     /**
-     * Height that was set using setSize.
+     * Height that was set using [[setSize]].
      */
     readonly height: number;
 
     /**
-     * Width that is calculated from the constraints and the .intrinsicWidth of the sub-views.
-     * When the width has been explicitly set using setSize, the fittingWidth will always be the same as the
+     * Width that is calculated from the constraints and the [[intrinsicWidth]] of the sub-views. When the
+     * width has been explicitly set using [[setSize]], the [[fittingWidth]] will always be the same as the
      * explicitly set width. To calculate the size based on the content, use:
      *
     ```js
@@ -77,9 +76,9 @@ interface View<Names extends string = string> {
      * Sets the spacing for the view.
      *
      * The spacing can be set for 7 different variables: top, right, bottom, left, width, height and zIndex. The
-     * left-spacing is used when a spacer is used between the parent-view and a sub-view (e.g. |-[subView]). The
+     * left-spacing is used when a spacer is used between the parent-view and a sub-view (e.g. `|-[subView]`). The
      * same is true for the right, top and bottom spacers. The width and height are used for spacers in between
-     * sub-views (e.g. [view1]-[view2]).
+     * sub-views (e.g. `[view1]-[view2]`).
      *
      * Instead of using the full spacing syntax, it is also possible to use shorthand notations:
      *
@@ -94,13 +93,10 @@ interface View<Names extends string = string> {
      
   Examples:
   
-```
+```js
 view.setSpacing(10); // horizontal & vertical spacing 10 
-
 view.setSpacing([10, 15, 2]); // horizontal spacing 10, vertical spacing 15, z-axis spacing 2 
-
 view.setSpacing([10, 20, 10, 20, 5, 5]); // top, right, bottom, left, horizontal, vertical 
-
 view.setSpacing([10, 20, 10, 20, 5, 5, 1]); // top, right, bottom, left, horizontal, vertical, z
 ```
   */
@@ -109,9 +105,14 @@ view.setSpacing([10, 20, 10, 20, 5, 5, 1]); // top, right, bottom, left, horizon
     addConstraint(constraint: Constraint): View;
 
     addConstraints(constraints: Constraint[]): View;
-
 }
-interface VisualFormat {
+
+export declare const VisualFormat: VisualFormat;
+
+/**
+ * Parses VFL into constraints.
+ */
+declare interface VisualFormat {
     /**
      * Parses one or more visual format strings into an array of constraint definitions. When the visual-format
      * could not be successfully parsed an exception is thrown containing additional info about the parse error
@@ -160,12 +161,12 @@ V:|[row]|
      *   |`shapes`|`{view-name}:[circle/square]`|`//shapes avatar:circle`|
 
      */
-    parseMetaInfo(visualFormat: string | string[], options?: parseMetaInfoOptions): void;
+    parseMetaInfo(visualFormat: string | string[], options?: ParseMetaInfoOptions): void;
 }
 
-interface parseMetaInfoOptions {
+declare interface ParseMetaInfoOptions {
     /**
-     * String that defines the end of a line (default \n).
+     * string that defines the end of a line (default `\n`).
      */
     lineSeparator?: string;
 
@@ -175,19 +176,19 @@ interface parseMetaInfoOptions {
     prefix?: string;
 }
 
-interface ParseOptions extends ParseLineOptions {
+declare interface ParseOptions extends ParseLineOptions {
     /**
      * When set to false trims any leading/trailing spaces and ignores empty lines (default: true).
      */
     strict?: boolean;
 
     /**
-     * String that defines the end of a line (default \n).
+     * string that defines the end of a line (default `\n`).
      */
     lineSeparator?: string;
 }
 
-interface ParseLineOptions {
+declare interface ParseLineOptions {
     /**
      * When set to true uses the extended syntax (default: false).
      */
@@ -204,22 +205,84 @@ interface ParseLineOptions {
     outFormat?: 'constraints' | 'raw';
 }
 
-declare type Attribute = 'const' | 'var' | 'left' | 'right' | 'top' | 'bottom' | 'width' | 'height' | 'centerX' | 'centerY' | 'zIndex';
-
-declare type Relation = 'leq' | 'equ' | 'gep';
-
-interface Constraint {
+/**
+ * The relationship between two user interface objects that must be satisfied by the constraint-based layout
+ * system.
+ *
+ * The properties are identical to those of
+ * [NSLayoutConstraint](https://developer.apple.com/documentation/uikit/nslayoutconstraint). 
+ *
+ * To constrain `view` to its parent view, use `null` for `view2`. 
+ *
+ * Each constraint is a linear equation with the following format: 
+ *
+ * ```item1.attribute1 = multiplier × item2.attribute2 + constant```
+ *
+ * In this equation, attribute1 and attribute2 are the variables that Auto Layout can adjust when solving
+ * these constraints. The other values are defined when you create the constraint. 
+ */
+declare interface Constraint {
     view1: string;
     attr1: Attribute;
     relation: Relation;
-    view2?: String;
+    view2?: string;
     attr2?: Attribute;
-    multiplier?: Number;
+    multiplier?: number;
     constant?: number;
-    priority?: number;
+    priority?: Priority|number;
 }
 
-interface SubView {
+/**
+ * Layout priorities.
+ */
+export declare enum Priority {
+  REQUIRED = 1000,
+
+  DEFAULTHIGH = 750,
+
+  DEFAULTLOW = 250
+}
+
+/**
+ * Relationship types that are supported when adding constraints.
+ */
+export declare enum Relation {
+  /**
+   * Less than or equal.
+   */
+  LEQ='leq',
+  /**
+   * Equal.
+   */
+  EQU='equ',
+  /**
+   * Greater than or equal.
+   */
+  GEQ='geq'
+}
+
+/**
+ * Attribute types that are supported when adding constraints.
+ */
+export declare enum Attribute {
+  CONST='const',
+  NOTANATTRIBUTE='const',	
+  VARIABLE='var',	
+  LEFT='left',	
+  RIGHT='right',	
+  TOP='top',	
+  BOTTOM='bottom',	
+  WIDTH='width',	
+  HEIGHT='height',	
+  CENTERX='centerX',	
+  CENTERY='centerY',	
+  ZINDEX='zIndex'
+}
+
+/**
+ * SubView's are automatically created when constraints are added to views. They give access to the evaluated results.
+ */
+declare interface SubView {
     left: number;
     top: number;
     right: number;
@@ -248,9 +311,8 @@ view.subViews.child1.intrinsicWidth = 100; console.log('child2 width: ' + view.s
 
     zIndex: number;
 
-    type: String;
+    type: string;
 
     getValue(attr: string): number | undefined;
 }
-
-export = AutoLayout
+ 
