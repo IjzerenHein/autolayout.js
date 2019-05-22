@@ -9,6 +9,9 @@ esperanto.bundle({
   ]
 }).then(function(bundle) {
   var cjs = bundle.toCjs();
+  if(!fs.existsSync('tmp')) {
+      fs.mkdirSync('tmp');
+  }
   fs.writeFile('tmp/autolayout.es6', cjs.code, function(err){
     if(err) {
       console.log(err);
