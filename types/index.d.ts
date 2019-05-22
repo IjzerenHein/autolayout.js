@@ -92,18 +92,38 @@ declare interface View<Names extends string = string> {
      *   same, z-index = 1.|
      
   Examples:
-  
-```js
-view.setSpacing(10); // horizontal & vertical spacing 10 
-view.setSpacing([10, 15, 2]); // horizontal spacing 10, vertical spacing 15, z-axis spacing 2 
-view.setSpacing([10, 20, 10, 20, 5, 5]); // top, right, bottom, left, horizontal, vertical 
-view.setSpacing([10, 20, 10, 20, 5, 5, 1]); // top, right, bottom, left, horizontal, vertical, z
-```
+   
+  ```js
+  view.setSpacing(10); // horizontal & vertical spacing 10 
+  view.setSpacing([10, 15, 2]); // horizontal spacing 10, vertical spacing 15, z-axis spacing 2 
+  view.setSpacing([10, 20, 10, 20, 5, 5]); // top, right, bottom, left, horizontal, vertical 
+  view.setSpacing([10, 20, 10, 20, 5, 5, 1]); // top, right, bottom, left, horizontal, vertical, z
+  ```
   */
     setSpacing(spacing: number | number[]): View;
 
+    /**
+     * Adds a constraint definition.
+     * A constraint definition has the following format:
+  
+  ```
+  constraint: {
+    view1: {String},
+    attr1: {AutoLayout.Attribute},
+    relation: {AutoLayout.Relation},
+    view2: {String},
+    attr2: {AutoLayout.Attribute},
+    multiplier: {Number},
+    constant: {Number},
+    priority: {Number}(0..1000)
+  }
+  ```
+      */
     addConstraint(constraint: Constraint): View;
 
+    /**
+     * Adds one or more constraint definitions. See [[addConstraint]]
+     */
     addConstraints(constraints: Constraint[]): View;
 }
 
@@ -134,15 +154,15 @@ declare interface VisualFormat {
      * For instance, the view-port aspect-ratio, sub-view widths and colors, can be specified. 
      * 
      * The following example renders three colored circles in the visual-format editor:
-  
-```vfl
-//viewport aspect-ratio:3/1 max-height:300
-//colors red:#FF0000 green:#00FF00 blue:#0000FF
-//shapes red:circle green:circle blue:circle
-H:|-[row:[red(green,blue)]-[green]-[blue]]-|
-V:|[row]|
-```
-  
+   
+  ```vfl
+  //viewport aspect-ratio:3/1 max-height:300
+  //colors red:#FF0000 green:#00FF00 blue:#0000FF
+  //shapes red:circle green:circle blue:circle
+  H:|-[row:[red(green,blue)]-[green]-[blue]]-|
+  V:|[row]|
+  ```
+   
      * Supported categories and properties:
      *   
      *   |Category|Property|Example|
@@ -159,7 +179,7 @@ V:|[row]|
      *   |`heights`|`{view-name}:[{number}/intrinsic]`|`//heights subview1:intrinsic`|
      *   |`colors`|`{view-name}:{color}`|`//colors redview:#FF0000 blueview:#00FF00`|
      *   |`shapes`|`{view-name}:[circle/square]`|`//shapes avatar:circle`|
-
+  
      */
     parseMetaInfo(visualFormat: string | string[], options?: ParseMetaInfoOptions): void;
 }
@@ -229,74 +249,104 @@ declare interface Constraint {
     attr2?: Attribute;
     multiplier?: number;
     constant?: number;
-    priority?: Priority|number;
+    priority?: Priority | number;
 }
 
 /**
- * Layout priorities.
+ * Default priority values for when adding constraints.
  */
 export declare enum Priority {
-  REQUIRED = 1000,
+    REQUIRED = 1000,
 
-  DEFAULTHIGH = 750,
+    DEFAULTHIGH = 750,
 
-  DEFAULTLOW = 250
+    DEFAULTLOW = 250
 }
 
 /**
  * Relationship types that are supported when adding constraints.
  */
 export declare enum Relation {
-  /**
-   * Less than or equal.
-   */
-  LEQ='leq',
-  /**
-   * Equal.
-   */
-  EQU='equ',
-  /**
-   * Greater than or equal.
-   */
-  GEQ='geq'
+    /**
+     * Less than or equal.
+     */
+    LEQ = 'leq',
+    /**
+     * Equal.
+     */
+    EQU = 'equ',
+    /**
+     * Greater than or equal.
+     */
+    GEQ = 'geq'
 }
 
 /**
  * Attribute types that are supported when adding constraints.
  */
 export declare enum Attribute {
-  CONST='const',
-  NOTANATTRIBUTE='const',	
-  VARIABLE='var',	
-  LEFT='left',	
-  RIGHT='right',	
-  TOP='top',	
-  BOTTOM='bottom',	
-  WIDTH='width',	
-  HEIGHT='height',	
-  CENTERX='centerX',	
-  CENTERY='centerY',	
-  ZINDEX='zIndex'
+    CONST = 'const',
+    NOTANATTRIBUTE = 'const',
+    VARIABLE = 'var',
+    LEFT = 'left',
+    RIGHT = 'right',
+    TOP = 'top',
+    BOTTOM = 'bottom',
+    WIDTH = 'width',
+    HEIGHT = 'height',
+    CENTERX = 'centerX',
+    CENTERY = 'centerY',
+    ZINDEX = 'zIndex'
 }
 
 /**
  * SubView's are automatically created when constraints are added to views. They give access to the evaluated results.
  */
 declare interface SubView {
-    left: number;
-    top: number;
-    right: number;
-    bottom: number;
-    width: number;
-    height: number;
-    name: string;
+
+    /**
+     * Left value (Attribute.LEFT).
+     */
+    readonly left: number;
+
+    /**
+     * Top value (Attribute.TOP).
+     */
+    readonly top: number;
+
+    /**
+     * Right value (Attribute.RIGHT).
+     */
+    readonly right: number;
+
+    /**
+     * Bottom value (Attribute.BOTTOM).
+     */
+    readonly bottom: number;
+
+    /**
+     * Width value (Attribute.WIDTH).
+     */
+    readonly width: number;
+
+    /**
+     * Height value (Attribute.HEIGHT).
+     */
+    readonly height: number;
+
+    /**
+     * The name of the sub-view, which is also the key of the sub-view in the [[View]] instance, e.g: 
+     * `view.subViews[name].name === name`.
+     */
+    readonly name: string;
+
     /**
      * Intrinsic width of the sub-view. Use this property to explicitly set the width of the sub-view, e.g.:
-  
-```js
-var view = new AutoLayout.View(AutoLayout.VisualFormat.parse('|[child1][child2]|'), {width: 500});
-view.subViews.child1.intrinsicWidth = 100; console.log('child2 width: ' + view.subViews.child2.width); // 400
-```
+   
+  ```js
+  var view = new AutoLayout.View(AutoLayout.VisualFormat.parse('|[child1][child2]|'), {width: 500});
+  view.subViews.child1.intrinsicWidth = 100; console.log('child2 width: ' + view.subViews.child2.width); // 400
+  ```
      */
     intrinsicWidth: number;
 
@@ -305,14 +355,42 @@ view.subViews.child1.intrinsicWidth = 100; console.log('child2 width: ' + view.s
      */
     intrinsicHeight: number;
 
-    centerX: number;
+    /**
+     * Horizontal center (Attribute.CENTERX).
+     */
+    readonly centerX: number;
 
-    centerY: number;
+    /**
+     * Vertical center (Attribute.CENTERY).
+     */
+    readonly centerY: number;
 
-    zIndex: number;
+    /**
+     * When sub-views overlap it can be useful to specify the z-ordering for the sub-views:
+     * 
+  ```
+  Z:|[child1][child2]  // child2 is placed in front of child1
+  Z:|[background]-10-[child1..2]  // child1 and child2 are placed 10 units in-front of background
+  ```
+  
+     * By default, all sub-views have a z-index of 0. When placed in front of each other, the z-index will 
+     * be 1 higher than the sub-view it was placed in front of. The z-index of the sub-view can be accessed 
+     * through the `zIndex` property:
+  
+  ```js
+  console.log('zIndex: ' + view.subViews.child2.zIndex);
+  ```
+     */
+    readonly zIndex: number;
 
-    type: string;
+    /**
+     * Returns the type of the sub-view.
+     */
+    readonly type: string;
 
-    getValue(attr: string): number | undefined;
+    /**
+     * Gets the value of one of the attributes.
+     * @param attr - Attribute name (e.g. 'right', 'centerY', Attribute.TOP).
+     */
+    getValue(attr: string | Attribute): number | undefined;
 }
- 
