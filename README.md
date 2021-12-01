@@ -1,3 +1,11 @@
+# THIS REPOSITORY IS NO LONGER MAINTAINED
+
+Looking for an alternative that is maintained? Please have a look at [lume/autolayout](https://github.com/lume/autolayout).
+
+If you are interested in maintaining this repository (and taking ownership of it), please reach out to me [here](mailto:hrutjes@gmail.com).
+
+
+
 ![Logo](logo.png)
 
 [![Build Status](https://travis-ci.org/IjzerenHein/autolayout.js.svg?branch=master)](https://travis-ci.org/IjzerenHein/autolayout.js)
@@ -24,17 +32,32 @@ Layouts can be previewed and debugged using the [Visual Format Editor](https://g
 
 
 ## Index
-- [Getting started](#getting-started)
-  - [Installation](#installation)
-  - [Using the API](#using-the-api)
-  - [API Documentation](#api-documentation)
-  - [Examples](#examples)
-- [Extended Visual Format Language (EVFL)](#extended-visual-format-language-evfl)
-- [Additional resources](#additional-resources)
-- [Benchmark](https://rawgit.com/IjzerenHein/autolayout.js/master/bench/index.html)
-- [Tests](https://rawgit.com/IjzerenHein/autolayout.js/master/test/index.html)
-- [Roadmap](#roadmap)
-- [Contribute](#contribute)
+- [THIS REPOSITORY IS NO LONGER MAINTAINED](#this-repository-is-no-longer-maintained)
+  - [Index](#index)
+  - [Getting started](#getting-started)
+    - [Installation](#installation)
+    - [Using the API](#using-the-api)
+    - [API Documentation](#api-documentation)
+    - [Examples](#examples)
+  - [Extended Visual Format Language (EVFL)](#extended-visual-format-language-evfl)
+    - [Language features](#language-features)
+    - [Proportional size](#proportional-size)
+    - [Operators](#operators)
+    - [Attributes](#attributes)
+    - [Z-Ordering](#z-ordering)
+    - [Equal size spacers / centering](#equal-size-spacers--centering)
+    - [View stacks](#view-stacks)
+    - [View ranges (spread operator)](#view-ranges-spread-operator)
+    - [Multiple views](#multiple-views)
+    - [Multiple orientations (fill content)](#multiple-orientations-fill-content)
+    - [Disconnections (right/bottom alignment)](#disconnections-rightbottom-alignment)
+    - [Negative values (overlapping views)](#negative-values-overlapping-views)
+    - [Explicit constraint syntax](#explicit-constraint-syntax)
+    - [Comments](#comments)
+  - [Additional resources](#additional-resources)
+  - [Roadmap](#roadmap)
+  - [Contribute](#contribute)
+  - [Contact](#contact)
 
 ## Getting started
 
