@@ -6,7 +6,7 @@ var envify = require('envify/custom');
 var CombinedStream = require('combined-stream');
 var argv = require('minimist')(process.argv.slice(2));
 
-var packageJSON = JSON.parse(fs.readFileSync('./package.json'));
+var packageJSON = JSON.parse(fs.readFileSync('./package.json').toString());
 
 var banner = '' +
 '/**\n' +
@@ -41,6 +41,9 @@ var kiwiBanner = '' +
 '|----------------------------------------------------------------------------*/\n';
 
 function dist(kiwi, minify) {
+    if(!fs.existsSync('dist')) {
+        fs.mkdirSync('dist');
+    }
     var input = CombinedStream.create();
     input.append(!kiwi ? 'var c = require(\'cassowary/bin/c\')\n' : 'var kiwi = require(\'kiwi.js\')\n');
     input.append(fs.createReadStream('./tmp/autolayout.es6'));

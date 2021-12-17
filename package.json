@@ -40,8 +40,8 @@
     "babel-eslint": "^7.1.1",
     "babel-preset-es2015": "^6.18.0",
     "babelify": "^7.3.0",
-    "benchmark": "^2.1.3",
-    "browserify": "^13.3.0",
+    "benchmark": "^2.1.4",
+    "browserify": "^16.2.3",
     "chai": "^3.5.0",
     "combined-stream": "^1.0.5",
     "envify": "^4.0.0",
@@ -58,12 +58,16 @@
     "minifyify": "^7.3.4",
     "minimist": "^1.2.0",
     "mocha": "^3.2.0",
-    "platform": "^1.3.1"
+    "platform": "^1.3.1",
+    "shx": "^0.3.2"
   },
   "dependencies": {
     "cassowary": "0.0.2"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "npx mocha",
+    "all": "npm run clean && npx grunt",
+    "prepare": "npm run all",
+    "clean": "npx shx rm -rf dist tmp"
   }
 }

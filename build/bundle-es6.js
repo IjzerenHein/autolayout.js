@@ -9,7 +9,18 @@ esperanto.bundle({
   ]
 }).then(function(bundle) {
   var cjs = bundle.toCjs();
-  fs.writeFile('tmp/autolayout.es6', cjs.code);
+  if(!fs.existsSync('tmp')) {
+      fs.mkdirSync('tmp');
+  }
+  fs.writeFile('tmp/autolayout.es6', cjs.code, function(err){
+    if(err) {
+      console.log(err);
+      process.exit(1);
+    }
+  });
 }, function(err) {
+  if(err) {
     console.log(err);
+    process.exit(1);
+  }
 });
