@@ -1,30 +1,7 @@
-import Attribute from './Attribute';
-import Relation from './Relation';
-import Priority from './Priority';
-import VisualFormat from './VisualFormat';
-import View from './View';
-import SubView from './SubView';
+export {default as Attribute} from './Attribute';
+export {default as Relation} from './Relation';
+export {default as Priority} from './Priority';
+export {default as VisualFormat} from './VisualFormat';
+export {default as View} from './View';
+export {default as SubView} from './SubView';
 //import DOM from './DOM';
-
-/**
- * AutoLayout.
- *
- * @namespace AutoLayout
- * @property {Attribute} Attribute
- * @property {Relation} Relation
- * @property {Priority} Priority
- * @property {VisualFormat} VisualFormat
- * @property {View} View
- * @property {SubView} SubView
- */
-var AutoLayout = {
-    Attribute: Attribute,
-    Relation: Relation,
-    Priority: Priority,
-    VisualFormat: VisualFormat,
-    View: View,
-    SubView: SubView
-    //DOM: DOM
-};
-
-export default AutoLayout;

@@ -7,6 +7,7 @@
     "url": "git://github.com/IjzerenHein/autolayout.js.git"
   },
   "main": "dist/autolayout.js",
+  "types": "dist/autolayout.d.ts",
   "author": {
     "name": "Hein Rutjes <hrutjes@gmail.com>"
   },
@@ -37,33 +38,31 @@
     "LICENSE"
   ],
   "devDependencies": {
-    "babel-eslint": "^7.1.1",
-    "babel-preset-es2015": "^6.18.0",
-    "babelify": "^7.3.0",
     "benchmark": "^2.1.3",
     "browserify": "^13.3.0",
     "chai": "^3.5.0",
     "combined-stream": "^1.0.5",
-    "envify": "^4.0.0",
-    "esperanto": "^0.7.5",
-    "grunt": "^1.0.1",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-eslint": "^19.0.0",
-    "grunt-exec": "^1.0.1",
-    "grunt-jscs": "^3.0.1",
-    "grunt-jsdoc-to-markdown": "^2.0.0",
-    "grunt-peg": "1.5.0",
-    "kiwi.js": "^1.0.1",
+    "copy-webpack-plugin": "^5.0.0",
+    "eslint": "^5.14.1",
     "lodash": "^4.17.4",
     "minifyify": "^7.3.4",
     "minimist": "^1.2.0",
-    "mocha": "^3.2.0",
-    "platform": "^1.3.1"
+    "mocha": "^6.0.0",
+    "platform": "^1.3.1",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3",
+    "webpack-conditional-loader": "^1.0.12"
   },
   "dependencies": {
-    "cassowary": "0.0.2"
+    "cassowary": "0.0.2",
+    "kiwi.js": "^1.1.0"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "build-dev-kiwi": "npx webpack --mode development",
+    "build-prod-kiwi": "npx webpack --mode production",
+    "build-dev-cassowary": "npx webpack --mode development --env.CASSOWARYJS",
+    "build-prod-cassowary": "npx webpack --mode production --env.CASSOWARYJS",
+    "release": "npm run build-prod-kiwi && npm run build-prod-cassowary"
   }
 }

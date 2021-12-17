@@ -3,3 +3,6 @@ bower_components
 npm-debug.log
 tmp
 /cassowary.js
+/.idea
+.DS_Store
+/dist
